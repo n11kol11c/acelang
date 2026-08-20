@@ -67,6 +67,12 @@ class Keywords:
         "sv_voiceChat", "sv_mumble", "sv_devMode", "sv_scriptDebugDuplicates",
         "sv_enhancedHostSupport", "sv_protectServerEntities", "sv_projectName",
         "sv_projectDesc", "sv_appearAllowlisted", "sv_allowlistInstructions",
+        "sv_replaceExeToSwitchBuilds", "sv_showBusySpinnerOnLoadingScreen",
+        "sv_endpointurl", "sv_kick_players_cnl", "sv_exposePlayerIdentifiersInHttpEndpoint",
+        "txAdmin-menuEnabled", "txAdmin-menuAlignRight", "txAdmin-menuPageKey",
+        "txAdmin-hideDefaultAnnouncement", "txAdmin-hideDefaultDirectMessage",
+        "txAdmin-hideDefaultWarning", "txAdmin-hideDefaultScheduledRestartWarning",
+        "txAdmin-debugMode", "txAdmin-menuPlayerIdDistance", "txAdmin-menuDrunkDuration",
         "sync_start_recording", "sync_stop_recording", "test_ace",
         "unblock_net_game_event",
         "rateLimiter_challenge_rate", "rateLimiter_challenge_burst",
@@ -91,6 +97,7 @@ class Keywords:
 
     ACTIONS: frozenset[str] = frozenset({
         "ensure", "ensure_stop", "quit", "refresh", "restart", "say", "start", "stop",
+        "status", "clientkick", "moo",
     })
 
     PRINCIPALS: frozenset[str] = frozenset({
@@ -220,6 +227,21 @@ class Keywords:
         "sv_experimentalNetGameEventHandler": KeywordInfo("Experimental Net Game Event", "Faster game events handler", "boolean", "true", "experimental", valid_values=("true", "false"), usage="sv_experimentalNetGameEventHandler true"),
         "sv_stateBagStrictMode": KeywordInfo("State Bag Strict Mode", "Only server can modify state bags", "boolean", "false", "experimental", valid_values=("true", "false"), usage='setr sv_stateBagStrictMode false'),
         "sv_httpFileServerProxyOnly": KeywordInfo("HTTP File Server Proxy", "Restrict file server to proxy IPs only", "boolean", "false", "experimental", valid_values=("true", "false"), usage="sv_httpFileServerProxyOnly false"),
+        "sv_replaceExeToSwitchBuilds": KeywordInfo("Replace Exe To Switch Builds", "Controls how older game builds are run (true=old exe, false=latest exe with DLC)", "boolean", "true", "network", valid_values=("true", "false"), usage="sv_replaceExeToSwitchBuilds true"),
+        "sv_showBusySpinnerOnLoadingScreen": KeywordInfo("Show Busy Spinner", "Show busy spinner on loading screen", "boolean", "false", "features", valid_values=("true", "false"), usage="sv_showBusySpinnerOnLoadingScreen false"),
+        "sv_endpointurl": KeywordInfo("Endpoint URL", "Custom URL for server endpoint instead of IP", "string", "", "network", usage='sv_endpointurl "https://myserver.example.com"'),
+        "sv_kick_players_cnl": KeywordInfo("Kick Players CNL", "Fix Connection CNL timed out error", "boolean", "false", "network", valid_values=("true", "false"), usage="set sv_kick_players_cnl 0"),
+        "sv_exposePlayerIdentifiersInHttpEndpoint": KeywordInfo("Expose Player Identifiers", "Retain player identifiers in players.json endpoint", "boolean", "false", "network", valid_values=("true", "false"), usage="sv_exposePlayerIdentifiersInHttpEndpoint false"),
+        "txAdmin-menuEnabled": KeywordInfo("TXAdmin Menu Enabled", "Enable txAdmin menu (requires restart)", "boolean", "true", "txadmin", valid_values=("true", "false"), usage="txAdmin-menuEnabled true"),
+        "txAdmin-menuAlignRight": KeywordInfo("TXAdmin Menu Align Right", "Align txAdmin menu to right side of screen", "boolean", "false", "txadmin", valid_values=("true", "false"), usage="txAdmin-menuAlignRight false"),
+        "txAdmin-menuPageKey": KeywordInfo("TXAdmin Menu Page Key", "Key for changing txAdmin menu pages", "string", "Tab", "txadmin", usage="txAdmin-menuPageKey Tab"),
+        "txAdmin-hideDefaultAnnouncement": KeywordInfo("TXAdmin Hide Announcement", "Suppress default announcements", "boolean", "false", "txadmin", valid_values=("true", "false"), usage="txAdmin-hideDefaultAnnouncement false"),
+        "txAdmin-hideDefaultDirectMessage": KeywordInfo("TXAdmin Hide DM", "Suppress default direct messages", "boolean", "false", "txadmin", valid_values=("true", "false"), usage="txAdmin-hideDefaultDirectMessage false"),
+        "txAdmin-hideDefaultWarning": KeywordInfo("TXAdmin Hide Warning", "Suppress default warnings", "boolean", "false", "txadmin", valid_values=("true", "false"), usage="txAdmin-hideDefaultWarning false"),
+        "txAdmin-hideDefaultScheduledRestartWarning": KeywordInfo("TXAdmin Hide Restart Warning", "Suppress restart warnings", "boolean", "false", "txadmin", valid_values=("true", "false"), usage="txAdmin-hideDefaultScheduledRestartWarning false"),
+        "txAdmin-debugMode": KeywordInfo("TXAdmin Debug Mode", "Toggle txAdmin debug printing", "boolean", "false", "txadmin", valid_values=("true", "false"), usage="+setr txAdmin-debugMode true"),
+        "txAdmin-menuPlayerIdDistance": KeywordInfo("TXAdmin Player ID Distance", "Distance for Player ID visibility in txAdmin menu", "number", "150", "txadmin", min_value="0", max_value="300", usage="+setr txAdmin-menuPlayerIdDistance 100"),
+        "txAdmin-menuDrunkDuration": KeywordInfo("TXAdmin Drunk Duration", "Duration of drunk effect in txAdmin menu (seconds)", "number", "0", "txadmin", min_value="0", max_value="300", usage="+setr txAdmin-menuDrunkDuration 120"),
 
         # ═══════════════════════════════════════════════════════════
         # MONITORING
@@ -290,6 +312,9 @@ class Keywords:
         "refresh": KeywordInfo("Refresh Resources", "Refresh resources folder", "action", "", "action", usage="refresh", related=("start", "stop")),
         "restart": KeywordInfo("Restart Server", "Restart the server", "action", "", "action", usage="restart", related=("quit",)),
         "say": KeywordInfo("Say Message", "Send a chat message as console", "action", "", "action", params=(ParamInfo("message", "str", True, description="Message to send"),), usage='say "Hello everyone!"'),
+        "status": KeywordInfo("Status", "Show connected players with IDs and ping (provided by rconlog)", "action", "", "action", usage="status"),
+        "clientkick": KeywordInfo("Client Kick", "Kick a client by server ID (provided by rconlog)", "action", "", "action", params=(ParamInfo("id", "int", True, description="Server ID"), ParamInfo("reason", "str", False, description="Kick reason")), usage="clientkick 43 You're a superstitious idiot!"),
+        "moo": KeywordInfo("Moo", "Set to 31337 to bypass pool size validation for local dev", "boolean", "0", "experimental", valid_values=("0", "31337"), usage="set moo 31337", warning="Development only, never use in production"),
         "start": KeywordInfo("Start Resource", "Start a resource", "action", "", "action", params=(ParamInfo("resource", "str", True, description="Resource folder name"),), usage="start mapmanager", related=("stop", "ensure")),
         "stop": KeywordInfo("Stop Resource", "Stop a running resource", "action", "", "action", params=(ParamInfo("resource", "str", True, description="Resource folder name"),), usage="stop mapmanager", related=("start", "ensure")),
         # ═══════════════════════════════════════════════════════════
