@@ -1,4 +1,14 @@
 from __future__ import annotations
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True, slots=True)
+class KeywordInfo:
+    name: str
+    description: str = ""
+    value_type: str = "string"
+    default: str = ""
+    category: str = ""
 
 
 class Keywords:
@@ -236,6 +246,134 @@ class Keywords:
 
     ALL: frozenset[str] = CVARS | ACTIONS | PRINCIPALS | STATES
 
+    META: dict[str, KeywordInfo] = {
+        # ── Server Config ──
+        "sv_hostname": KeywordInfo("Server Hostname", "Server name displayed in the browser", "string", "Cfx.re Default Server", "server"),
+        "sv_maxClients": KeywordInfo("Max Clients", "Maximum number of players", "number", "48", "server"),
+        "sv_maxclients": KeywordInfo("Max Clients (alias)", "Maximum number of players (lowercase alias)", "number", "48", "server"),
+        "sv_licenseKey": KeywordInfo("License Key", "FiveM license key for authentication", "string", "", "server"),
+        "sv_lan": KeywordInfo("LAN Mode", "Enable LAN mode for local play", "boolean", "false", "server"),
+        "sv_projectName": KeywordInfo("Project Name", "Name of the project", "string", "", "server"),
+        "sv_projectDesc": KeywordInfo("Project Description", "Description of the project", "string", "", "server"),
+        "sv_tebexSecret": KeywordInfo("Tebex Secret", "Tebex store integration secret", "string", "", "server"),
+        "sv_kvsName": KeywordInfo("KVS Name", "Key-Value Store name", "string", "", "server"),
+        "sv_master1": KeywordInfo("Master Server", "Master server URL", "string", "https://master.fivem.net", "server"),
+        "sv_endpoints": KeywordInfo("Endpoints", "Server endpoints", "string", "", "server"),
+        "sv_registerMulticastDns": KeywordInfo("Register Multicast DNS", "Register with multicast DNS", "boolean", "false", "server"),
+
+        # ── Network ──
+        "netPort": KeywordInfo("Net Port", "Network port for the server", "number", "30120", "network"),
+        "net_tcpConnLimit": KeywordInfo("TCP Connection Limit", "Maximum TCP connections", "number", "0", "network"),
+        "sv_tcpConnectionTimeoutSeconds": KeywordInfo("TCP Timeout", "TCP connection timeout in seconds", "number", "10", "network"),
+        "sv_ioThreads": KeywordInfo("IO Threads", "Number of IO threads", "number", "2", "network"),
+        "sv_clientConnectingTimeoutMilliseconds": KeywordInfo("Client Connecting Timeout", "Timeout for connecting clients (ms)", "number", "5000", "network"),
+        "sv_clientConnectedTimeoutMilliseconds": KeywordInfo("Client Connected Timeout", "Timeout for connected clients (ms)", "number", "0", "network"),
+        "sv_pingIntervalMilliseconds": KeywordInfo("Ping Interval", "Client ping interval (ms)", "number", "5000", "network"),
+        "sv_endpointPrivacy": KeywordInfo("Endpoint Privacy", "Hide endpoint information", "boolean", "false", "network"),
+        "sv_forceIndirectListing": KeywordInfo("Force Indirect Listing", "Force indirect server listing", "boolean", "false", "network"),
+        "sv_listingIpOverride": KeywordInfo("Listing IP Override", "Override server listing IP", "string", "", "network"),
+        "sv_listingHostOverride": KeywordInfo("Listing Host Override", "Override server listing host", "string", "", "network"),
+        "sv_proxyIPRanges": KeywordInfo("Proxy IP Ranges", "Proxy IP address ranges", "string", "", "network"),
+        "sv_enhancedHostSupport": KeywordInfo("Enhanced Host Support", "Enable enhanced host support", "boolean", "false", "network"),
+
+        # ── Security ──
+        "rcon_password": KeywordInfo("RCON Password", "Remote console password", "string", "", "security"),
+        "sv_scriptHookAllowed": KeywordInfo("Script Hook Allowed", "Allow ScriptHookV", "boolean", "false", "security"),
+        "sv_protectServerEntities": KeywordInfo("Protect Server Entities", "Protect server entities from client modification", "boolean", "false", "security"),
+        "sv_pureLevel": KeywordInfo("Pure Level", "Server purity level (0-2)", "number", "0", "security"),
+        "sv_requestParanoia": KeywordInfo("Request Paranoia", "Request paranoia level (0-3)", "number", "0", "security"),
+        "sv_authMaxVariance": KeywordInfo("Auth Max Variance", "Maximum authentication variance", "number", "1000", "security"),
+        "sv_authMinTrust": KeywordInfo("Auth Min Trust", "Minimum authentication trust level", "number", "0", "security"),
+        "sv_filterRequestControl": KeywordInfo("Filter Request Control", "Filter request control level", "number", "0", "security"),
+        "sv_filterRequestControlSettleTimer": KeywordInfo("Filter Request Settle Timer", "Filter request control settle timer", "number", "0", "security"),
+        "sv_entityLockdown": KeywordInfo("Entity Lockdown", "Entity lockdown mode", "enum", "inactive", "security"),
+
+        # ── OneSync ──
+        "onesync": KeywordInfo("OneSync", "Enable OneSync sync mode", "enum", "off", "onesync"),
+        "onesync_enableInfinity": KeywordInfo("Enable Infinity", "Enable OneSync Infinity", "boolean", "false", "onesync"),
+        "onesync_enableBeyond": KeywordInfo("Enable Beyond", "Enable OneSync Beyond", "boolean", "false", "onesync"),
+        "onesync_population": KeywordInfo("Population", "Enable OneSync population management", "boolean", "false", "onesync"),
+        "onesync_forceMigration": KeywordInfo("Force Migration", "Force entity migration between slots", "boolean", "false", "onesync"),
+        "onesync_distanceCulling": KeywordInfo("Distance Culling", "Enable distance-based entity culling", "boolean", "false", "onesync"),
+        "onesync_distanceCullVehicles": KeywordInfo("Distance Cull Vehicles", "Enable distance culling for vehicles", "boolean", "false", "onesync"),
+        "onesync_radiusFrequency": KeywordInfo("Radius Frequency", "Entity update radius frequency", "boolean", "false", "onesync"),
+        "onesync_migrateDataTimeout": KeywordInfo("Migrate Data Timeout", "Entity migration data timeout", "number", "5000", "onesync"),
+        "onesync_compressionDictionarySamples": KeywordInfo("Compression Dictionary Samples", "Compression dictionary sample count", "number", "256", "onesync"),
+        "onesync_mapBoundsMinX": KeywordInfo("Map Bounds Min X", "Minimum X map boundary", "number", "-4000", "onesync"),
+        "onesync_mapBoundsMinY": KeywordInfo("Map Bounds Min Y", "Minimum Y map boundary", "number", "-4000", "onesync"),
+        "onesync_mapBoundsMaxX": KeywordInfo("Map Bounds Max X", "Maximum X map boundary", "number", "8000", "onesync"),
+        "onesync_mapBoundsMaxY": KeywordInfo("Map Bounds Max Y", "Maximum Y map boundary", "number", "8000", "onesync"),
+        "onesync_mapCellAreaSize": KeywordInfo("Map Cell Area Size", "Size of map cells for OneSync", "number", "100", "onesync"),
+
+        # ── Features ──
+        "sv_enableNetworkedSounds": KeywordInfo("Enable Networked Sounds", "Allow networked sound playback", "boolean", "false", "features"),
+        "sv_enableNetworkedPhoneExplosions": KeywordInfo("Enable Networked Phone Explosions", "Allow networked phone explosions", "boolean", "false", "features"),
+        "sv_enableNetworkedScriptEntityStates": KeywordInfo("Enable Script Entity States", "Allow networked script entity states", "boolean", "false", "features"),
+        "sv_enableNetEventReassembly": KeywordInfo("Enable Net Event Reassembly", "Enable network event reassembly", "boolean", "false", "features"),
+        "sv_netEventReassemblyMaxPendingEvents": KeywordInfo("Max Pending Events", "Maximum pending net events", "number", "128", "features"),
+        "sv_netEventReassemblyUnlimitedPendingEvents": KeywordInfo("Unlimited Pending Events", "Allow unlimited pending net events", "boolean", "false", "features"),
+        "sv_useAccurateSends": KeywordInfo("Use Accurate Sends", "Use accurate network sends", "boolean", "false", "features"),
+        "sv_voiceChat": KeywordInfo("Voice Chat", "Enable built-in voice chat", "boolean", "false", "features"),
+        "sv_mumble": KeywordInfo("Mumble", "Enable Mumble voice integration", "boolean", "false", "features"),
+        "sv_devMode": KeywordInfo("Developer Mode", "Enable developer mode", "boolean", "false", "features"),
+        "sv_scriptDebugDuplicates": KeywordInfo("Script Debug Duplicates", "Debug duplicate script events", "boolean", "false", "features"),
+        "svgui": KeywordInfo("SVG UI", "Enable SVG-based UI", "boolean", "false", "features"),
+
+        # ── Experimental ──
+        "sv_experimentalStateBagsHandler": KeywordInfo("Experimental State Bags", "Use experimental state bags handler", "boolean", "false", "experimental"),
+        "sv_experimentalOnesyncPopulation": KeywordInfo("Experimental OneSync Population", "Use experimental OneSync population", "boolean", "false", "experimental"),
+        "sv_experimentalNetGameEventHandler": KeywordInfo("Experimental Net Game Event", "Use experimental net game event handler", "boolean", "false", "experimental"),
+        "sv_stateBagStrictMode": KeywordInfo("State Bag Strict Mode", "Enable strict state bag mode", "boolean", "false", "experimental"),
+        "sv_httpFileServerProxyOnly": KeywordInfo("HTTP File Server Proxy", "HTTP file server proxy mode only", "boolean", "false", "experimental"),
+
+        # ── Auth ──
+        "sv_appearAllowlisted": KeywordInfo("Appear Allowlisted", "Show as allowlisted in server browser", "boolean", "false", "auth"),
+        "sv_allowlistInstructions": KeywordInfo("Allowlist Instructions", "Instructions for allowlisted players", "string", "", "auth"),
+
+        # ── Debug / Monitoring ──
+        "sv_prometheusBasicAuthUser": KeywordInfo("Prometheus Auth User", "Prometheus monitoring basic auth user", "string", "", "monitoring"),
+        "sv_prometheusBasicAuthPassword": KeywordInfo("Prometheus Auth Password", "Prometheus monitoring basic auth password", "string", "", "monitoring"),
+
+        # ── Misc ──
+        "gamename": KeywordInfo("Game Name", "Game name identifier", "string", "gta5", "misc"),
+        "gametype": KeywordInfo("Game Type", "Game type identifier", "string", "gta5", "misc"),
+        "mapname": KeywordInfo("Map Name", "Current map name", "string", "gta5", "misc"),
+        "load_server_icon": KeywordInfo("Load Server Icon", "Load a server icon file", "string", "", "misc"),
+        "exec": KeywordInfo("Execute", "Execute a configuration file", "string", "", "misc"),
+        "increase_pool_size": KeywordInfo("Increase Pool Size", "Increase pool size", "string", "", "misc"),
+
+        # ── Actions ──
+        "ensure": KeywordInfo("Ensure", "Start a resource and ensure it stays running", "", "", "action"),
+        "ensure_stop": KeywordInfo("Ensure Stop", "Stop an ensured resource", "", "", "action"),
+        "quit": KeywordInfo("Quit", "Stop the server", "", "", "action"),
+        "refresh": KeywordInfo("Refresh", "Refresh server resources", "", "", "action"),
+        "restart": KeywordInfo("Restart", "Restart the server", "", "", "action"),
+        "say": KeywordInfo("Say", "Send a server message", "", "", "action"),
+        "start": KeywordInfo("Start", "Start a resource", "", "", "action"),
+        "stop": KeywordInfo("Stop", "Stop a resource", "", "", "action"),
+
+        # ── Commands ──
+        "set": KeywordInfo("Set", "Set a convar (not replicated)", "", "", "command"),
+        "setr": KeywordInfo("Set Replicated", "Set a replicated convar", "", "", "command"),
+        "sets": KeywordInfo("Set Saved", "Set a saved convar", "", "", "command"),
+        "add_ace": KeywordInfo("Add ACE", "Add an ACE permission", "", "", "command"),
+        "add_principal": KeywordInfo("Add Principal", "Add a principal to another principal", "", "", "command"),
+        "remove_ace": KeywordInfo("Remove ACE", "Remove an ACE permission", "", "", "command"),
+        "remove_principal": KeywordInfo("Remove Principal", "Remove a principal from another principal", "", "", "command"),
+        "block_net_game_event": KeywordInfo("Block Net Game Event", "Block a network game event", "", "", "command"),
+        "unblock_net_game_event": KeywordInfo("Unblock Net Game Event", "Unblock a network game event", "", "", "command"),
+        "test_ace": KeywordInfo("Test ACE", "Test an ACE permission", "", "", "command"),
+        "replay_start": KeywordInfo("Replay Start", "Start recording a replay", "", "", "command"),
+        "replay_stop": KeywordInfo("Replay Stop", "Stop recording a replay", "", "", "command"),
+        "sync_start_recording": KeywordInfo("Sync Start Recording", "Start synced recording", "", "", "command"),
+        "sync_stop_recording": KeywordInfo("Sync Stop Recording", "Stop synced recording", "", "", "command"),
+        "con_channelFilters": KeywordInfo("Channel Filters", "Set console channel filters", "", "", "command"),
+        "con_addChannelFilter": KeywordInfo("Add Channel Filter", "Add a console channel filter", "", "", "command"),
+        "con_removeChannelFilter": KeywordInfo("Remove Channel Filter", "Remove a console channel filter", "", "", "command"),
+        "endpoint_add_tcp": KeywordInfo("Add TCP Endpoint", "Add a TCP endpoint", "", "", "command"),
+        "endpoint_add_udp": KeywordInfo("Add UDP Endpoint", "Add a UDP endpoint", "", "", "command"),
+    }
+
 
 def get_identifier(identifier: str | None, /) -> str | None:
     return str(identifier) if identifier else None
@@ -278,6 +416,73 @@ def get_token_prefix(token: str, /) -> str | None:
         if token.startswith(prefix):
             return name
     return None
+
+
+def get_keyword_info(token: str, /) -> KeywordInfo | None:
+    return Keywords.META.get(token)
+
+
+def get_keyword_name(token: str, /) -> str:
+    info = Keywords.META.get(token)
+    return info.name if info else token
+
+
+def get_keyword_desc(token: str, /) -> str:
+    info = Keywords.META.get(token)
+    return info.description if info else ""
+
+
+def get_keyword_type(token: str, /) -> str:
+    info = Keywords.META.get(token)
+    return info.value_type if info else "string"
+
+
+def get_keyword_default(token: str, /) -> str:
+    info = Keywords.META.get(token)
+    return info.default if info else ""
+
+
+def get_keyword_category(token: str, /) -> str:
+    info = Keywords.META.get(token)
+    return info.category if info else ""
+
+
+def find_by_category(category: str, /) -> frozenset[str]:
+    return frozenset(k for k, v in Keywords.META.items() if v.category == category)
+
+
+def find_by_value_type(value_type: str, /) -> frozenset[str]:
+    return frozenset(k for k, v in Keywords.META.items() if v.value_type == value_type)
+
+
+def find_by_name(name: str, /) -> list[str]:
+    lower = name.lower()
+    return sorted(k for k, v in Keywords.META.items() if lower in v.name.lower())
+
+
+def search_keywords(query: str, /) -> list[str]:
+    lower = query.lower()
+    return sorted(k for k, v in Keywords.META.items()
+                  if lower in k.lower() or lower in v.name.lower() or lower in v.description.lower())
+
+
+def get_all_categories() -> frozenset[str]:
+    return frozenset(v.category for v in Keywords.META.values() if v.category)
+
+
+def get_category_stats() -> dict[str, int]:
+    stats: dict[str, int] = {}
+    for info in Keywords.META.values():
+        if info.category:
+            stats[info.category] = stats.get(info.category, 0) + 1
+    return dict(sorted(stats.items()))
+
+
+def get_value_type_stats() -> dict[str, int]:
+    stats: dict[str, int] = {}
+    for info in Keywords.META.values():
+        stats[info.value_type] = stats.get(info.value_type, 0) + 1
+    return dict(sorted(stats.items()))
 
 
 def resolve_identifier_type(identifier: str, /) -> str | None:
@@ -528,3 +733,4 @@ def get_stats() -> dict[str, int]:
         "txadmin": len(get_txadmin_permissions()),
         "frameworks": len(get_framework_permissions()),
     }
+
