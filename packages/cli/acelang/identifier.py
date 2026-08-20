@@ -1,5 +1,5 @@
 from __future__ import annotations
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass(frozen=True, slots=True)
@@ -27,6 +27,9 @@ class KeywordInfo:
     usage: str = ""
     related: tuple[str, ...] = ()
     aliases: tuple[str, ...] = ()
+    deprecated: bool = False
+    startup_only: bool = False
+    warning: str = ""
     since: str = ""
 
 
@@ -123,189 +126,237 @@ class Keywords:
     ALL: frozenset[str] = CVARS | ACTIONS | PRINCIPALS | STATES
 
     META: dict[str, KeywordInfo] = {
-        "sv_hostname": KeywordInfo("Server Hostname", "Server name displayed in the browser", "string", "Cfx.re Default Server", "server", max_length=128, usage='set sv_hostname "My Server"', related=("sv_projectName",)),
-        "sv_maxClients": KeywordInfo("Max Clients", "Maximum players allowed", "number", "48", "server", min_value="1", max_value="1024", usage="set sv_maxClients 64", related=("sv_maxclients",)),
-        "sv_maxclients": KeywordInfo("Max Clients (lowercase)", "Maximum players (alias)", "number", "48", "server", min_value="1", max_value="1024", usage="set sv_maxclients 64", aliases=("sv_maxClients",)),
-        "sv_licenseKey": KeywordInfo("License Key", "FiveM license key", "string", "", "server", min_length=1, usage="set sv_licenseKey YOUR_KEY"),
-        "sv_lan": KeywordInfo("LAN Mode", "Enable LAN mode", "boolean", "false", "server", valid_values=("true", "false"), usage="set sv_lan true"),
-        "sv_projectName": KeywordInfo("Project Name", "Project name for txAdmin", "string", "", "server", max_length=64, usage='set sv_projectName "My Project"'),
-        "sv_projectDesc": KeywordInfo("Project Description", "Project description for txAdmin", "string", "", "server", max_length=256, usage='set sv_projectDesc "Cool server"'),
-        "sv_tebexSecret": KeywordInfo("Tebex Secret", "Tebex store secret key", "string", "", "server", usage="set sv_tebexSecret YOUR_SECRET"),
-        "sv_kvsName": KeywordInfo("KVS Name", "Key-Value Store name", "string", "", "server", usage="set sv_kvsName my-server"),
-        "sv_master1": KeywordInfo("Master Server", "Master server URL", "string", "https://master.fivem.net", "server", usage="set sv_master1 https://master.fivem.net"),
-        "sv_endpoints": KeywordInfo("Endpoints", "Server endpoints", "string", "", "server", usage="set sv_endpoints endpoint_add_tcp 0.0.0.0:30120"),
-        "sv_registerMulticastDns": KeywordInfo("Multicast DNS", "Register with multicast DNS", "boolean", "false", "server", valid_values=("true", "false"), usage="set sv_registerMulticastDns true"),
-        "sv_appearAllowlisted": KeywordInfo("Appear Allowlisted", "Show as allowlisted", "boolean", "false", "server", valid_values=("true", "false"), usage="set sv_appearAllowlisted true"),
-        "sv_allowlistInstructions": KeywordInfo("Allowlist Instructions", "Instructions for non-allowlisted players", "string", "", "server", usage='set sv_allowlistInstructions "Contact admin"'),
-        "sv_enforceGameBuild": KeywordInfo("Enforce Game Build", "Force GTA V build number", "number", "0", "server", min_value="0", max_value="9999", usage="set sv_enforceGameBuild 2802"),
-        "netPort": KeywordInfo("Network Port", "Server listening port", "number", "30120", "network", min_value="1", max_value="65535", usage="set netPort 30120"),
-        "net_tcpConnLimit": KeywordInfo("TCP Connection Limit", "Max TCP connections (0=unlimited)", "number", "0", "network", min_value="0", max_value="65535", usage="set net_tcpConnLimit 0"),
-        "sv_tcpConnectionTimeoutSeconds": KeywordInfo("TCP Timeout", "TCP connection timeout (seconds)", "number", "10", "network", min_value="1", max_value="300", usage="set sv_tcpConnectionTimeoutSeconds 10"),
-        "sv_ioThreads": KeywordInfo("IO Threads", "Number of IO threads", "number", "2", "network", min_value="1", max_value="16", usage="set sv_ioThreads 2"),
-        "sv_clientConnectingTimeoutMilliseconds": KeywordInfo("Client Connecting Timeout", "Timeout for connecting clients (ms)", "number", "5000", "network", min_value="1000", max_value="60000", usage="set sv_clientConnectingTimeoutMilliseconds 5000"),
-        "sv_clientConnectedTimeoutMilliseconds": KeywordInfo("Client Connected Timeout", "Timeout for connected clients (ms, 0=off)", "number", "0", "network", min_value="0", max_value="60000", usage="set sv_clientConnectedTimeoutMilliseconds 0"),
-        "sv_pingIntervalMilliseconds": KeywordInfo("Ping Interval", "Client ping interval (ms)", "number", "5000", "network", min_value="1000", max_value="30000", usage="set sv_pingIntervalMilliseconds 5000"),
-        "sv_endpointPrivacy": KeywordInfo("Endpoint Privacy", "Hide endpoint information", "boolean", "false", "network", valid_values=("true", "false"), usage="set sv_endpointPrivacy true"),
-        "sv_forceIndirectListing": KeywordInfo("Force Indirect Listing", "Force indirect server listing", "boolean", "false", "network", valid_values=("true", "false"), usage="set sv_forceIndirectListing true"),
-        "sv_listingIpOverride": KeywordInfo("Listing IP Override", "Override listing IP", "string", "", "network", usage="set sv_listingIpOverride 1.2.3.4"),
-        "sv_listingHostOverride": KeywordInfo("Listing Host Override", "Override listing host", "string", "", "network", usage="set sv_listingHostOverride my.server.com"),
-        "sv_proxyIPRanges": KeywordInfo("Proxy IP Ranges", "Proxy IP ranges (comma-separated)", "string", "", "network", usage='set sv_proxyIPRanges "10.0.0.0/8"'),
-        "sv_enhancedHostSupport": KeywordInfo("Enhanced Host Support", "Enable enhanced hosting", "boolean", "false", "network", valid_values=("true", "false"), usage="set sv_enhancedHostSupport true"),
-        "rcon_password": KeywordInfo("RCON Password", "Remote console password", "string", "", "security", min_length=1, usage="set rcon_password mypass"),
-        "sv_scriptHookAllowed": KeywordInfo("Script Hook Allowed", "Allow ScriptHookV", "boolean", "false", "security", valid_values=("true", "false"), usage="set sv_scriptHookAllowed false"),
-        "sv_protectServerEntities": KeywordInfo("Protect Server Entities", "Protect entities from client modification", "boolean", "false", "security", valid_values=("true", "false"), usage="set sv_protectServerEntities true"),
-        "sv_pureLevel": KeywordInfo("Pure Level", "Server purity (0=off, 1=limited, 2=strict)", "number", "0", "security", valid_values=("0", "1", "2"), usage="set sv_pureLevel 0"),
-        "sv_requestParanoia": KeywordInfo("Request Paranoia", "Request validation level (0-3)", "number", "0", "security", valid_values=("0", "1", "2", "3"), usage="set sv_requestParanoia 1"),
-        "sv_authMaxVariance": KeywordInfo("Auth Max Variance", "Max authentication variance", "number", "1000", "security", min_value="0", max_value="10000", usage="set sv_authMaxVariance 1000"),
-        "sv_authMinTrust": KeywordInfo("Auth Min Trust", "Min authentication trust", "number", "0", "security", min_value="0", max_value="100", usage="set sv_authMinTrust 0"),
-        "sv_filterRequestControl": KeywordInfo("Filter Request Control", "Request filter level (0=off)", "number", "0", "security", min_value="0", max_value="5", usage="set sv_filterRequestControl 0"),
-        "sv_filterRequestControlSettleTimer": KeywordInfo("Filter Request Settle Timer", "Request filter settle timer (ms)", "number", "0", "security", min_value="0", max_value="10000", usage="set sv_filterRequestControlSettleTimer 0"),
-        "sv_entityLockdown": KeywordInfo("Entity Lockdown", "Entity lockdown mode", "enum", "inactive", "security", valid_values=("full", "strict", "relaxed", "inactive"), usage="set sv_entityLockdown relaxed"),
-        "sv_useAccurateSends": KeywordInfo("Use Accurate Sends", "Use accurate network sends", "boolean", "false", "security", valid_values=("true", "false"), usage="set sv_useAccurateSends false"),
-        "onesync": KeywordInfo("OneSync", "Enable OneSync sync mode", "enum", "off", "onesync", valid_values=("on", "off", "legacy"), usage="set onesync on", related=("onesync_enableInfinity",)),
-        "onesync_enableInfinity": KeywordInfo("Enable Infinity", "Enable OneSync Infinity", "boolean", "false", "onesync", valid_values=("true", "false"), usage="set onesync_enableInfinity true", related=("onesync",)),
-        "onesync_enableBeyond": KeywordInfo("Enable Beyond", "Enable OneSync Beyond", "boolean", "false", "onesync", valid_values=("true", "false"), usage="set onesync_enableBeyond true", related=("onesync",)),
-        "onesync_population": KeywordInfo("Population", "Enable population management", "boolean", "false", "onesync", valid_values=("true", "false"), usage="set onesync_population true"),
-        "onesync_forceMigration": KeywordInfo("Force Migration", "Force entity migration", "boolean", "false", "onesync", valid_values=("true", "false"), usage="set onesync_forceMigration true"),
-        "onesync_distanceCulling": KeywordInfo("Distance Culling", "Enable distance-based culling", "boolean", "false", "onesync", valid_values=("true", "false"), usage="set onesync_distanceCulling true"),
-        "onesync_distanceCullVehicles": KeywordInfo("Distance Cull Vehicles", "Distance culling for vehicles", "boolean", "false", "onesync", valid_values=("true", "false"), usage="set onesync_distanceCullVehicles true"),
-        "onesync_radiusFrequency": KeywordInfo("Radius Frequency", "Radius-based update frequency", "boolean", "false", "onesync", valid_values=("true", "false"), usage="set onesync_radiusFrequency true"),
-        "onesync_migrateDataTimeout": KeywordInfo("Migrate Data Timeout", "Migration data timeout (ms)", "number", "5000", "onesync", min_value="1000", max_value="30000", usage="set onesync_migrateDataTimeout 5000"),
-        "onesync_compressionDictionarySamples": KeywordInfo("Compression Dictionary Samples", "Compression dictionary samples", "number", "256", "onesync", min_value="0", max_value="1024", usage="set onesync_compressionDictionarySamples 256"),
-        "onesync_mapBoundsMinX": KeywordInfo("Map Bounds Min X", "Min X map boundary", "number", "-4000", "onesync", min_value="-10000", max_value="0", usage="set onesync_mapBoundsMinX -4000"),
-        "onesync_mapBoundsMinY": KeywordInfo("Map Bounds Min Y", "Min Y map boundary", "number", "-4000", "onesync", min_value="-10000", max_value="0", usage="set onesync_mapBoundsMinY -4000"),
-        "onesync_mapBoundsMaxX": KeywordInfo("Map Bounds Max X", "Max X map boundary", "number", "8000", "onesync", min_value="0", max_value="10000", usage="set onesync_mapBoundsMaxX 8000"),
-        "onesync_mapBoundsMaxY": KeywordInfo("Map Bounds Max Y", "Max Y map boundary", "number", "8000", "onesync", min_value="0", max_value="10000", usage="set onesync_mapBoundsMaxY 8000"),
-        "onesync_mapCellAreaSize": KeywordInfo("Map Cell Area Size", "Map cell size for spatial partitioning", "number", "100", "onesync", min_value="10", max_value="1000", usage="set onesync_mapCellAreaSize 100"),
-        "sv_enableNetworkedSounds": KeywordInfo("Enable Networked Sounds", "Allow networked sounds", "boolean", "false", "features", valid_values=("true", "false"), usage="set sv_enableNetworkedSounds true"),
-        "sv_enableNetworkedPhoneExplosions": KeywordInfo("Enable Networked Phone Explosions", "Allow networked phone explosions", "boolean", "false", "features", valid_values=("true", "false"), usage="set sv_enableNetworkedPhoneExplosions true"),
-        "sv_enableNetworkedScriptEntityStates": KeywordInfo("Enable Script Entity States", "Allow script entity state sync", "boolean", "false", "features", valid_values=("true", "false"), usage="set sv_enableNetworkedScriptEntityStates true"),
-        "sv_enableNetEventReassembly": KeywordInfo("Enable Net Event Reassembly", "Enable event reassembly", "boolean", "false", "features", valid_values=("true", "false"), usage="set sv_enableNetEventReassembly true"),
-        "sv_netEventReassemblyMaxPendingEvents": KeywordInfo("Max Pending Events", "Max pending events for reassembly", "number", "128", "features", min_value="1", max_value="1024", usage="set sv_netEventReassemblyMaxPendingEvents 128"),
-        "sv_netEventReassemblyUnlimitedPendingEvents": KeywordInfo("Unlimited Pending Events", "Allow unlimited pending events", "boolean", "false", "features", valid_values=("true", "false"), usage="set sv_netEventReassemblyUnlimitedPendingEvents false"),
-        "sv_voiceChat": KeywordInfo("Voice Chat", "Enable built-in voice chat", "boolean", "false", "features", valid_values=("true", "false"), usage="set sv_voiceChat true", related=("sv_mumble",)),
-        "sv_mumble": KeywordInfo("Mumble Integration", "Enable Mumble voice integration", "boolean", "false", "features", valid_values=("true", "false"), usage="set sv_mumble true", related=("sv_voiceChat",)),
-        "sv_devMode": KeywordInfo("Developer Mode", "Enable developer mode", "boolean", "false", "features", valid_values=("true", "false"), usage="set sv_devMode false"),
-        "sv_scriptDebugDuplicates": KeywordInfo("Script Debug Duplicates", "Debug duplicate script events", "boolean", "false", "features", valid_values=("true", "false"), usage="set sv_scriptDebugDuplicates false"),
-        "svgui": KeywordInfo("SVG UI", "Enable SVG-based UI", "boolean", "false", "features", valid_values=("true", "false"), usage="set svgui false"),
-        "sv_experimentalStateBagsHandler": KeywordInfo("Experimental State Bags", "Use experimental state bags handler", "boolean", "false", "experimental", valid_values=("true", "false"), usage="set sv_experimentalStateBagsHandler false"),
-        "sv_experimentalOnesyncPopulation": KeywordInfo("Experimental OneSync Population", "Use experimental OneSync population", "boolean", "false", "experimental", valid_values=("true", "false"), usage="set sv_experimentalOnesyncPopulation false"),
-        "sv_experimentalNetGameEventHandler": KeywordInfo("Experimental Net Game Event", "Use experimental net event handler", "boolean", "false", "experimental", valid_values=("true", "false"), usage="set sv_experimentalNetGameEventHandler false"),
-        "sv_stateBagStrictMode": KeywordInfo("State Bag Strict Mode", "Enable strict state bag mode", "boolean", "false", "experimental", valid_values=("true", "false"), usage="set sv_stateBagStrictMode false"),
-        "sv_httpFileServerProxyOnly": KeywordInfo("HTTP File Server Proxy", "HTTP file server proxy mode", "boolean", "false", "experimental", valid_values=("true", "false"), usage="set sv_httpFileServerProxyOnly false"),
-        "sv_prometheusBasicAuthUser": KeywordInfo("Prometheus Auth User", "Prometheus monitoring user", "string", "", "monitoring", usage="set sv_prometheusBasicAuthUser admin"),
-        "sv_prometheusBasicAuthPassword": KeywordInfo("Prometheus Auth Password", "Prometheus monitoring password", "string", "", "monitoring", usage="set sv_prometheusBasicAuthPassword secret"),
-        "steam_webApiKey": KeywordInfo("Steam Web API Key", "Steam Web API key", "string", "", "steam", min_length=32, max_length=32, usage="set steam_webApiKey YOUR_KEY"),
-        "steam_webApiDomain": KeywordInfo("Steam Web API Domain", "Steam Web API domain", "string", "api.steampowered.com", "steam", usage="set steam_webApiDomain api.steampowered.com"),
-        "gamename": KeywordInfo("Game Name", "Game name identifier", "string", "gta5", "misc", usage="set gamename gta5"),
-        "gametype": KeywordInfo("Game Type", "Game type identifier", "string", "gta5", "misc", usage="set gametype gta5"),
-        "mapname": KeywordInfo("Map Name", "Current map name", "string", "gta5", "misc", usage="set mapname gta5"),
-        "load_server_icon": KeywordInfo("Load Server Icon", "Load server icon file", "string", "", "misc", usage="load_server_icon icon.png"),
-        "exec": KeywordInfo("Execute Config", "Execute a config file", "string", "", "misc", usage="exec server_private.cfg"),
-        "increase_pool_size": KeywordInfo("Increase Pool Size", "Increase memory pool size", "string", "", "misc", usage="increase_pool_size 10"),
-        "rateLimiter_challenge_rate": KeywordInfo("Challenge Rate", "Rate limit for challenge requests", "number", "10", "ratelimiter", min_value="0", max_value="10000", usage="set rateLimiter_challenge_rate 10", related=("rateLimiter_challenge_burst",)),
-        "rateLimiter_challenge_burst": KeywordInfo("Challenge Burst", "Burst limit for challenge requests", "number", "50", "ratelimiter", min_value="0", max_value="10000", usage="set rateLimiter_challenge_burst 50", related=("rateLimiter_challenge_rate",)),
-        "rateLimiter_handshake_rate": KeywordInfo("Handshake Rate", "Rate limit for TCP handshake", "number", "5", "ratelimiter", min_value="0", max_value="1000", usage="set rateLimiter_handshake_rate 5", related=("rateLimiter_handshake_burst",)),
-        "rateLimiter_handshake_burst": KeywordInfo("Handshake Burst", "Burst limit for TCP handshake", "number", "10", "ratelimiter", min_value="0", max_value="1000", usage="set rateLimiter_handshake_burst 10", related=("rateLimiter_handshake_rate",)),
-        "rateLimiter_handshakeUDP_rate": KeywordInfo("Handshake UDP Rate", "Rate limit for UDP handshake", "number", "50", "ratelimiter", min_value="0", max_value="10000", usage="set rateLimiter_handshakeUDP_rate 50", related=("rateLimiter_handshakeUDP_burst",)),
-        "rateLimiter_handshakeUDP_burst": KeywordInfo("Handshake UDP Burst", "Burst limit for UDP handshake", "number", "100", "ratelimiter", min_value="0", max_value="10000", usage="set rateLimiter_handshakeUDP_burst 100", related=("rateLimiter_handshakeUDP_rate",)),
-        "rateLimiter_http_dynamic_rate": KeywordInfo("HTTP Dynamic Rate", "Rate limit for dynamic HTTP", "number", "20", "ratelimiter", min_value="0", max_value="1000", usage="set rateLimiter_http_dynamic_rate 20", related=("rateLimiter_http_dynamic_burst",)),
-        "rateLimiter_http_dynamic_burst": KeywordInfo("HTTP Dynamic Burst", "Burst limit for dynamic HTTP", "number", "40", "ratelimiter", min_value="0", max_value="1000", usage="set rateLimiter_http_dynamic_burst 40", related=("rateLimiter_http_dynamic_rate",)),
-        "rateLimiter_http_info_rate": KeywordInfo("HTTP Info Rate", "Rate limit for /info", "number", "20", "ratelimiter", min_value="0", max_value="1000", usage="set rateLimiter_http_info_rate 20", related=("rateLimiter_http_info_burst",)),
-        "rateLimiter_http_info_burst": KeywordInfo("HTTP Info Burst", "Burst limit for /info", "number", "40", "ratelimiter", min_value="0", max_value="1000", usage="set rateLimiter_http_info_burst 40", related=("rateLimiter_http_info_rate",)),
-        "rateLimiter_http_perf_rate": KeywordInfo("HTTP Perf Rate", "Rate limit for /perf", "number", "2", "ratelimiter", min_value="0", max_value="100", usage="set rateLimiter_http_perf_rate 2", related=("rateLimiter_http_perf_burst",)),
-        "rateLimiter_http_perf_burst": KeywordInfo("HTTP Perf Burst", "Burst limit for /perf", "number", "4", "ratelimiter", min_value="0", max_value="100", usage="set rateLimiter_http_perf_burst 4", related=("rateLimiter_http_perf_rate",)),
-        "rateLimiter_http_players_rate": KeywordInfo("HTTP Players Rate", "Rate limit for /players", "number", "5", "ratelimiter", min_value="0", max_value="100", usage="set rateLimiter_http_players_rate 5", related=("rateLimiter_http_players_burst",)),
-        "rateLimiter_http_players_burst": KeywordInfo("HTTP Players Burst", "Burst limit for /players", "number", "10", "ratelimiter", min_value="0", max_value="100", usage="set rateLimiter_http_players_burst 10", related=("rateLimiter_http_players_rate",)),
-        "rateLimiter_netCommand_rate": KeywordInfo("Net Command Rate", "Rate limit for net commands", "number", "400", "ratelimiter", min_value="0", max_value="10000", usage="set rateLimiter_netCommand_rate 400", related=("rateLimiter_netCommand_burst",)),
-        "rateLimiter_netCommand_burst": KeywordInfo("Net Command Burst", "Burst limit for net commands", "number", "800", "ratelimiter", min_value="0", max_value="10000", usage="set rateLimiter_netCommand_burst 800", related=("rateLimiter_netCommand_rate",)),
-        "rateLimiter_netCommandFlood_rate": KeywordInfo("Net Command Flood Rate", "Rate limit for command flood", "number", "200", "ratelimiter", min_value="0", max_value="10000", usage="set rateLimiter_netCommandFlood_rate 200", related=("rateLimiter_netCommandFlood_burst",)),
-        "rateLimiter_netCommandFlood_burst": KeywordInfo("Net Command Flood Burst", "Burst limit for command flood", "number", "400", "ratelimiter", min_value="0", max_value="10000", usage="set rateLimiter_netCommandFlood_burst 400", related=("rateLimiter_netCommandFlood_rate",)),
-        "rateLimiter_netCommandSize_rate": KeywordInfo("Net Command Size Rate", "Rate limit for command size", "number", "8000", "ratelimiter", min_value="0", max_value="100000", usage="set rateLimiter_netCommandSize_rate 8000", related=("rateLimiter_netCommandSize_burst",)),
-        "rateLimiter_netCommandSize_burst": KeywordInfo("Net Command Size Burst", "Burst limit for command size", "number", "16000", "ratelimiter", min_value="0", max_value="100000", usage="set rateLimiter_netCommandSize_burst 16000", related=("rateLimiter_netCommandSize_rate",)),
-        "rateLimiter_netEvent_rate": KeywordInfo("Net Event Rate", "Rate limit for net events", "number", "400", "ratelimiter", min_value="0", max_value="10000", usage="set rateLimiter_netEvent_rate 400", related=("rateLimiter_netEvent_burst",)),
-        "rateLimiter_netEvent_burst": KeywordInfo("Net Event Burst", "Burst limit for net events", "number", "800", "ratelimiter", min_value="0", max_value="10000", usage="set rateLimiter_netEvent_burst 800", related=("rateLimiter_netEvent_rate",)),
-        "rateLimiter_netEventFlood_rate": KeywordInfo("Net Event Flood Rate", "Rate limit for event flood", "number", "200", "ratelimiter", min_value="0", max_value="10000", usage="set rateLimiter_netEventFlood_rate 200", related=("rateLimiter_netEventFlood_burst",)),
-        "rateLimiter_netEventFlood_burst": KeywordInfo("Net Event Flood Burst", "Burst limit for event flood", "number", "400", "ratelimiter", min_value="0", max_value="10000", usage="set rateLimiter_netEventFlood_burst 400", related=("rateLimiter_netEventFlood_rate",)),
-        "rateLimiter_rcon_rate": KeywordInfo("RCON Rate", "Rate limit for RCON", "number", "4", "ratelimiter", min_value="0", max_value="100", usage="set rateLimiter_rcon_rate 4", related=("rateLimiter_rcon_burst",)),
-        "rateLimiter_rcon_burst": KeywordInfo("RCON Burst", "Burst limit for RCON", "number", "8", "ratelimiter", min_value="0", max_value="100", usage="set rateLimiter_rcon_burst 8", related=("rateLimiter_rcon_rate",)),
-        "rateLimiter_res_http_handler_rate": KeywordInfo("Resource HTTP Rate", "Rate limit for resource HTTP", "number", "20", "ratelimiter", min_value="0", max_value="1000", usage="set rateLimiter_res_http_handler_rate 20", related=("rateLimiter_res_http_handler_burst",)),
-        "rateLimiter_res_http_handler_burst": KeywordInfo("Resource HTTP Burst", "Burst limit for resource HTTP", "number", "40", "ratelimiter", min_value="0", max_value="1000", usage="set rateLimiter_res_http_handler_burst 40", related=("rateLimiter_res_http_handler_rate",)),
-        "rateLimiter_resourceList_rate": KeywordInfo("Resource List Rate", "Rate limit for resource list", "number", "2", "ratelimiter", min_value="0", max_value="100", usage="set rateLimiter_resourceList_rate 2", related=("rateLimiter_resourceList_burst",)),
-        "rateLimiter_resourceList_burst": KeywordInfo("Resource List Burst", "Burst limit for resource list", "number", "4", "ratelimiter", min_value="0", max_value="100", usage="set rateLimiter_resourceList_burst 4", related=("rateLimiter_resourceList_rate",)),
-        "rateLimiter_stateBag_rate": KeywordInfo("State Bag Rate", "Rate limit for state bags", "number", "512", "ratelimiter", min_value="0", max_value="10000", usage="set rateLimiter_stateBag_rate 512", related=("rateLimiter_stateBag_burst",)),
-        "rateLimiter_stateBag_burst": KeywordInfo("State Bag Burst", "Burst limit for state bags", "number", "1024", "ratelimiter", min_value="0", max_value="10000", usage="set rateLimiter_stateBag_burst 1024", related=("rateLimiter_stateBag_rate",)),
-        "rateLimiter_stateBagFlood_rate": KeywordInfo("State Bag Flood Rate", "Rate limit for state bag flood", "number", "256", "ratelimiter", min_value="0", max_value="10000", usage="set rateLimiter_stateBagFlood_rate 256", related=("rateLimiter_stateBagFlood_burst",)),
-        "rateLimiter_stateBagFlood_burst": KeywordInfo("State Bag Flood Burst", "Burst limit for state bag flood", "number", "512", "ratelimiter", min_value="0", max_value="10000", usage="set rateLimiter_stateBagFlood_burst 512", related=("rateLimiter_stateBagFlood_rate",)),
-        "rateLimiter_stateBagSize_rate": KeywordInfo("State Bag Size Rate", "Rate limit for state bag size", "number", "524288", "ratelimiter", min_value="0", max_value="10000000", usage="set rateLimiter_stateBagSize_rate 524288", related=("rateLimiter_stateBagSize_burst",)),
-        "rateLimiter_stateBagSize_burst": KeywordInfo("State Bag Size Burst", "Burst limit for state bag size", "number", "1048576", "ratelimiter", min_value="0", max_value="10000000", usage="set rateLimiter_stateBagSize_burst 1048576", related=("rateLimiter_stateBagSize_rate",)),
-        "ensure": KeywordInfo("Ensure Resource", "Start resource and keep it running", "action", "", "action", params=(ParamInfo("resource", "str", True, description="Resource name"),), usage="ensure es_extended", related=("ensure_stop", "start", "stop")),
-        "ensure_stop": KeywordInfo("Stop Ensured", "Stop an ensured resource", "action", "", "action", params=(ParamInfo("resource", "str", True, description="Resource name"),), usage="ensure_stop es_extended", related=("ensure",)),
-        "quit": KeywordInfo("Quit Server", "Shut down the server", "action", "", "action", usage="quit", related=("restart",)),
-        "refresh": KeywordInfo("Refresh Resources", "Refresh available resources", "action", "", "action", usage="refresh", related=("start", "stop")),
+        # ═══════════════════════════════════════════════════════════
+        # SERVER CONFIGURATION
+        # ═══════════════════════════════════════════════════════════
+        "sv_hostname": KeywordInfo("Server Hostname", "Server name shown in the browser", "string", "Cfx.re Default Server", "server", max_length=128, usage='sv_hostname "My Awesome Server"', related=("sv_projectName", "sv_projectDesc")),
+        "sv_maxClients": KeywordInfo("Max Clients", "Maximum player slots (1-2048, 32+ needs onesync)", "number", "48", "server", min_value="1", max_value="2048", usage="sv_maxClients 48", related=("sv_maxclients",)),
+        "sv_maxclients": KeywordInfo("Max Clients (lowercase)", "Maximum player slots (lowercase alias)", "number", "48", "server", min_value="1", max_value="2048", usage="sv_maxclients 48", aliases=("sv_maxClients",)),
+        "sv_licenseKey": KeywordInfo("License Key", "FiveM license key from portal.cfx.re (required)", "string", "", "server", min_length=1, usage='sv_licenseKey "your_license_key_here"', warning="Required for non-LAN servers"),
+        "sv_lan": KeywordInfo("LAN Mode", "LAN-only mode (skips license key check)", "boolean", "false", "server", valid_values=("true", "false"), usage="sv_lan false"),
+        "sv_projectName": KeywordInfo("Project Name", "Project name shown in txAdmin", "string", "My FXServer Project", "server", max_length=64, usage='sv_projectName "My FXServer Project"'),
+        "sv_projectDesc": KeywordInfo("Project Description", "Project description shown in txAdmin", "string", "Default FXServer requiring configuration", "server", max_length=256, usage='sv_projectDesc "Default FXServer requiring configuration"'),
+        "sv_appearAllowlisted": KeywordInfo("Appear Allowlisted", "Show server as allowlisted in browser", "boolean", "false", "server", valid_values=("true", "false"), usage="sets sv_appearAllowlisted false"),
+        "sv_allowlistInstructions": KeywordInfo("Allowlist Instructions", "Instructions for non-allowlisted players", "string", "", "server", usage='sets sv_allowlistInstructions "Contact us on Discord"'),
+        "sv_enforceGameBuild": KeywordInfo("Enforce Game Build", "Force a specific GTA V game build number", "number", "0", "server", min_value="0", max_value="9999", usage="sv_enforceGameBuild 2944"),
+        "sv_master1": KeywordInfo("Master Server", "Master server URL (empty = private server)", "string", "", "server", usage='sv_master1 ""'),
+        "sv_tebexSecret": KeywordInfo("Tebex Secret", "Tebex store integration secret key", "string", "", "server", usage='sv_tebexSecret "your_secret_here"'),
+        "sv_kvsName": KeywordInfo("KVS Name", "Key-Value Store database file name (startup only)", "string", "default", "server", startup_only=True, usage='sv_kvsName "default"'),
+        "sv_endpoints": KeywordInfo("Endpoints", "Space-separated list of client UDP endpoints", "string", "", "server", usage='sv_endpoints "1.2.3.4:30120"'),
+        "sv_registerMulticastDns": KeywordInfo("Multicast DNS", "Register via mDNS for LAN discovery", "boolean", "true", "server", valid_values=("true", "false"), usage="sv_registerMulticastDns true"),
+
+        # ═══════════════════════════════════════════════════════════
+        # NETWORK
+        # ═══════════════════════════════════════════════════════════
+        "netPort": KeywordInfo("Network Port", "Primary server port", "number", "30120", "network", min_value="1", max_value="65535", usage="netPort 30120"),
+        "net_tcpConnLimit": KeywordInfo("TCP Connection Limit", "Concurrent connection limit per IP", "number", "16", "network", min_value="0", max_value="65535", usage="net_tcpConnLimit 32"),
+        "sv_tcpConnectionTimeoutSeconds": KeywordInfo("TCP Timeout", "TCP connection idle timeout in seconds", "number", "5", "network", min_value="1", max_value="300", usage="sv_tcpConnectionTimeoutSeconds 5"),
+        "sv_ioThreads": KeywordInfo("IO Threads", "Network IO threads (0 = CPU core count)", "number", "0", "network", min_value="0", max_value="16", usage="sv_ioThreads 0"),
+        "sv_clientConnectingTimeoutMilliseconds": KeywordInfo("Client Connecting Timeout", "Timeout for clients during connection (ms)", "number", "60000", "network", min_value="1000", max_value="120000", usage="sv_clientConnectingTimeoutMilliseconds 60000"),
+        "sv_clientConnectedTimeoutMilliseconds": KeywordInfo("Client Connected Timeout", "Timeout for connected clients (ms)", "number", "120000", "network", min_value="0", max_value="600000", usage="sv_clientConnectedTimeoutMilliseconds 120000"),
+        "sv_pingIntervalMilliseconds": KeywordInfo("Ping Interval", "Client ping check interval (ms)", "number", "5000", "network", min_value="1000", max_value="30000", usage="sv_pingIntervalMilliseconds 5000"),
+        "sv_endpointPrivacy": KeywordInfo("Endpoint Privacy", "Hide player IPs from public reports", "boolean", "true", "network", valid_values=("true", "false"), usage="sv_endpointPrivacy true"),
+        "sv_forceIndirectListing": KeywordInfo("Force Indirect Listing", "Prevent server from using real IP for listing", "boolean", "false", "network", valid_values=("true", "false"), usage="sv_forceIndirectListing false"),
+        "sv_listingIpOverride": KeywordInfo("Listing IP Override", "Override IP sent to master server", "string", "", "network", usage='sv_listingIpOverride "1.2.3.4"'),
+        "sv_listingHostOverride": KeywordInfo("Listing Host Override", "Override hostname sent to master server", "string", "", "network", usage='sv_listingHostOverride "myserver.example.com"'),
+        "sv_proxyIPRanges": KeywordInfo("Proxy IP Ranges", "Proxy IP ranges in CIDR notation (space-separated)", "string", "", "network", usage='sv_proxyIPRanges "10.0.0.0/8 127.0.0.0/8 192.168.0.0/16 172.16.0.0/12"'),
+        "sv_enhancedHostSupport": KeywordInfo("Enhanced Host Support", "Enable enhanced hosting features (deprecated)", "boolean", "false", "network", valid_values=("true", "false"), deprecated=True, warning="Not used anymore"),
+
+        # ═══════════════════════════════════════════════════════════
+        # SECURITY & AUTHENTICATION
+        # ═══════════════════════════════════════════════════════════
+        "rcon_password": KeywordInfo("RCON Password", "UDP remote console password", "string", "", "security", min_length=1, usage='rcon_password "your_password_here"', warning="Never use setr for this!"),
+        "sv_scriptHookAllowed": KeywordInfo("Script Hook Allowed", "Allow ScriptHookV (0=disallow, 1=allow)", "boolean", "0", "security", valid_values=("0", "1"), usage="sv_scriptHookAllowed 0"),
+        "sv_enforceGameBuild": KeywordInfo("Enforce Game Build", "Force clients to use specific GTA V build", "number", "0", "server", min_value="0", max_value="9999", usage="sv_enforceGameBuild 2944"),
+        "sv_authMaxVariance": KeywordInfo("Auth Max Variance", "Steam authentication variance (1-5)", "number", "1", "security", min_value="1", max_value="5", usage="sv_authMaxVariance 1"),
+        "sv_authMinTrust": KeywordInfo("Auth Min Trust", "Steam authentication min trust (1-5)", "number", "5", "security", min_value="1", max_value="5", usage="sv_authMinTrust 5"),
+        "sv_requestParanoia": KeywordInfo("Request Paranoia", "Anti-DDoS proxy flood protection (0-3)", "number", "0", "security", valid_values=("0", "1", "2", "3"), usage="sv_requestParanoia 0"),
+        "sv_filterRequestControl": KeywordInfo("Filter Request Control", "Block REQUEST_CONTROL_EVENT routing (-1 to 4)", "number", "0", "security", min_value="-1", max_value="4", usage="sv_filterRequestControl 0"),
+        "sv_filterRequestControlSettleTimer": KeywordInfo("Filter Request Settle Timer", "Settle timer for filter request control (ms)", "number", "30000", "security", min_value="0", max_value="60000", usage="sv_filterRequestControlSettleTimer 30000"),
+        "sv_pureLevel": KeywordInfo("Pure Level", "Prevent modified client files (0=off, 1=block modified, 2=block all)", "number", "0", "security", valid_values=("0", "1", "2"), usage="sv_pureLevel 0"),
+        "sv_entityLockdown": KeywordInfo("Entity Lockdown", "Entity creation lockdown mode", "enum", "inactive", "security", valid_values=("full", "strict", "relaxed", "inactive"), usage="sv_entityLockdown inactive"),
+        "sv_useAccurateSends": KeywordInfo("Use Accurate Sends", "Enable/disable accurate entity sends", "boolean", "true", "security", valid_values=("true", "false"), usage="sv_useAccurateSends true"),
+        "sv_protectServerEntities": KeywordInfo("Protect Server Entities", "Protect server entities from client modification (deprecated)", "boolean", "false", "security", valid_values=("true", "false"), deprecated=True, warning="Not implemented, use sv_entityLockdown"),
+
+        # ═══════════════════════════════════════════════════════════
+        # ONESYNC
+        # ═══════════════════════════════════════════════════════════
+        "onesync": KeywordInfo("OneSync", "Enable OneSync (required for 32+ players)", "enum", "off", "onesync", valid_values=("on", "off", "legacy"), usage="onesync on", related=("onesync_enableInfinity", "onesync_population")),
+        "onesync_enableInfinity": KeywordInfo("Enable Infinity", "Enable Infinity system for large player counts", "boolean", "true", "onesync", valid_values=("true", "false"), usage="onesync_enableInfinity true", related=("onesync",)),
+        "onesync_enableBeyond": KeywordInfo("Enable Beyond", "Enable OneSync Beyond (deprecated, not necessary anymore)", "boolean", "false", "onesync", valid_values=("true", "false"), deprecated=True, warning="Not necessary anymore"),
+        "onesync_population": KeywordInfo("Population", "Enable population spawning/NPCs", "boolean", "true", "onesync", valid_values=("true", "false"), usage="onesync_population true"),
+        "onesync_forceMigration": KeywordInfo("Force Migration", "Force entity migration when owner disconnects", "boolean", "true", "onesync", valid_values=("true", "false"), usage="onesync_forceMigration true"),
+        "onesync_distanceCulling": KeywordInfo("Distance Culling", "Remove entities beyond distance", "boolean", "true", "onesync", valid_values=("true", "false"), usage="onesync_distanceCulling true", related=("onesync_distanceCullVehicles",)),
+        "onesync_distanceCullVehicles": KeywordInfo("Distance Cull Vehicles", "Apply distance culling to vehicles", "boolean", "false", "onesync", valid_values=("true", "false"), usage="onesync_distanceCullVehicles false", related=("onesync_distanceCulling",)),
+        "onesync_radiusFrequency": KeywordInfo("Radius Frequency", "Adjust update frequency by distance", "boolean", "true", "onesync", valid_values=("true", "false"), usage="onesync_radiusFrequency true"),
+        "onesync_migrateDataTimeout": KeywordInfo("Migrate Data Timeout", "Migration data timeout in ms", "number", "10000", "onesync", min_value="1000", max_value="60000", usage="onesync_migrateDataTimeout 10000"),
+        "onesync_compressionDictionarySamples": KeywordInfo("Compression Dictionary Samples", "Compression dictionary samples", "boolean", "false", "onesync", valid_values=("true", "false"), usage="onesync_compressionDictionarySamples false"),
+        "onesync_mapBoundsMinX": KeywordInfo("Map Bounds Min X", "Min X map boundary (startup only)", "number", "-10000", "onesync", min_value="-100000", max_value="0", startup_only=True, usage="onesync_mapBoundsMinX -10000"),
+        "onesync_mapBoundsMinY": KeywordInfo("Map Bounds Min Y", "Min Y map boundary (startup only)", "number", "-10000", "onesync", min_value="-100000", max_value="0", startup_only=True, usage="onesync_mapBoundsMinY -10000"),
+        "onesync_mapBoundsMaxX": KeywordInfo("Map Bounds Max X", "Max X map boundary (startup only)", "number", "65536", "onesync", min_value="0", max_value="100000", startup_only=True, usage="onesync_mapBoundsMaxX 65536"),
+        "onesync_mapBoundsMaxY": KeywordInfo("Map Bounds Max Y", "Max Y map boundary (startup only)", "number", "65536", "onesync", min_value="0", max_value="100000", startup_only=True, usage="onesync_mapBoundsMaxY 65536"),
+        "onesync_mapCellAreaSize": KeywordInfo("Map Cell Area Size", "Cell area size for spatial partitioning (startup only)", "number", "100", "onesync", min_value="10", max_value="1000", startup_only=True, usage="onesync_mapCellAreaSize 100"),
+
+        # ═══════════════════════════════════════════════════════════
+        # FEATURES
+        # ═══════════════════════════════════════════════════════════
+        "sv_enableNetworkedSounds": KeywordInfo("Enable Networked Sounds", "Prevent networked sounds exploitation", "boolean", "true", "features", valid_values=("true", "false"), usage="sv_enableNetworkedSounds true"),
+        "sv_enableNetworkedPhoneExplosions": KeywordInfo("Enable Networked Phone Explosions", "Prevent phone explosions exploitation", "boolean", "false", "features", valid_values=("true", "false"), usage="sv_enableNetworkedPhoneExplosions false"),
+        "sv_enableNetworkedScriptEntityStates": KeywordInfo("Enable Script Entity States", "Prevent script entity state exploitation", "boolean", "true", "features", valid_values=("true", "false"), usage="sv_enableNetworkedScriptEntityStates true"),
+        "sv_enableNetEventReassembly": KeywordInfo("Enable Net Event Reassembly", "Enable reassembly of large network events", "boolean", "true", "features", valid_values=("true", "false"), usage="sv_enableNetEventReassembly true", related=("sv_netEventReassemblyMaxPendingEvents",)),
+        "sv_netEventReassemblyMaxPendingEvents": KeywordInfo("Max Pending Events", "Max pending reassembled events per client", "number", "100", "features", min_value="1", max_value="1024", usage="sv_netEventReassemblyMaxPendingEvents 100", related=("sv_enableNetEventReassembly",)),
+        "sv_netEventReassemblyUnlimitedPendingEvents": KeywordInfo("Unlimited Pending Events", "Allow unlimited pending events", "boolean", "false", "features", valid_values=("true", "false"), usage="sv_netEventReassemblyUnlimitedPendingEvents false"),
+        "sv_voiceChat": KeywordInfo("Voice Chat", "Enable built-in voice chat", "boolean", "false", "features", valid_values=("true", "false"), usage="sv_voiceChat false", related=("sv_mumble",)),
+        "sv_mumble": KeywordInfo("Mumble Integration", "Enable legacy Mumble API (deprecated)", "boolean", "false", "features", valid_values=("true", "false"), usage="sv_mumble false", related=("sv_voiceChat",), deprecated=True, warning="Deprecated, use sv_voiceChat"),
+        "sv_devMode": KeywordInfo("Developer Mode", "Enable dev mode (DO NOT use in production)", "boolean", "false", "features", valid_values=("true", "false"), usage="sv_devMode false", warning="DO NOT use in production"),
+        "svgui": KeywordInfo("SVG UI", "Debug GUI toggle", "boolean", "", "features", valid_values=("true", "false"), usage="svgui"),
+        "sv_scriptDebugDuplicates": KeywordInfo("Script Debug Duplicates", "Debug duplicate script events", "boolean", "false", "features", valid_values=("true", "false"), usage="sv_scriptDebugDuplicates false"),
+
+        # ═══════════════════════════════════════════════════════════
+        # EXPERIMENTAL
+        # ═══════════════════════════════════════════════════════════
+        "sv_experimentalStateBagsHandler": KeywordInfo("Experimental State Bags", "Faster state bags handler", "boolean", "true", "experimental", valid_values=("true", "false"), usage="sv_experimentalStateBagsHandler true"),
+        "sv_experimentalOnesyncPopulation": KeywordInfo("Experimental OneSync Population", "Fix entity ID limit with onesync_population false", "boolean", "true", "experimental", valid_values=("true", "false"), usage="sv_experimentalOnesyncPopulation true"),
+        "sv_experimentalNetGameEventHandler": KeywordInfo("Experimental Net Game Event", "Faster game events handler", "boolean", "true", "experimental", valid_values=("true", "false"), usage="sv_experimentalNetGameEventHandler true"),
+        "sv_stateBagStrictMode": KeywordInfo("State Bag Strict Mode", "Only server can modify state bags", "boolean", "false", "experimental", valid_values=("true", "false"), usage='setr sv_stateBagStrictMode false'),
+        "sv_httpFileServerProxyOnly": KeywordInfo("HTTP File Server Proxy", "Restrict file server to proxy IPs only", "boolean", "false", "experimental", valid_values=("true", "false"), usage="sv_httpFileServerProxyOnly false"),
+
+        # ═══════════════════════════════════════════════════════════
+        # MONITORING
+        # ═══════════════════════════════════════════════════════════
+        "sv_prometheusBasicAuthUser": KeywordInfo("Prometheus Auth User", "Prometheus monitoring basic auth user", "string", "", "monitoring", usage='sv_prometheusBasicAuthUser ""'),
+        "sv_prometheusBasicAuthPassword": KeywordInfo("Prometheus Auth Password", "Prometheus monitoring basic auth password", "string", "", "monitoring", usage='sv_prometheusBasicAuthPassword ""'),
+
+        # ═══════════════════════════════════════════════════════════
+        # STEAM
+        # ═══════════════════════════════════════════════════════════
+        "steam_webApiKey": KeywordInfo("Steam Web API Key", "Steam Web API key (required for Steam identifiers)", "string", "", "steam", min_length=32, max_length=32, usage='steam_webApiKey "your_key_here"'),
+        "steam_webApiDomain": KeywordInfo("Steam Web API Domain", "Steam Web API domain", "string", "api.steampowered.com", "steam", usage='steam_webApiDomain "api.steampowered.com"'),
+
+        # ═══════════════════════════════════════════════════════════
+        # MISC
+        # ═══════════════════════════════════════════════════════════
+        "gamename": KeywordInfo("Game Name", "Game to run (gta5 or rdr3)", "string", "gta5", "misc", valid_values=("gta5", "rdr3"), usage="gamename gta5"),
+        "gametype": KeywordInfo("Game Type", "Game type shown in server browser", "string", "", "misc", usage='gametype "Roleplay"'),
+        "mapname": KeywordInfo("Map Name", "Map name shown in server browser", "string", "Los Santos", "misc", usage='mapname "Los Santos"'),
+        "load_server_icon": KeywordInfo("Load Server Icon", "Load a server icon (96x96 PNG)", "string", "", "misc", usage='load_server_icon "my-server.png"'),
+        "exec": KeywordInfo("Execute Config", "Execute another config file", "string", "", "misc", usage="exec server_internal.cfg"),
+        "increase_pool_size": KeywordInfo("Increase Pool Size", "Increase streaming asset pool size", "string", "", "misc", params=(ParamInfo("pool_name", "str", True, description="Pool name (TxdStore, CMoveObject, etc.)"), ParamInfo("increase", "int", True, description="Amount to increase")), usage='increase_pool_size "TxdStore" 6000'),
+        # ═══════════════════════════════════════════════════════════
+        # RATE LIMITER (each has _rate and _burst)
+        # ═══════════════════════════════════════════════════════════
+        "rateLimiter_challenge_rate": KeywordInfo("Challenge Rate", "Rate limit for client authentication challenge", "number", "4", "ratelimiter", min_value="0", max_value="10000", usage="rateLimiter_challenge_rate 4", related=("rateLimiter_challenge_burst",)),
+        "rateLimiter_challenge_burst": KeywordInfo("Challenge Burst", "Burst limit for client authentication challenge", "number", "10", "ratelimiter", min_value="0", max_value="10000", usage="rateLimiter_challenge_burst 10", related=("rateLimiter_challenge_rate",)),
+        "rateLimiter_handshake_rate": KeywordInfo("Handshake Rate", "Rate limit for TCP connection handshake", "number", "4", "ratelimiter", min_value="0", max_value="1000", usage="rateLimiter_handshake_rate 4", related=("rateLimiter_handshake_burst",)),
+        "rateLimiter_handshake_burst": KeywordInfo("Handshake Burst", "Burst limit for TCP connection handshake", "number", "10", "ratelimiter", min_value="0", max_value="1000", usage="rateLimiter_handshake_burst 10", related=("rateLimiter_handshake_rate",)),
+        "rateLimiter_handshakeUDP_rate": KeywordInfo("Handshake UDP Rate", "Rate limit for UDP connection handshake", "number", "1", "ratelimiter", min_value="0", max_value="10000", usage="rateLimiter_handshakeUDP_rate 1", related=("rateLimiter_handshakeUDP_burst",)),
+        "rateLimiter_handshakeUDP_burst": KeywordInfo("Handshake UDP Burst", "Burst limit for UDP connection handshake", "number", "5", "ratelimiter", min_value="0", max_value="10000", usage="rateLimiter_handshakeUDP_burst 5", related=("rateLimiter_handshakeUDP_rate",)),
+        "rateLimiter_http_dynamic_rate": KeywordInfo("HTTP Dynamic Rate", "Rate limit for dynamic HTTP endpoints", "number", "4", "ratelimiter", min_value="0", max_value="1000", usage="rateLimiter_http_dynamic_rate 4", related=("rateLimiter_http_dynamic_burst",)),
+        "rateLimiter_http_dynamic_burst": KeywordInfo("HTTP Dynamic Burst", "Burst limit for dynamic HTTP endpoints", "number", "10", "ratelimiter", min_value="0", max_value="1000", usage="rateLimiter_http_dynamic_burst 10", related=("rateLimiter_http_dynamic_rate",)),
+        "rateLimiter_http_info_rate": KeywordInfo("HTTP Info Rate", "Rate limit for server info endpoint", "number", "4", "ratelimiter", min_value="0", max_value="1000", usage="rateLimiter_http_info_rate 4", related=("rateLimiter_http_info_burst",)),
+        "rateLimiter_http_info_burst": KeywordInfo("HTTP Info Burst", "Burst limit for server info endpoint", "number", "10", "ratelimiter", min_value="0", max_value="1000", usage="rateLimiter_http_info_burst 10", related=("rateLimiter_http_info_rate",)),
+        "rateLimiter_http_perf_rate": KeywordInfo("HTTP Perf Rate", "Rate limit for performance endpoint", "number", "2", "ratelimiter", min_value="0", max_value="100", usage="rateLimiter_http_perf_rate 2", related=("rateLimiter_http_perf_burst",)),
+        "rateLimiter_http_perf_burst": KeywordInfo("HTTP Perf Burst", "Burst limit for performance endpoint", "number", "5", "ratelimiter", min_value="0", max_value="100", usage="rateLimiter_http_perf_burst 5", related=("rateLimiter_http_perf_rate",)),
+        "rateLimiter_http_players_rate": KeywordInfo("HTTP Players Rate", "Rate limit for player list endpoint", "number", "4", "ratelimiter", min_value="0", max_value="100", usage="rateLimiter_http_players_rate 4", related=("rateLimiter_http_players_burst",)),
+        "rateLimiter_http_players_burst": KeywordInfo("HTTP Players Burst", "Burst limit for player list endpoint", "number", "10", "ratelimiter", min_value="0", max_value="100", usage="rateLimiter_http_players_burst 10", related=("rateLimiter_http_players_rate",)),
+        "rateLimiter_netCommand_rate": KeywordInfo("Net Command Rate", "Rate limit for client commands", "number", "7", "ratelimiter", min_value="0", max_value="10000", usage="rateLimiter_netCommand_rate 7", related=("rateLimiter_netCommand_burst",)),
+        "rateLimiter_netCommand_burst": KeywordInfo("Net Command Burst", "Burst limit for client commands", "number", "14", "ratelimiter", min_value="0", max_value="10000", usage="rateLimiter_netCommand_burst 14", related=("rateLimiter_netCommand_rate",)),
+        "rateLimiter_netCommandFlood_rate": KeywordInfo("Net Command Flood Rate", "Rate limit for command flood protection", "number", "25", "ratelimiter", min_value="0", max_value="10000", usage="rateLimiter_netCommandFlood_rate 25", related=("rateLimiter_netCommandFlood_burst",)),
+        "rateLimiter_netCommandFlood_burst": KeywordInfo("Net Command Flood Burst", "Burst limit for command flood protection", "number", "45", "ratelimiter", min_value="0", max_value="10000", usage="rateLimiter_netCommandFlood_burst 45", related=("rateLimiter_netCommandFlood_rate",)),
+        "rateLimiter_netCommandSize_rate": KeywordInfo("Net Command Size Rate", "Rate limit for command payload size", "number", "1024", "ratelimiter", min_value="0", max_value="100000", usage="rateLimiter_netCommandSize_rate 1024", related=("rateLimiter_netCommandSize_burst",)),
+        "rateLimiter_netCommandSize_burst": KeywordInfo("Net Command Size Burst", "Burst limit for command payload size", "number", "8192", "ratelimiter", min_value="0", max_value="100000", usage="rateLimiter_netCommandSize_burst 8192", related=("rateLimiter_netCommandSize_rate",)),
+        "rateLimiter_netEvent_rate": KeywordInfo("Net Event Rate", "Rate limit for game events", "number", "50", "ratelimiter", min_value="0", max_value="10000", usage="rateLimiter_netEvent_rate 50", related=("rateLimiter_netEvent_burst",)),
+        "rateLimiter_netEvent_burst": KeywordInfo("Net Event Burst", "Burst limit for game events", "number", "200", "ratelimiter", min_value="0", max_value="10000", usage="rateLimiter_netEvent_burst 200", related=("rateLimiter_netEvent_rate",)),
+        "rateLimiter_netEventFlood_rate": KeywordInfo("Net Event Flood Rate", "Rate limit for event flood protection", "number", "75", "ratelimiter", min_value="0", max_value="10000", usage="rateLimiter_netEventFlood_rate 75", related=("rateLimiter_netEventFlood_burst",)),
+        "rateLimiter_netEventFlood_burst": KeywordInfo("Net Event Flood Burst", "Burst limit for event flood protection", "number", "300", "ratelimiter", min_value="0", max_value="10000", usage="rateLimiter_netEventFlood_burst 300", related=("rateLimiter_netEventFlood_rate",)),
+        "rateLimiter_rcon_rate": KeywordInfo("RCON Rate", "Rate limit for remote console", "number", "2", "ratelimiter", min_value="0", max_value="100", usage="rateLimiter_rcon_rate 2", related=("rateLimiter_rcon_burst",)),
+        "rateLimiter_rcon_burst": KeywordInfo("RCON Burst", "Burst limit for remote console", "number", "5", "ratelimiter", min_value="0", max_value="100", usage="rateLimiter_rcon_burst 5", related=("rateLimiter_rcon_rate",)),
+        "rateLimiter_res_http_handler_rate": KeywordInfo("Resource HTTP Rate", "Rate limit for resource HTTP endpoints", "number", "10", "ratelimiter", min_value="0", max_value="1000", usage="rateLimiter_res_http_handler_rate 10", related=("rateLimiter_res_http_handler_burst",)),
+        "rateLimiter_res_http_handler_burst": KeywordInfo("Resource HTTP Burst", "Burst limit for resource HTTP endpoints", "number", "25", "ratelimiter", min_value="0", max_value="1000", usage="rateLimiter_res_http_handler_burst 25", related=("rateLimiter_res_http_handler_rate",)),
+        "rateLimiter_resourceList_rate": KeywordInfo("Resource List Rate", "Rate limit for resource listing", "number", "10", "ratelimiter", min_value="0", max_value="100", usage="rateLimiter_resourceList_rate 10", related=("rateLimiter_resourceList_burst",)),
+        "rateLimiter_resourceList_burst": KeywordInfo("Resource List Burst", "Burst limit for resource listing", "number", "25", "ratelimiter", min_value="0", max_value="100", usage="rateLimiter_resourceList_burst 25", related=("rateLimiter_resourceList_rate",)),
+        "rateLimiter_stateBag_rate": KeywordInfo("State Bag Rate", "Rate limit for state bag updates", "number", "75", "ratelimiter", min_value="0", max_value="10000", usage="rateLimiter_stateBag_rate 75", related=("rateLimiter_stateBag_burst",)),
+        "rateLimiter_stateBag_burst": KeywordInfo("State Bag Burst", "Burst limit for state bag updates", "number", "125", "ratelimiter", min_value="0", max_value="10000", usage="rateLimiter_stateBag_burst 125", related=("rateLimiter_stateBag_rate",)),
+        "rateLimiter_stateBagFlood_rate": KeywordInfo("State Bag Flood Rate", "Rate limit for state bag flood protection", "number", "150", "ratelimiter", min_value="0", max_value="10000", usage="rateLimiter_stateBagFlood_rate 150", related=("rateLimiter_stateBagFlood_burst",)),
+        "rateLimiter_stateBagFlood_burst": KeywordInfo("State Bag Flood Burst", "Burst limit for state bag flood protection", "number", "175", "ratelimiter", min_value="0", max_value="10000", usage="rateLimiter_stateBagFlood_burst 175", related=("rateLimiter_stateBagFlood_rate",)),
+        "rateLimiter_stateBagSize_rate": KeywordInfo("State Bag Size Rate", "Rate limit for state bag payload size", "number", "131072", "ratelimiter", min_value="0", max_value="10000000", usage="rateLimiter_stateBagSize_rate 131072", related=("rateLimiter_stateBagSize_burst",)),
+        "rateLimiter_stateBagSize_burst": KeywordInfo("State Bag Size Burst", "Burst limit for state bag payload size", "number", "262144", "ratelimiter", min_value="0", max_value="10000000", usage="rateLimiter_stateBagSize_burst 262144", related=("rateLimiter_stateBagSize_rate",)),
+        # ═══════════════════════════════════════════════════════════
+        # ACTIONS (console commands)
+        # ═══════════════════════════════════════════════════════════
+        "ensure": KeywordInfo("Ensure Resource", "Start resource and keep it running (restarts if stopped)", "action", "", "action", params=(ParamInfo("resource", "str", True, description="Resource folder name"),), usage="ensure mapmanager", related=("ensure_stop", "start", "stop")),
+        "ensure_stop": KeywordInfo("Stop Ensured", "Stop an ensured resource", "action", "", "action", params=(ParamInfo("resource", "str", True, description="Resource folder name"),), usage="ensure_stop mapmanager", related=("ensure",)),
+        "quit": KeywordInfo("Quit Server", "Shut down the server with optional reason", "action", "", "action", params=(ParamInfo("reason", "str", False, description="Shutdown reason"),), usage='quit "Restarting - will be back soon!"', related=("restart",)),
+        "refresh": KeywordInfo("Refresh Resources", "Refresh resources folder", "action", "", "action", usage="refresh", related=("start", "stop")),
         "restart": KeywordInfo("Restart Server", "Restart the server", "action", "", "action", usage="restart", related=("quit",)),
-        "say": KeywordInfo("Say Message", "Send server message", "action", "", "action", params=(ParamInfo("message", "str", True, description="Message"),), usage="say Hello!"),
-        "start": KeywordInfo("Start Resource", "Start a resource", "action", "", "action", params=(ParamInfo("resource", "str", True, description="Resource name"),), usage="start es_extended", related=("stop", "ensure")),
-        "stop": KeywordInfo("Stop Resource", "Stop a resource", "action", "", "action", params=(ParamInfo("resource", "str", True, description="Resource name"),), usage="stop es_extended", related=("start", "ensure")),
-        "set": KeywordInfo("Set Convar", "Set a config variable (not replicated)", "command", "", "command", params=(ParamInfo("name", "str", True, description="Convar name"), ParamInfo("value", "str", True, description="Value")), usage="set sv_lan true", related=("setr", "sets")),
-        "setr": KeywordInfo("Set Replicated", "Set a replicated config variable", "command", "", "command", params=(ParamInfo("name", "str", True, description="Convar name"), ParamInfo("value", "str", True, description="Value")), usage="setr sv_hostname My Server", related=("set", "sets")),
-        "sets": KeywordInfo("Set Saved", "Set a saved config variable", "command", "", "command", params=(ParamInfo("name", "str", True, description="Convar name"), ParamInfo("value", "str", True, description="Value")), usage="sets sv_projectName My Project", related=("set", "setr")),
-        "add_ace": KeywordInfo("Add ACE Permission", "Add ACE permission for principal", "command", "", "command", params=(ParamInfo("principal", "str", True, description="Principal"), ParamInfo("object", "str", True, description="Permission object"), ParamInfo("permission", "str", True, "allow", "allow/deny")), usage="add_ace group.admin command allow", related=("remove_ace", "add_principal")),
-        "add_principal": KeywordInfo("Add Principal", "Add child principal to parent", "command", "", "command", params=(ParamInfo("child", "str", True, description="Child principal"), ParamInfo("parent", "str", True, description="Parent principal")), usage="add_principal identifier.license:abc group.admin", related=("remove_principal",)),
-        "remove_ace": KeywordInfo("Remove ACE Permission", "Remove ACE permission", "command", "", "command", params=(ParamInfo("principal", "str", True, description="Principal"), ParamInfo("object", "str", True, description="Permission object"), ParamInfo("permission", "str", True, "allow", "Permission level")), usage="remove_ace group.admin command allow", related=("add_ace",)),
-        "remove_principal": KeywordInfo("Remove Principal", "Remove child from parent", "command", "", "command", params=(ParamInfo("child", "str", True, description="Child principal"), ParamInfo("parent", "str", True, description="Parent principal")), usage="remove_principal identifier.license:abc group.admin", related=("add_principal",)),
-        "block_net_game_event": KeywordInfo("Block Net Game Event", "Block a network game event", "command", "", "command", params=(ParamInfo("event_name", "str", True, description="Event name"),), usage="block_net_game_event someEvent", related=("unblock_net_game_event",)),
-        "unblock_net_game_event": KeywordInfo("Unblock Net Game Event", "Unblock a network game event", "command", "", "command", params=(ParamInfo("event_name", "str", True, description="Event name"),), usage="unblock_net_game_event someEvent", related=("block_net_game_event",)),
-        "test_ace": KeywordInfo("Test ACE", "Test ACE permission", "command", "", "command", params=(ParamInfo("principal", "str", True, description="Principal"), ParamInfo("object", "str", True, description="Object"), ParamInfo("permission", "str", True, "allow", "Permission level")), usage="test_ace group.admin command allow", related=("add_ace",)),
-        "replay_start": KeywordInfo("Start Replay", "Start recording replay", "command", "", "command", usage="replay_start", related=("replay_stop",)),
-        "replay_stop": KeywordInfo("Stop Replay", "Stop recording replay", "command", "", "command", usage="replay_stop", related=("replay_start",)),
-        "sync_start_recording": KeywordInfo("Start Sync Recording", "Start synced recording", "command", "", "command", usage="sync_start_recording", related=("sync_stop_recording",)),
-        "sync_stop_recording": KeywordInfo("Stop Sync Recording", "Stop synced recording", "command", "", "command", usage="sync_stop_recording", related=("sync_start_recording",)),
-        "con_channelFilters": KeywordInfo("Set Channel Filters", "Set console channel filters", "command", "", "command", usage="con_channelFilters value"),
-        "con_addChannelFilter": KeywordInfo("Add Channel Filter", "Add console channel filter", "command", "", "command", params=(ParamInfo("filter", "str", True, description="Filter value"),), usage="con_addChannelFilter value", related=("con_removeChannelFilter",)),
-        "con_removeChannelFilter": KeywordInfo("Remove Channel Filter", "Remove console channel filter", "command", "", "command", params=(ParamInfo("filter", "str", True, description="Filter value"),), usage="con_removeChannelFilter value", related=("con_addChannelFilter",)),
-        "endpoint_add_tcp": KeywordInfo("Add TCP Endpoint", "Add a TCP endpoint", "command", "", "command", params=(ParamInfo("endpoint", "str", True, description="Endpoint (ip:port)"),), usage="endpoint_add_tcp 0.0.0.0:30120", related=("endpoint_add_udp",)),
-        "endpoint_add_udp": KeywordInfo("Add UDP Endpoint", "Add a UDP endpoint", "command", "", "command", params=(ParamInfo("endpoint", "str", True, description="Endpoint (ip:port)"),), usage="endpoint_add_udp 0.0.0.0:30121", related=("endpoint_add_tcp",)),
-        "builtin.everyone": KeywordInfo("Everyone", "All players", "principal", "", "principal", usage="add_ace builtin.everyone command allow"),
-        "builtin.restricted": KeywordInfo("Restricted", "Restricted players", "principal", "", "principal", usage="add_ace builtin.restricted command allow"),
-        "group.admin": KeywordInfo("Admin Group", "Administrators", "principal", "", "principal", related=("group.moderator", "group.owner")),
-        "group.moderator": KeywordInfo("Moderator Group", "Moderators", "principal", "", "principal", related=("group.admin",)),
-        "group.owner": KeywordInfo("Owner Group", "Server owner", "principal", "", "principal", related=("group.admin",)),
-        "group.user": KeywordInfo("User Group", "Regular users", "principal", "", "principal"),
-        "group.support": KeywordInfo("Support Group", "Support staff", "principal", "", "principal"),
-        "group.helper": KeywordInfo("Helper Group", "Helpers", "principal", "", "principal"),
-        "group.god": KeywordInfo("God Group", "God-level permissions", "principal", "", "principal"),
-        "group.superadmin": KeywordInfo("Superadmin Group", "Super administrators", "principal", "", "principal", related=("group.admin",)),
-        "group.developer": KeywordInfo("Developer Group", "Developers", "principal", "", "principal"),
-        "identifier.steam": KeywordInfo("Steam Identifier", "Steam platform identifier", "principal", "", "principal", usage="add_principal identifier.steam:12345 group.admin"),
+        "say": KeywordInfo("Say Message", "Send a chat message as console", "action", "", "action", params=(ParamInfo("message", "str", True, description="Message to send"),), usage='say "Hello everyone!"'),
+        "start": KeywordInfo("Start Resource", "Start a resource", "action", "", "action", params=(ParamInfo("resource", "str", True, description="Resource folder name"),), usage="start mapmanager", related=("stop", "ensure")),
+        "stop": KeywordInfo("Stop Resource", "Stop a running resource", "action", "", "action", params=(ParamInfo("resource", "str", True, description="Resource folder name"),), usage="stop mapmanager", related=("start", "ensure")),
+        # ═══════════════════════════════════════════════════════════
+        # COMMANDS
+        # ═══════════════════════════════════════════════════════════
+        "set": KeywordInfo("Set Convar", "Set a server-only convar (NOT sent to clients, safe for secrets)", "command", "", "command", params=(ParamInfo("name", "str", True, description="Convar name"), ParamInfo("value", "str", True, description="Convar value")), usage='set mysql_connection_string "mysql://user:pass@host/db"', related=("setr", "sets"), warning="NOT sent to clients, safe for secrets"),
+        "setr": KeywordInfo("Set Replicated", "Set a replicated convar (sent to ALL clients)", "command", "", "command", params=(ParamInfo("name", "str", True, description="Convar name"), ParamInfo("value", "str", True, description="Convar value")), usage="setr myscript_debug true", related=("set", "sets"), warning="Sent to ALL clients, NOT for secrets!"),
+        "sets": KeywordInfo("Set Saved", "Set a server-info convar (PUBLIC, shown in browser)", "command", "", "command", params=(ParamInfo("name", "str", True, description="Convar name"), ParamInfo("value", "str", True, description="Convar value")), usage='sets sv_projectName "My FXServer Project"', related=("set", "setr"), warning="PUBLIC, shown in server browser"),
+        "add_ace": KeywordInfo("Add ACE Permission", "Add an ACE permission to a principal", "command", "", "command", params=(ParamInfo("principal", "str", True, description="Principal to grant permission to"), ParamInfo("object", "str", True, description="Permission object name"), ParamInfo("permission", "str", True, "allow", "allow or deny")), usage="add_ace group.admin command allow", related=("remove_ace", "add_principal")),
+        "add_principal": KeywordInfo("Add Principal", "Add a child principal to a parent principal", "command", "", "command", params=(ParamInfo("child", "str", True, description="Child principal (player or group)"), ParamInfo("parent", "str", True, description="Parent principal (group)")), usage="add_principal identifier.license:abc123 group.admin", related=("remove_principal",)),
+        "remove_ace": KeywordInfo("Remove ACE Permission", "Remove an ACE permission from a principal", "command", "", "command", params=(ParamInfo("principal", "str", True, description="Principal to remove permission from"), ParamInfo("object", "str", True, description="Permission object name")), usage="remove_ace group.admin command", related=("add_ace",)),
+        "remove_principal": KeywordInfo("Remove Principal", "Remove a child principal from a parent principal", "command", "", "command", params=(ParamInfo("child", "str", True, description="Child principal"), ParamInfo("parent", "str", True, description="Parent principal")), usage="remove_principal identifier.license:abc123 group.admin", related=("add_principal",)),
+        "block_net_game_event": KeywordInfo("Block Net Game Event", "Block a net game event (anti-cheat)", "command", "", "command", params=(ParamInfo("event_name", "str", True, description="Event name to block")), usage='block_net_game_event "FIRE_EVENT"', related=("unblock_net_game_event",)),
+        "unblock_net_game_event": KeywordInfo("Unblock Net Game Event", "Unblock a previously blocked net game event", "command", "", "command", params=(ParamInfo("event_name", "str", True, description="Event name to unblock")), usage='unblock_net_game_event "FIRE_EVENT"', related=("block_net_game_event",)),
+        "test_ace": KeywordInfo("Test ACE", "Test if a principal has a specific ACE permission", "command", "", "command", params=(ParamInfo("principal", "str", True, description="Principal to test"), ParamInfo("object", "str", True, description="Permission object")), usage="test_ace group.admin command", related=("add_ace",)),
+        "replay_start": KeywordInfo("Start Replay", "Start recording a replay (Enhanced only)", "command", "", "command", params=(ParamInfo("file_name", "str", True, description="File name"), ParamInfo("mode", "str", True, description="Recording mode")), usage="replay_start fileName mode", related=("replay_stop",)),
+        "replay_stop": KeywordInfo("Stop Replay", "Stop recording a replay (Enhanced only)", "command", "", "command", params=(ParamInfo("replay_id", "str", True, description="Replay ID")), usage="replay_stop replayId", related=("replay_start",)),
+        "sync_start_recording": KeywordInfo("Start Sync Recording", "Start synchronized recording", "command", "", "command", params=(ParamInfo("net_id", "str", True, description="Network ID"), ParamInfo("compressed", "str", False, description="Compress recording")), usage="sync_start_recording netId compressed", related=("sync_stop_recording",)),
+        "sync_stop_recording": KeywordInfo("Stop Sync Recording", "Stop synchronized recording", "command", "", "command", params=(ParamInfo("net_id", "str", True, description="Network ID")), usage="sync_stop_recording netId", related=("sync_start_recording",)),
+        "con_channelFilters": KeywordInfo("Set Channel Filters", "Set console channel filter masks", "command", "", "command", usage="con_channelFilters value"),
+        "con_addChannelFilter": KeywordInfo("Add Channel Filter", "Add a console channel filter", "command", "", "command", params=(ParamInfo("filter", "str", True, description="Filter value"), ParamInfo("action", "str", True, description="Action")), usage="con_addChannelFilter filter action", related=("con_removeChannelFilter",)),
+        "con_removeChannelFilter": KeywordInfo("Remove Channel Filter", "Remove a console channel filter", "command", "", "command", params=(ParamInfo("filter", "str", True, description="Filter value"), ParamInfo("action", "str", True, description="Action")), usage="con_removeChannelFilter filter action", related=("con_addChannelFilter",)),
+        "endpoint_add_tcp": KeywordInfo("Add TCP Endpoint", "Add a TCP endpoint for client connections", "command", "", "command", params=(ParamInfo("endpoint", "str", True, description="Endpoint in ip:port format")), usage='endpoint_add_tcp "0.0.0.0:30120"', related=("endpoint_add_udp",)),
+        "endpoint_add_udp": KeywordInfo("Add UDP Endpoint", "Add a UDP endpoint for game traffic", "command", "", "command", params=(ParamInfo("endpoint", "str", True, description="Endpoint in ip:port format")), usage='endpoint_add_udp "0.0.0.0:30120"', related=("endpoint_add_tcp",)),
+        # ═══════════════════════════════════════════════════════════
+        # PRINCIPALS
+        # ═══════════════════════════════════════════════════════════
+        "builtin.everyone": KeywordInfo("Everyone", "All players (built-in)", "principal", "", "principal", usage="add_ace builtin.everyone command allow"),
+        "builtin.restricted": KeywordInfo("Restricted", "Restricted players (built-in)", "principal", "", "principal", usage="add_ace builtin.restricted command allow"),
+        "group.admin": KeywordInfo("Admin Group", "Administrators group", "principal", "", "principal", related=("group.moderator", "group.owner", "group.superadmin")),
+        "group.moderator": KeywordInfo("Moderator Group", "Moderators group", "principal", "", "principal", related=("group.admin",)),
+        "group.owner": KeywordInfo("Owner Group", "Server owner group", "principal", "", "principal", related=("group.admin",)),
+        "group.user": KeywordInfo("User Group", "Regular users group", "principal", "", "principal"),
+        "group.support": KeywordInfo("Support Group", "Support staff group", "principal", "", "principal"),
+        "group.helper": KeywordInfo("Helper Group", "Helpers group", "principal", "", "principal"),
+        "group.god": KeywordInfo("God Group", "God-level permissions group", "principal", "", "principal"),
+        "group.superadmin": KeywordInfo("Superadmin Group", "Super administrators group", "principal", "", "principal", related=("group.admin",)),
+        "group.developer": KeywordInfo("Developer Group", "Developers group", "principal", "", "principal"),
+        "identifier.steam": KeywordInfo("Steam Identifier", "Steam platform identifier", "principal", "", "principal", usage="add_principal identifier.license:abc123 group.admin"),
         "identifier.license": KeywordInfo("License Identifier", "FiveM license identifier", "principal", "", "principal", usage="add_principal identifier.license:abc123 group.admin"),
-        "identifier.discord": KeywordInfo("Discord Identifier", "Discord identifier", "principal", "", "principal", usage="add_principal identifier.discord:123456789 group.admin"),
+        "identifier.discord": KeywordInfo("Discord Identifier", "Discord identifier", "principal", "", "principal", usage="add_principal identifier.discord:123456789012345678 group.admin"),
         "identifier.fivem": KeywordInfo("FiveM Identifier", "FiveM platform identifier", "principal", "", "principal"),
         "identifier.ip": KeywordInfo("IP Identifier", "IP address identifier", "principal", "", "principal"),
         "identifier.xbl": KeywordInfo("Xbox Live Identifier", "Xbox Live identifier", "principal", "", "principal"),
-        "resource.mapmanager": KeywordInfo("Map Manager", "mapmanager resource", "principal", "", "principal"),
-        "resource.chat": KeywordInfo("Chat Resource", "chat resource", "principal", "", "principal"),
-        "resource.spawnmanager": KeywordInfo("Spawn Manager", "spawnmanager resource", "principal", "", "principal"),
-        "resource.sessionmanager": KeywordInfo("Session Manager", "sessionmanager resource", "principal", "", "principal"),
-        "resource.hardcap": KeywordInfo("Hardcap", "hardcap resource", "principal", "", "principal"),
-        "resource.rconlog": KeywordInfo("RCON Log", "rconlog resource", "principal", "", "principal"),
-        "resource.baseevents": KeywordInfo("Base Events", "baseevents resource", "principal", "", "principal"),
-        "command": KeywordInfo("Command Base", "All commands", "principal", "", "principal", related=("command.kick", "command.ban")),
-        "command.kick": KeywordInfo("Kick Command", "Kick players", "principal", "", "principal", related=("command.ban",)),
-        "command.ban": KeywordInfo("Ban Command", "Ban players", "principal", "", "principal", related=("command.kick",)),
-        "command.tempban": KeywordInfo("Tempban Command", "Temporarily ban players", "principal", "", "principal", related=("command.ban",)),
-        "command.setgroup": KeywordInfo("Setgroup Command", "Set player groups", "principal", "", "principal"),
-        "command.admin": KeywordInfo("Admin Command", "Admin commands", "principal", "", "principal"),
-        "command.noclip": KeywordInfo("Noclip Command", "Toggle noclip", "principal", "", "principal"),
-        "command.tpm": KeywordInfo("TPM Command", "Teleport to marker", "principal", "", "principal"),
-        "command.bring": KeywordInfo("Bring Command", "Bring player to you", "principal", "", "principal"),
-        "command.revive": KeywordInfo("Revive Command", "Revive player", "principal", "", "principal"),
-        "command.heal": KeywordInfo("Heal Command", "Heal player", "principal", "", "principal"),
-        "command.announce": KeywordInfo("Announce Command", "Server announcements", "principal", "", "principal"),
-        "command.car": KeywordInfo("Car Command", "Spawn vehicles", "principal", "", "principal"),
-        "command.weather": KeywordInfo("Weather Command", "Change weather", "principal", "", "principal"),
-        "command.time": KeywordInfo("Time Command", "Change time", "principal", "", "principal"),
-        "command.quit": KeywordInfo("Quit Command", "Quit the server", "principal", "", "principal"),
+        "resource.mapmanager": KeywordInfo("Map Manager", "mapmanager resource principal", "principal", "", "principal"),
+        "resource.chat": KeywordInfo("Chat Resource", "chat resource principal", "principal", "", "principal"),
+        "resource.spawnmanager": KeywordInfo("Spawn Manager", "spawnmanager resource principal", "principal", "", "principal"),
+        "resource.sessionmanager": KeywordInfo("Session Manager", "sessionmanager resource principal", "principal", "", "principal"),
+        "resource.hardcap": KeywordInfo("Hardcap", "hardcap resource principal", "principal", "", "principal"),
+        "resource.rconlog": KeywordInfo("RCON Log", "rconlog resource principal", "principal", "", "principal"),
+        "resource.baseevents": KeywordInfo("Base Events", "baseevents resource principal", "principal", "", "principal"),
+        "command": KeywordInfo("Command Base", "All commands permission", "principal", "", "principal", related=("command.kick", "command.ban")),
+        "command.kick": KeywordInfo("Kick Command", "Kick players permission", "principal", "", "principal", related=("command.ban",)),
+        "command.ban": KeywordInfo("Ban Command", "Ban players permission", "principal", "", "principal", related=("command.kick",)),
+        "command.tempban": KeywordInfo("Tempban Command", "Temporarily ban players permission", "principal", "", "principal", related=("command.ban",)),
+        "command.setgroup": KeywordInfo("Setgroup Command", "Set player groups permission", "principal", "", "principal"),
+        "command.admin": KeywordInfo("Admin Command", "Admin commands permission", "principal", "", "principal"),
+        "command.noclip": KeywordInfo("Noclip Command", "Toggle noclip permission", "principal", "", "principal"),
+        "command.tpm": KeywordInfo("TPM Command", "Teleport to marker permission", "principal", "", "principal"),
+        "command.bring": KeywordInfo("Bring Command", "Bring player to you permission", "principal", "", "principal"),
+        "command.revive": KeywordInfo("Revive Command", "Revive player permission", "principal", "", "principal"),
+        "command.heal": KeywordInfo("Heal Command", "Heal player permission", "principal", "", "principal"),
+        "command.announce": KeywordInfo("Announce Command", "Server announcements permission", "principal", "", "principal"),
+        "command.car": KeywordInfo("Car Command", "Spawn vehicles permission", "principal", "", "principal"),
+        "command.weather": KeywordInfo("Weather Command", "Change weather permission", "principal", "", "principal"),
+        "command.time": KeywordInfo("Time Command", "Change time permission", "principal", "", "principal"),
+        "command.quit": KeywordInfo("Quit Command", "Quit the server permission", "principal", "", "principal"),
         "command.add_ace": KeywordInfo("Add ACE Command", "add_ace command permission", "principal", "", "principal"),
         "command.add_principal": KeywordInfo("Add Principal Command", "add_principal command permission", "principal", "", "principal"),
         "txAdmin.kick": KeywordInfo("TXAdmin Kick", "txAdmin kick permission", "principal", "", "principal"),
@@ -315,23 +366,30 @@ class Keywords:
         "qbcore.admin": KeywordInfo("QBCore Admin", "QBCore admin permissions", "principal", "", "principal"),
         "qbx.admin": KeywordInfo("QBx Admin", "QBx admin permissions", "principal", "", "principal"),
         "esx.admin": KeywordInfo("ESX Admin", "ESX admin permissions", "principal", "", "principal"),
-        "mapmanager": KeywordInfo("Map Manager (bare)", "mapmanager permission", "principal", "", "principal"),
-        "chat": KeywordInfo("Chat (bare)", "chat permission", "principal", "", "principal"),
-        "spawnmanager": KeywordInfo("Spawn Manager (bare)", "spawnmanager permission", "principal", "", "principal"),
-        "sessionmanager": KeywordInfo("Session Manager (bare)", "sessionmanager permission", "principal", "", "principal"),
-        "basic-gamemode": KeywordInfo("Basic Gamemode", "basic-gamemode permission", "principal", "", "principal"),
-        "hardcap": KeywordInfo("Hardcap (bare)", "hardcap permission", "principal", "", "principal"),
-        "rconlog": KeywordInfo("RCON Log (bare)", "rconlog permission", "principal", "", "principal"),
-        "baseevents": KeywordInfo("Base Events (bare)", "baseevents permission", "principal", "", "principal"),
+        "mapmanager": KeywordInfo("Map Manager (bare)", "mapmanager bare permission", "principal", "", "principal"),
+        "chat": KeywordInfo("Chat (bare)", "chat bare permission", "principal", "", "principal"),
+        "spawnmanager": KeywordInfo("Spawn Manager (bare)", "spawnmanager bare permission", "principal", "", "principal"),
+        "sessionmanager": KeywordInfo("Session Manager (bare)", "sessionmanager bare permission", "principal", "", "principal"),
+        "basic-gamemode": KeywordInfo("Basic Gamemode", "basic-gamemode bare permission", "principal", "", "principal"),
+        "hardcap": KeywordInfo("Hardcap (bare)", "hardcap bare permission", "principal", "", "principal"),
+        "rconlog": KeywordInfo("RCON Log (bare)", "rconlog bare permission", "principal", "", "principal"),
+        "baseevents": KeywordInfo("Base Events (bare)", "baseevents bare permission", "principal", "", "principal"),
+        # ═══════════════════════════════════════════════════════════
+        # STATES
+        # ═══════════════════════════════════════════════════════════
         "allow": KeywordInfo("Allow", "Grant permission", "state", "", "state", usage="add_ace group.admin command allow", related=("deny",)),
         "deny": KeywordInfo("Deny", "Deny permission", "state", "", "state", usage="add_ace group.user command deny", related=("allow",)),
         "deny_socket": KeywordInfo("Deny Socket", "Deny socket access", "state", "", "state", usage="add_ace group.user endpoint deny_socket"),
-        "true": KeywordInfo("True", "Boolean true", "state", "", "state", related=("false",)),
-        "false": KeywordInfo("False", "Boolean false", "state", "", "state", related=("true",)),
+        "true": KeywordInfo("True", "Boolean true value", "state", "", "state", related=("false",)),
+        "false": KeywordInfo("False", "Boolean false value", "state", "", "state", related=("true",)),
         "on": KeywordInfo("On", "Enable feature", "state", "", "state", related=("off",)),
         "off": KeywordInfo("Off", "Disable feature", "state", "", "state", related=("on",)),
     }
 
+
+# ═══════════════════════════════════════════════════════════════════════════
+# LOOKUP FUNCTIONS
+# ═══════════════════════════════════════════════════════════════════════════
 
 def get_identifier(identifier: str | None, /) -> str | None:
     return str(identifier) if identifier else None
@@ -405,6 +463,36 @@ def get_keyword_category(token: str, /) -> str:
     return info.category if info else ""
 
 
+def get_keyword_params(token: str, /) -> tuple[ParamInfo, ...]:
+    info = Keywords.META.get(token)
+    return info.params if info else ()
+
+
+def get_keyword_usage(token: str, /) -> str:
+    info = Keywords.META.get(token)
+    return info.usage if info else ""
+
+
+def get_keyword_related(token: str, /) -> tuple[str, ...]:
+    info = Keywords.META.get(token)
+    return info.related if info else ()
+
+
+def get_keyword_warning(token: str, /) -> str:
+    info = Keywords.META.get(token)
+    return info.warning if info else ""
+
+
+def is_deprecated(token: str, /) -> bool:
+    info = Keywords.META.get(token)
+    return info.deprecated if info else False
+
+
+def is_startup_only(token: str, /) -> bool:
+    info = Keywords.META.get(token)
+    return info.startup_only if info else False
+
+
 def find_by_category(category: str, /) -> frozenset[str]:
     return frozenset(k for k, v in Keywords.META.items() if v.category == category)
 
@@ -416,6 +504,18 @@ def find_by_value_type(value_type: str, /) -> frozenset[str]:
 def find_by_name(name: str, /) -> list[str]:
     lower = name.lower()
     return sorted(k for k, v in Keywords.META.items() if lower in v.name.lower())
+
+
+def find_deprecated() -> frozenset[str]:
+    return frozenset(k for k, v in Keywords.META.items() if v.deprecated)
+
+
+def find_startup_only() -> frozenset[str]:
+    return frozenset(k for k, v in Keywords.META.items() if v.startup_only)
+
+
+def find_with_warnings() -> dict[str, str]:
+    return {k: v.warning for k, v in Keywords.META.items() if v.warning}
 
 
 def search_keywords(query: str, /) -> list[str]:
@@ -443,6 +543,10 @@ def get_value_type_stats() -> dict[str, int]:
     return dict(sorted(stats.items()))
 
 
+# ═══════════════════════════════════════════════════════════════════════════
+# IDENTIFIER FUNCTIONS
+# ═══════════════════════════════════════════════════════════════════════════
+
 def resolve_identifier_type(identifier: str, /) -> str | None:
     prefix = identifier.split(".")[0] if "." in identifier else None
     if prefix == "identifier":
@@ -462,6 +566,34 @@ def split_identifier(identifier: str, /) -> tuple[str, str] | None:
 def format_identifier(prefix: str, sep: str, value: str, /) -> str:
     return f"{prefix}{sep}{value}"
 
+
+def make_steam_id(steam64: str, /) -> str:
+    return f"identifier.steam:{steam64}"
+
+
+def make_license_id(license: str, /) -> str:
+    return f"identifier.license:{license}"
+
+
+def make_discord_id(discord_id: str, /) -> str:
+    return f"identifier.discord:{discord_id}"
+
+
+def make_fivem_id(fivem_id: str, /) -> str:
+    return f"identifier.fivem:{fivem_id}"
+
+
+def make_ip_id(ip: str, /) -> str:
+    return f"identifier.ip:{ip}"
+
+
+def make_xbl_id(xbl_id: str, /) -> str:
+    return f"identifier.xbl:{xbl_id}"
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# FILTER / GROUP FUNCTIONS
+# ═══════════════════════════════════════════════════════════════════════════
 
 def get_sv_convars() -> frozenset[str]:
     return frozenset(c for c in Keywords.CVARS if c.startswith("sv_"))
@@ -518,6 +650,7 @@ def validate_convar_value(cvar: str, value: str, /) -> bool:
         "sv_pureLevel": frozenset({"0", "1", "2"}),
         "sv_requestParanoia": frozenset({"0", "1", "2", "3"}),
         "onesync": frozenset({"on", "off", "legacy"}),
+        "sv_scriptHookAllowed": frozenset({"0", "1"}),
     }
     allowed = validators.get(cvar)
     if allowed is not None:
@@ -533,6 +666,10 @@ def get_keyword_suggestions(prefix: str, /) -> list[str]:
         return keywords
     return [k for k in keywords if k.startswith(prefix)]
 
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PARSING / FORMATTING
+# ═══════════════════════════════════════════════════════════════════════════
 
 def parse_line(line: str, /) -> tuple[str, list[str]]:
     stripped = line.strip()
@@ -603,7 +740,6 @@ def get_enabled_only() -> frozenset[str]:
         "sv_scriptHookAllowed", "sv_scriptDebugDuplicates",
         "onesync_enableInfinity", "onesync_population", "onesync_forceMigration",
         "onesync_distanceCulling", "onesync_distanceCullVehicles", "onesync_radiusFrequency",
-        "onesync_compressionDictionarySamples", "sv_prometheusBasicAuthUser",
     })
 
 
@@ -631,32 +767,526 @@ def get_string_only() -> frozenset[str]:
     })
 
 
-def build_ace_line(principal: str, object_name: str, perm: str, /) -> str:
-    return build_line("add_ace", principal, object_name, perm)
+# ═══════════════════════════════════════════════════════════════════════════
+# BUILDER FUNCTIONS — generate cfg lines for every keyword
+# ═══════════════════════════════════════════════════════════════════════════
+
+def build_set(name: str, value: str, /) -> str:
+    return build_line("set", name, format_value(value))
 
 
-def build_principal_line(child: str, parent: str, /) -> str:
+def build_setr(name: str, value: str, /) -> str:
+    return build_line("setr", name, format_value(value))
+
+
+def build_sets(name: str, value: str, /) -> str:
+    return build_line("sets", name, format_value(value))
+
+
+def build_ace(principal: str, obj: str, perm: str, /) -> str:
+    return build_line("add_ace", principal, obj, perm)
+
+
+def build_remove_ace(principal: str, obj: str, /) -> str:
+    return build_line("remove_ace", principal, obj)
+
+
+def build_principal(child: str, parent: str, /) -> str:
     return build_line("add_principal", child, parent)
 
 
-def build_resource_line(action: str, resource: str, /) -> str:
-    return build_line(action, resource)
+def build_remove_principal(child: str, parent: str, /) -> str:
+    return build_line("remove_principal", child, parent)
 
 
-def build_convar_line(mode: str, name: str, value: str, /) -> str:
-    return build_line(mode, name, format_value(value))
+def build_block_event(event: str, /) -> str:
+    return build_line("block_net_game_event", format_value(event))
 
 
-def build_set_line(name: str, value: str, /) -> str:
-    return build_convar_line("set", name, value)
+def build_unblock_event(event: str, /) -> str:
+    return build_line("unblock_net_game_event", format_value(event))
 
 
-def build_setr_line(name: str, value: str, /) -> str:
-    return build_convar_line("setr", name, value)
+def build_test_ace(principal: str, obj: str, /) -> str:
+    return build_line("test_ace", principal, obj)
 
 
-def build_sets_line(name: str, value: str, /) -> str:
-    return build_convar_line("sets", name, value)
+def build_ensure(resource: str, /) -> str:
+    return build_line("ensure", resource)
+
+
+def build_ensure_stop(resource: str, /) -> str:
+    return build_line("ensure_stop", resource)
+
+
+def build_start(resource: str, /) -> str:
+    return build_line("start", resource)
+
+
+def build_stop(resource: str, /) -> str:
+    return build_line("stop", resource)
+
+
+def build_restart(resource: str, /) -> str:
+    return build_line("restart", resource)
+
+
+def build_quit(reason: str = "", /) -> str:
+    return build_line("quit", format_value(reason)) if reason else "quit"
+
+
+def build_refresh() -> str:
+    return "refresh"
+
+
+def build_say(message: str, /) -> str:
+    return build_line("say", format_value(message))
+
+
+def build_exec(path: str, /) -> str:
+    return build_line("exec", path)
+
+
+def build_load_icon(path: str, /) -> str:
+    return build_line("load_server_icon", format_value(path))
+
+
+def build_increase_pool(pool: str, amount: int, /) -> str:
+    return build_line("increase_pool_size", format_value(pool), str(amount))
+
+
+def build_sync_start(net_id: str, compressed: str = "", /) -> str:
+    args = [net_id]
+    if compressed:
+        args.append(compressed)
+    return build_line("sync_start_recording", *args)
+
+
+def build_sync_stop(net_id: str, /) -> str:
+    return build_line("sync_stop_recording", net_id)
+
+
+def build_replay_start(file_name: str, mode: str, /) -> str:
+    return build_line("replay_start", file_name, mode)
+
+
+def build_replay_stop(replay_id: str, /) -> str:
+    return build_line("replay_stop", replay_id)
+
+
+def build_endpoint_tcp(endpoint: str, /) -> str:
+    return build_line("endpoint_add_tcp", format_value(endpoint))
+
+
+def build_endpoint_udp(endpoint: str, /) -> str:
+    return build_line("endpoint_add_udp", format_value(endpoint))
+
+
+def build_con_filter_add(filter_val: str, action: str, /) -> str:
+    return build_line("con_addChannelFilter", filter_val, action)
+
+
+def build_con_filter_remove(filter_val: str, action: str, /) -> str:
+    return build_line("con_removeChannelFilter", filter_val, action)
+
+
+# ── Server Config Builders ──
+
+def build_hostname(name: str, /) -> str:
+    return build_set("sv_hostname", name)
+
+
+def build_max_clients(n: int, /) -> str:
+    return build_set("sv_maxClients", str(n))
+
+
+def build_license_key(key: str, /) -> str:
+    return build_set("sv_licenseKey", key)
+
+
+def build_lan(enabled: bool, /) -> str:
+    return build_set("sv_lan", "true" if enabled else "false")
+
+
+def build_project_name(name: str, /) -> str:
+    return build_set("sv_projectName", name)
+
+
+def build_project_desc(desc: str, /) -> str:
+    return build_set("sv_projectDesc", desc)
+
+
+def build_tebex_secret(secret: str, /) -> str:
+    return build_set("sv_tebexSecret", secret)
+
+
+def build_game_build(build_num: int, /) -> str:
+    return build_set("sv_enforceGameBuild", str(build_num))
+
+
+def build_game_name(name: str, /) -> str:
+    return build_line("gamename", name)
+
+
+def build_game_type(gtype: str, /) -> str:
+    return build_line("gametype", format_value(gtype))
+
+
+def build_map_name(name: str, /) -> str:
+    return build_line("mapname", format_value(name))
+
+
+def build_rcon_password(pw: str, /) -> str:
+    return build_line("rcon_password", format_value(pw))
+
+
+def build_net_port(port: int, /) -> str:
+    return build_set("netPort", str(port))
+
+
+def build_tcp_limit(limit: int, /) -> str:
+    return build_set("net_tcpConnLimit", str(limit))
+
+
+def build_script_hook(allowed: bool, /) -> str:
+    return build_set("sv_scriptHookAllowed", "1" if allowed else "0")
+
+
+def build_endpoint_privacy(enabled: bool, /) -> str:
+    return build_set("sv_endpointPrivacy", "true" if enabled else "false")
+
+
+def build_entity_lockdown(mode: str, /) -> str:
+    return build_set("sv_entityLockdown", mode)
+
+
+def build_pure_level(level: int, /) -> str:
+    return build_set("sv_pureLevel", str(level))
+
+
+def build_request_paranoia(level: int, /) -> str:
+    return build_set("sv_requestParanoia", str(level))
+
+
+def build_auth_variance(var: int, /) -> str:
+    return build_set("sv_authMaxVariance", str(var))
+
+
+def build_auth_trust(trust: int, /) -> str:
+    return build_set("sv_authMinTrust", str(trust))
+
+
+def build_filter_request(level: int, /) -> str:
+    return build_set("sv_filterRequestControl", str(level))
+
+
+def build_filter_settle(ms: int, /) -> str:
+    return build_set("sv_filterRequestControlSettleTimer", str(ms))
+
+
+# ── OneSync Builders ──
+
+def build_onesync(mode: str, /) -> str:
+    return build_set("onesync", mode)
+
+
+def build_onesync_infinity(enabled: bool, /) -> str:
+    return build_set("onesync_enableInfinity", "true" if enabled else "false")
+
+
+def build_onesync_population(enabled: bool, /) -> str:
+    return build_set("onesync_population", "true" if enabled else "false")
+
+
+def build_onesync_migration(enabled: bool, /) -> str:
+    return build_set("onesync_forceMigration", "true" if enabled else "false")
+
+
+def build_onesync_culling(enabled: bool, /) -> str:
+    return build_set("onesync_distanceCulling", "true" if enabled else "false")
+
+
+def build_onesync_cull_vehicles(enabled: bool, /) -> str:
+    return build_set("onesync_distanceCullVehicles", "true" if enabled else "false")
+
+
+def build_onesync_radius(enabled: bool, /) -> str:
+    return build_set("onesync_radiusFrequency", "true" if enabled else "false")
+
+
+def build_onesync_migrate_timeout(ms: int, /) -> str:
+    return build_set("onesync_migrateDataTimeout", str(ms))
+
+
+def build_onesync_map_bounds(min_x: int, min_y: int, max_x: int, max_y: int, /) -> list[str]:
+    return [
+        build_set("onesync_mapBoundsMinX", str(min_x)),
+        build_set("onesync_mapBoundsMinY", str(min_y)),
+        build_set("onesync_mapBoundsMaxX", str(max_x)),
+        build_set("onesync_mapBoundsMaxY", str(max_y)),
+    ]
+
+
+def build_onesync_cell_size(size: int, /) -> str:
+    return build_set("onesync_mapCellAreaSize", str(size))
+
+
+# ── Feature Builders ──
+
+def build_networked_sounds(enabled: bool, /) -> str:
+    return build_set("sv_enableNetworkedSounds", "true" if enabled else "false")
+
+
+def build_networked_phone_explosions(enabled: bool, /) -> str:
+    return build_set("sv_enableNetworkedPhoneExplosions", "true" if enabled else "false")
+
+
+def build_script_entity_states(enabled: bool, /) -> str:
+    return build_set("sv_enableNetworkedScriptEntityStates", "true" if enabled else "false")
+
+
+def build_event_reassembly(enabled: bool, /) -> str:
+    return build_set("sv_enableNetEventReassembly", "true" if enabled else "false")
+
+
+def build_max_pending_events(n: int, /) -> str:
+    return build_set("sv_netEventReassemblyMaxPendingEvents", str(n))
+
+
+def build_unlimited_pending(enabled: bool, /) -> str:
+    return build_set("sv_netEventReassemblyUnlimitedPendingEvents", "true" if enabled else "false")
+
+
+def build_voice_chat(enabled: bool, /) -> str:
+    return build_set("sv_voiceChat", "true" if enabled else "false")
+
+
+def build_mumble(enabled: bool, /) -> str:
+    return build_set("sv_mumble", "true" if enabled else "false")
+
+
+def build_dev_mode(enabled: bool, /) -> str:
+    return build_set("sv_devMode", "true" if enabled else "false")
+
+
+def build_accurate_sends(enabled: bool, /) -> str:
+    return build_set("sv_useAccurateSends", "true" if enabled else "false")
+
+
+def build_indirect_listing(enabled: bool, /) -> str:
+    return build_set("sv_forceIndirectListing", "true" if enabled else "false")
+
+
+def build_listing_ip(ip: str, /) -> str:
+    return build_set("sv_listingIpOverride", ip)
+
+
+def build_listing_host(host: str, /) -> str:
+    return build_set("sv_listingHostOverride", host)
+
+
+def build_multicast_dns(enabled: bool, /) -> str:
+    return build_set("sv_registerMulticastDns", "true" if enabled else "false")
+
+
+def build_endpoints(eps: str, /) -> str:
+    return build_set("sv_endpoints", eps)
+
+
+def build_tcp_timeout(seconds: int, /) -> str:
+    return build_set("sv_tcpConnectionTimeoutSeconds", str(seconds))
+
+
+def build_proxy_ranges(ranges: str, /) -> str:
+    return build_set("sv_proxyIPRanges", ranges)
+
+
+def build_io_threads(n: int, /) -> str:
+    return build_set("sv_ioThreads", str(n))
+
+
+def build_connect_timeout(ms: int, /) -> str:
+    return build_set("sv_clientConnectingTimeoutMilliseconds", str(ms))
+
+
+def build_connected_timeout(ms: int, /) -> str:
+    return build_set("sv_clientConnectedTimeoutMilliseconds", str(ms))
+
+
+def build_ping_interval(ms: int, /) -> str:
+    return build_set("sv_pingIntervalMilliseconds", str(ms))
+
+
+def build_steam_api_key(key: str, /) -> str:
+    return build_set("steam_webApiKey", key)
+
+
+def build_steam_domain(domain: str, /) -> str:
+    return build_set("steam_webApiDomain", domain)
+
+
+def build_prometheus_user(user: str, /) -> str:
+    return build_set("sv_prometheusBasicAuthUser", user)
+
+
+def build_prometheus_pass(pw: str, /) -> str:
+    return build_set("sv_prometheusBasicAuthPassword", pw)
+
+
+# ── Rate Limiter Builders ──
+
+def build_ratelimiter(name: str, rate: int, burst: int, /) -> list[str]:
+    return [
+        build_set(f"rateLimiter_{name}_rate", str(rate)),
+        build_set(f"rateLimiter_{name}_burst", str(burst)),
+    ]
+
+
+def build_ratelimiter_challenge(rate: int = 4, burst: int = 10, /) -> list[str]:
+    return build_ratelimiter("challenge", rate, burst)
+
+
+def build_ratelimiter_handshake(rate: int = 4, burst: int = 10, /) -> list[str]:
+    return build_ratelimiter("handshake", rate, burst)
+
+
+def build_ratelimiter_handshake_udp(rate: int = 1, burst: int = 5, /) -> list[str]:
+    return build_ratelimiter("handshakeUDP", rate, burst)
+
+
+def build_ratelimiter_http_dynamic(rate: int = 4, burst: int = 10, /) -> list[str]:
+    return build_ratelimiter("http_dynamic", rate, burst)
+
+
+def build_ratelimiter_http_info(rate: int = 4, burst: int = 10, /) -> list[str]:
+    return build_ratelimiter("http_info", rate, burst)
+
+
+def build_ratelimiter_http_perf(rate: int = 2, burst: int = 5, /) -> list[str]:
+    return build_ratelimiter("http_perf", rate, burst)
+
+
+def build_ratelimiter_http_players(rate: int = 4, burst: int = 10, /) -> list[str]:
+    return build_ratelimiter("http_players", rate, burst)
+
+
+def build_ratelimiter_net_command(rate: int = 7, burst: int = 14, /) -> list[str]:
+    return build_ratelimiter("netCommand", rate, burst)
+
+
+def build_ratelimiter_net_command_flood(rate: int = 25, burst: int = 45, /) -> list[str]:
+    return build_ratelimiter("netCommandFlood", rate, burst)
+
+
+def build_ratelimiter_net_command_size(rate: int = 1024, burst: int = 8192, /) -> list[str]:
+    return build_ratelimiter("netCommandSize", rate, burst)
+
+
+def build_ratelimiter_net_event(rate: int = 50, burst: int = 200, /) -> list[str]:
+    return build_ratelimiter("netEvent", rate, burst)
+
+
+def build_ratelimiter_net_event_flood(rate: int = 75, burst: int = 300, /) -> list[str]:
+    return build_ratelimiter("netEventFlood", rate, burst)
+
+
+def build_ratelimiter_rcon(rate: int = 2, burst: int = 5, /) -> list[str]:
+    return build_ratelimiter("rcon", rate, burst)
+
+
+def build_ratelimiter_res_http(rate: int = 10, burst: int = 25, /) -> list[str]:
+    return build_ratelimiter("res_http_handler", rate, burst)
+
+
+def build_ratelimiter_resource_list(rate: int = 10, burst: int = 25, /) -> list[str]:
+    return build_ratelimiter("resourceList", rate, burst)
+
+
+def build_ratelimiter_state_bag(rate: int = 75, burst: int = 125, /) -> list[str]:
+    return build_ratelimiter("stateBag", rate, burst)
+
+
+def build_ratelimiter_state_bag_flood(rate: int = 150, burst: int = 175, /) -> list[str]:
+    return build_ratelimiter("stateBagFlood", rate, burst)
+
+
+def build_ratelimiter_state_bag_size(rate: int = 131072, burst: int = 262144, /) -> list[str]:
+    return build_ratelimiter("stateBagSize", rate, burst)
+
+
+def build_all_ratelimiters() -> list[str]:
+    lines: list[str] = []
+    for pair in get_ratelimiter_pairs():
+        rate_cvar, burst_cvar = pair
+        info_r = Keywords.META.get(rate_cvar)
+        info_b = Keywords.META.get(burst_cvar)
+        rate_default = info_r.default if info_r else "0"
+        burst_default = info_b.default if info_b else "0"
+        lines.append(build_set(rate_cvar, rate_default))
+        lines.append(build_set(burst_cvar, burst_default))
+    return lines
+
+
+# ── Batch Builders ──
+
+def build_admin_permissions(groups: list[str] | None = None, /) -> list[str]:
+    if groups is None:
+        groups = ["group.admin"]
+    lines: list[str] = []
+    for g in groups:
+        lines.append(build_ace(g, "command", "allow"))
+        lines.append(build_ace(g, "command.kick", "allow"))
+        lines.append(build_ace(g, "command.ban", "allow"))
+        lines.append(build_ace(g, "txAdmin.kick", "allow"))
+        lines.append(build_ace(g, "txAdmin.ban", "allow"))
+        lines.append(build_ace(g, "txAdmin.warn", "allow"))
+    return lines
+
+
+def build_resource_ensures(*resources: str) -> list[str]:
+    return [build_ensure(r) for r in resources]
+
+
+def build_default_ensures() -> list[str]:
+    return build_resource_ensures(
+        "mapmanager", "chat", "spawnmanager", "sessionmanager",
+        "basic-gamemode", "hardcap", "rconlog", "baseevents",
+    )
+
+
+def build_identifier_steam(steam64: str, group: str = "group.admin", /) -> list[str]:
+    return [build_principal(make_steam_id(steam64), group)]
+
+
+def build_identifier_license(license: str, group: str = "group.admin", /) -> list[str]:
+    return [build_principal(make_license_id(license), group)]
+
+
+def build_identifier_discord(discord_id: str, group: str = "group.admin", /) -> list[str]:
+    return [build_principal(make_discord_id(discord_id), group)]
+
+
+def build_standard_server_config(hostname: str, max_clients: int = 48, license_key: str = "", /) -> list[str]:
+    lines: list[str] = []
+    lines.append(build_hostname(hostname))
+    lines.append(build_max_clients(max_clients))
+    if license_key:
+        lines.append(build_license_key(license_key))
+    lines.append(build_net_port(30120))
+    lines.append(build_endpoint_tcp("0.0.0.0:30120"))
+    return lines
+
+
+def build_standard_onesync(max_clients: int = 64, /) -> list[str]:
+    lines: list[str] = []
+    if max_clients > 32:
+        lines.append(build_onesync("on"))
+        lines.append(build_onesync_infinity(True))
+    lines.append(build_onesync_population(True))
+    lines.append(build_onesync_migration(True))
+    lines.append(build_onesync_culling(True))
+    lines.append(build_onesync_radius(True))
+    return lines
 
 
 def get_all_lines() -> list[str]:
@@ -673,13 +1303,17 @@ def get_stats() -> dict[str, int]:
         "principals": len(Keywords.PRINCIPALS),
         "states": len(Keywords.STATES),
         "total": len(Keywords.ALL),
+        "metadata": len(Keywords.META),
         "sv_convars": len(get_sv_convars()),
         "onesync_convars": len(get_onesync_convars()),
         "ratelimiter_convars": len(get_ratelimiter_convars()),
+        "ratelimiter_pairs": len(get_ratelimiter_pairs()),
         "groups": len(get_group_principals()),
         "identifiers": len(get_identifier_principals()),
         "resources": len(get_resource_principals()),
         "commands": len(get_command_permissions()),
         "txadmin": len(get_txadmin_permissions()),
         "frameworks": len(get_framework_permissions()),
+        "deprecated": len(find_deprecated()),
+        "startup_only": len(find_startup_only()),
     }
