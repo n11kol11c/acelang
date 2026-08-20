@@ -1538,6 +1538,386 @@ build_standard_server_config = batch_standard_server_config
 build_standard_onesync = batch_standard_onesync
 
 
+# ═══════════════════════════════════════════════════════════════════════════
+# REMAINING KEYWORD BUILDERS (every keyword from META has a function)
+# ═══════════════════════════════════════════════════════════════════════════
+
+# ── Set Commands (exposed publicly) ──
+
+def set(name: str, value: str, /) -> str:
+    return _set(name, value)
+
+
+def setr(name: str, value: str, /) -> str:
+    return _setr(name, value)
+
+
+def sets(name: str, value: str, /) -> str:
+    return _sets(name, value)
+
+
+# ── Lowercase Aliases ──
+
+def sv_maxclients(n: int, /) -> str:
+    return sv_maxClients(n)
+
+
+# ── Individual Rate Limiter ConVars ──
+
+def rateLimiter_challenge_rate(value: int = 4, /) -> str:
+    return _set("rateLimiter_challenge_rate", str(value))
+
+
+def rateLimiter_challenge_burst(value: int = 10, /) -> str:
+    return _set("rateLimiter_challenge_burst", str(value))
+
+
+def rateLimiter_handshake_rate(value: int = 4, /) -> str:
+    return _set("rateLimiter_handshake_rate", str(value))
+
+
+def rateLimiter_handshake_burst(value: int = 10, /) -> str:
+    return _set("rateLimiter_handshake_burst", str(value))
+
+
+def rateLimiter_handshakeUDP_rate(value: int = 1, /) -> str:
+    return _set("rateLimiter_handshakeUDP_rate", str(value))
+
+
+def rateLimiter_handshakeUDP_burst(value: int = 5, /) -> str:
+    return _set("rateLimiter_handshakeUDP_burst", str(value))
+
+
+def rateLimiter_http_dynamic_rate(value: int = 4, /) -> str:
+    return _set("rateLimiter_http_dynamic_rate", str(value))
+
+
+def rateLimiter_http_dynamic_burst(value: int = 10, /) -> str:
+    return _set("rateLimiter_http_dynamic_burst", str(value))
+
+
+def rateLimiter_http_info_rate(value: int = 4, /) -> str:
+    return _set("rateLimiter_http_info_rate", str(value))
+
+
+def rateLimiter_http_info_burst(value: int = 10, /) -> str:
+    return _set("rateLimiter_http_info_burst", str(value))
+
+
+def rateLimiter_http_perf_rate(value: int = 2, /) -> str:
+    return _set("rateLimiter_http_perf_rate", str(value))
+
+
+def rateLimiter_http_perf_burst(value: int = 5, /) -> str:
+    return _set("rateLimiter_http_perf_burst", str(value))
+
+
+def rateLimiter_http_players_rate(value: int = 4, /) -> str:
+    return _set("rateLimiter_http_players_rate", str(value))
+
+
+def rateLimiter_http_players_burst(value: int = 10, /) -> str:
+    return _set("rateLimiter_http_players_burst", str(value))
+
+
+def rateLimiter_netCommand_rate(value: int = 7, /) -> str:
+    return _set("rateLimiter_netCommand_rate", str(value))
+
+
+def rateLimiter_netCommand_burst(value: int = 14, /) -> str:
+    return _set("rateLimiter_netCommand_burst", str(value))
+
+
+def rateLimiter_netCommandFlood_rate(value: int = 25, /) -> str:
+    return _set("rateLimiter_netCommandFlood_rate", str(value))
+
+
+def rateLimiter_netCommandFlood_burst(value: int = 45, /) -> str:
+    return _set("rateLimiter_netCommandFlood_burst", str(value))
+
+
+def rateLimiter_netCommandSize_rate(value: int = 1024, /) -> str:
+    return _set("rateLimiter_netCommandSize_rate", str(value))
+
+
+def rateLimiter_netCommandSize_burst(value: int = 8192, /) -> str:
+    return _set("rateLimiter_netCommandSize_burst", str(value))
+
+
+def rateLimiter_netEvent_rate(value: int = 50, /) -> str:
+    return _set("rateLimiter_netEvent_rate", str(value))
+
+
+def rateLimiter_netEvent_burst(value: int = 200, /) -> str:
+    return _set("rateLimiter_netEvent_burst", str(value))
+
+
+def rateLimiter_netEventFlood_rate(value: int = 75, /) -> str:
+    return _set("rateLimiter_netEventFlood_rate", str(value))
+
+
+def rateLimiter_netEventFlood_burst(value: int = 300, /) -> str:
+    return _set("rateLimiter_netEventFlood_burst", str(value))
+
+
+def rateLimiter_rcon_rate(value: int = 2, /) -> str:
+    return _set("rateLimiter_rcon_rate", str(value))
+
+
+def rateLimiter_rcon_burst(value: int = 5, /) -> str:
+    return _set("rateLimiter_rcon_burst", str(value))
+
+
+def rateLimiter_res_http_handler_rate(value: int = 10, /) -> str:
+    return _set("rateLimiter_res_http_handler_rate", str(value))
+
+
+def rateLimiter_res_http_handler_burst(value: int = 25, /) -> str:
+    return _set("rateLimiter_res_http_handler_burst", str(value))
+
+
+def rateLimiter_resourceList_rate(value: int = 10, /) -> str:
+    return _set("rateLimiter_resourceList_rate", str(value))
+
+
+def rateLimiter_resourceList_burst(value: int = 25, /) -> str:
+    return _set("rateLimiter_resourceList_burst", str(value))
+
+
+def rateLimiter_stateBag_rate(value: int = 75, /) -> str:
+    return _set("rateLimiter_stateBag_rate", str(value))
+
+
+def rateLimiter_stateBag_burst(value: int = 125, /) -> str:
+    return _set("rateLimiter_stateBag_burst", str(value))
+
+
+def rateLimiter_stateBagFlood_rate(value: int = 150, /) -> str:
+    return _set("rateLimiter_stateBagFlood_rate", str(value))
+
+
+def rateLimiter_stateBagFlood_burst(value: int = 175, /) -> str:
+    return _set("rateLimiter_stateBagFlood_burst", str(value))
+
+
+def rateLimiter_stateBagSize_rate(value: int = 131072, /) -> str:
+    return _set("rateLimiter_stateBagSize_rate", str(value))
+
+
+def rateLimiter_stateBagSize_burst(value: int = 262144, /) -> str:
+    return _set("rateLimiter_stateBagSize_burst", str(value))
+
+
+# ── txAdmin ConVars ──
+
+def txAdmin_menuEnabled(enabled: bool = True, /) -> str:
+    return _set("txAdmin-menuEnabled", "true" if enabled else "false")
+
+
+def txAdmin_menuAlignRight(enabled: bool = False, /) -> str:
+    return _set("txAdmin-menuAlignRight", "true" if enabled else "false")
+
+
+def txAdmin_menuPageKey(key: str = "Tab", /) -> str:
+    return _set("txAdmin-menuPageKey", key)
+
+
+def txAdmin_hideDefaultAnnouncement(enabled: bool = False, /) -> str:
+    return _set("txAdmin-hideDefaultAnnouncement", "true" if enabled else "false")
+
+
+def txAdmin_hideDefaultDirectMessage(enabled: bool = False, /) -> str:
+    return _set("txAdmin-hideDefaultDirectMessage", "true" if enabled else "false")
+
+
+def txAdmin_hideDefaultWarning(enabled: bool = False, /) -> str:
+    return _set("txAdmin-hideDefaultWarning", "true" if enabled else "false")
+
+
+def txAdmin_hideDefaultScheduledRestartWarning(enabled: bool = False, /) -> str:
+    return _set("txAdmin-hideDefaultScheduledRestartWarning", "true" if enabled else "false")
+
+
+def txAdmin_debugMode(enabled: bool = False, /) -> str:
+    return _setr("txAdmin-debugMode", "true" if enabled else "false")
+
+
+def txAdmin_menuPlayerIdDistance(distance: int = 150, /) -> str:
+    return _setr("txAdmin-menuPlayerIdDistance", str(distance))
+
+
+def txAdmin_menuDrunkDuration(seconds: int = 0, /) -> str:
+    return _setr("txAdmin-menuDrunkDuration", str(seconds))
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PRINCIPAL CONSTANTS (string values for use in add_ace/add_principal)
+# ═══════════════════════════════════════════════════════════════════════════
+
+# Built-in
+PRINCIPAL_EVERYONE = "builtin.everyone"
+PRINCIPAL_RESTRICTED = "builtin.restricted"
+
+# Groups
+PRINCIPAL_GROUP_ADMIN = "group.admin"
+PRINCIPAL_GROUP_MODERATOR = "group.moderator"
+PRINCIPAL_GROUP_OWNER = "group.owner"
+PRINCIPAL_GROUP_USER = "group.user"
+PRINCIPAL_GROUP_SUPPORT = "group.support"
+PRINCIPAL_GROUP_HELPER = "group.helper"
+PRINCIPAL_GROUP_GOD = "group.god"
+PRINCIPAL_GROUP_SUPERADMIN = "group.superadmin"
+PRINCIPAL_GROUP_DEVELOPER = "group.developer"
+
+# Identifiers
+PRINCIPAL_IDENTIFIER_STEAM = "identifier.steam"
+PRINCIPAL_IDENTIFIER_LICENSE = "identifier.license"
+PRINCIPAL_IDENTIFIER_DISCORD = "identifier.discord"
+PRINCIPAL_IDENTIFIER_FIVEM = "identifier.fivem"
+PRINCIPAL_IDENTIFIER_IP = "identifier.ip"
+PRINCIPAL_IDENTIFIER_XBL = "identifier.xbl"
+
+# Resources
+PRINCIPAL_RESOURCE_MAPMANAGER = "resource.mapmanager"
+PRINCIPAL_RESOURCE_CHAT = "resource.chat"
+PRINCIPAL_RESOURCE_SPAWNMANAGER = "resource.spawnmanager"
+PRINCIPAL_RESOURCE_SESSIONMANAGER = "resource.sessionmanager"
+PRINCIPAL_RESOURCE_HARDCAP = "resource.hardcap"
+PRINCIPAL_RESOURCE_RCONLOG = "resource.rconlog"
+PRINCIPAL_RESOURCE_BASEEVENTS = "resource.baseevents"
+
+# Bare Resources
+PRINCIPAL_MAPMANAGER = "mapmanager"
+PRINCIPAL_CHAT = "chat"
+PRINCIPAL_SPAWNMANAGER = "spawnmanager"
+PRINCIPAL_SESSIONMANAGER = "sessionmanager"
+PRINCIPAL_BASIC_GAMEMODE = "basic-gamemode"
+PRINCIPAL_HARDCAP = "hardcap"
+PRINCIPAL_RCONLOG = "rconlog"
+PRINCIPAL_BASEEVENTS = "baseevents"
+
+# Commands
+PRINCIPAL_COMMAND = "command"
+PRINCIPAL_COMMAND_KICK = "command.kick"
+PRINCIPAL_COMMAND_BAN = "command.ban"
+PRINCIPAL_COMMAND_TEMPBAN = "command.tempban"
+PRINCIPAL_COMMAND_SETGROUP = "command.setgroup"
+PRINCIPAL_COMMAND_ADMIN = "command.admin"
+PRINCIPAL_COMMAND_NOCLIP = "command.noclip"
+PRINCIPAL_COMMAND_TPM = "command.tpm"
+PRINCIPAL_COMMAND_BRING = "command.bring"
+PRINCIPAL_COMMAND_REVIVE = "command.revive"
+PRINCIPAL_COMMAND_HEAL = "command.heal"
+PRINCIPAL_COMMAND_ANNOUNCE = "command.announce"
+PRINCIPAL_COMMAND_CAR = "command.car"
+PRINCIPAL_COMMAND_WEATHER = "command.weather"
+PRINCIPAL_COMMAND_TIME = "command.time"
+PRINCIPAL_COMMAND_QUIT = "command.quit"
+PRINCIPAL_COMMAND_ADD_ACE = "command.add_ace"
+PRINCIPAL_COMMAND_ADD_PRINCIPAL = "command.add_principal"
+
+# txAdmin
+PRINCIPAL_TXADMIN_KICK = "txAdmin.kick"
+PRINCIPAL_TXADMIN_BAN = "txAdmin.ban"
+PRINCIPAL_TXADMIN_WARN = "txAdmin.warn"
+PRINCIPAL_TXADMIN_PLAYERS_HEAL = "txAdmin.players.heal"
+
+# Frameworks
+PRINCIPAL_QBCORE_ADMIN = "qbcore.admin"
+PRINCIPAL_QBX_ADMIN = "qbx.admin"
+PRINCIPAL_ESX_ADMIN = "esx.admin"
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# KEYWORD STRING CONSTANTS (exact keyword names for lookup/validation)
+# ═══════════════════════════════════════════════════════════════════════════
+
+# Built-in
+builtin_everyone = "builtin.everyone"
+builtin_restricted = "builtin.restricted"
+
+# Groups
+group_admin = "group.admin"
+group_moderator = "group.moderator"
+group_owner = "group.owner"
+group_user = "group.user"
+group_support = "group.support"
+group_helper = "group.helper"
+group_god = "group.god"
+group_superadmin = "group.superadmin"
+group_developer = "group.developer"
+
+# Identifiers
+identifier_steam = "identifier.steam"
+identifier_license = "identifier.license"
+identifier_discord = "identifier.discord"
+identifier_fivem = "identifier.fivem"
+identifier_ip = "identifier.ip"
+identifier_xbl = "identifier.xbl"
+
+# Resources
+resource_mapmanager = "resource.mapmanager"
+resource_chat = "resource.chat"
+resource_spawnmanager = "resource.spawnmanager"
+resource_sessionmanager = "resource.sessionmanager"
+resource_hardcap = "resource.hardcap"
+resource_rconlog = "resource.rconlog"
+resource_baseevents = "resource.baseevents"
+
+# Bare Resources
+baseevents = "baseevents"
+basic_gamemode = "basic-gamemode"
+chat = "chat"
+hardcap = "hardcap"
+mapmanager = "mapmanager"
+rconlog = "rconlog"
+sessionmanager = "sessionmanager"
+spawnmanager = "spawnmanager"
+
+# Commands
+command_str = "command"
+command_add_ace = "command.add_ace"
+command_add_principal = "command.add_principal"
+command_admin = "command.admin"
+command_announce = "command.announce"
+command_ban = "command.ban"
+command_bring = "command.bring"
+command_car = "command.car"
+command_heal = "command.heal"
+command_kick = "command.kick"
+command_noclip = "command.noclip"
+command_quit = "command.quit"
+command_revive = "command.revive"
+command_setgroup = "command.setgroup"
+command_tempban = "command.tempban"
+command_time = "command.time"
+command_tpm = "command.tpm"
+command_weather = "command.weather"
+
+# txAdmin Permissions
+txAdmin_kick = "txAdmin.kick"
+txAdmin_ban = "txAdmin.ban"
+txAdmin_warn = "txAdmin.warn"
+txAdmin_players_heal = "txAdmin.players.heal"
+
+# Frameworks
+qbcore_admin = "qbcore.admin"
+qbx_admin = "qbx.admin"
+esx_admin = "esx.admin"
+
+# txAdmin ConVar keywords (hyphen names)
+TXADMIN_MENU_ENABLED = "txAdmin-menuEnabled"
+TXADMIN_MENU_ALIGN_RIGHT = "txAdmin-menuAlignRight"
+TXADMIN_MENU_PAGE_KEY = "txAdmin-menuPageKey"
+TXADMIN_HIDE_DEFAULT_ANNOUNCEMENT = "txAdmin-hideDefaultAnnouncement"
+TXADMIN_HIDE_DEFAULT_DIRECT_MESSAGE = "txAdmin-hideDefaultDirectMessage"
+TXADMIN_HIDE_DEFAULT_WARNING = "txAdmin-hideDefaultWarning"
+TXADMIN_HIDE_DEFAULT_SCHEDULED_RESTART_WARNING = "txAdmin-hideDefaultScheduledRestartWarning"
+TXADMIN_DEBUG_MODE = "txAdmin-debugMode"
+TXADMIN_MENU_PLAYER_ID_DISTANCE = "txAdmin-menuPlayerIdDistance"
+TXADMIN_MENU_DRUNK_DURATION = "txAdmin-menuDrunkDuration"
+
+
 def get_all_lines() -> list[str]:
     lines = []
     for cvar in sorted(Keywords.CVARS):
