@@ -1,32 +1,32 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/VS%20Code-Extension-blue?style=for-the-badge&logo=visual-studio-code&logoColor=white" alt="VS Code Extension">
-  <img src="https://img.shields.io/badge/Python-Library-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python Library">
-  <img src="https://img.shields.io/badge/FiveM-Config%20Language-orange?style=for-the-badge&logo=fivem&logoColor=white" alt="FiveM">
+  <img src="https://img.shields.io/badge/VS%20Code-Extension-007ACC?style=for-the-badge&logo=visual-studio-code&logoColor=white" alt="VS Code">
+  <img src="https://img.shields.io/badge/Python-3.8+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
+  <img src="https://img.shields.io/badge/FiveM-Server-orange?style=for-the-badge" alt="FiveM">
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
+  <img src="https://img.shields.io/badge/PRs-Welcome-brightgreen?style=for-the-badge" alt="PRs Welcome">
 </p>
 
 <h1 align="center">Acelang</h1>
 
 <p align="center">
-  <strong>A modern configuration language for FiveM servers</strong>
+  <strong>Professional configuration language and tooling for FiveM servers</strong>
 </p>
 
 <p align="center">
-  Acelang provides a structured, readable syntax for managing FiveM server configurations.<br>
-  Parse, validate, and highlight your server configs with powerful tooling.
+  Acelang provides a structured, human-readable syntax for managing FiveM server configurations.<br>
+  Complete with syntax highlighting, parsing, and validation tools.
 </p>
 
 ---
 
-## Features
+## Overview
 
-| Feature | Description |
-|---------|-------------|
-| **Syntax Highlighting** | Full VS Code support with color-coded keywords, convars, and principals |
-| **Multi-line Comments** | Use `/;` and `;/` for block comments alongside standard `#` comments |
-| **Python Parser** | Programmatically read and manipulate `.ac` files |
-| **Validator** | Catch errors before deploying your server configuration |
-| **Cross-Platform** | Works on Windows, macOS, and Linux |
+Acelang is a configuration language designed specifically for FiveM game servers. It offers:
+
+- **Clean Syntax** - Readable, maintainable server configurations
+- **VS Code Extension** - Full syntax highlighting and language support
+- **Python SDK** - Parse, validate, and manipulate configurations programmatically
+- **Cross-Platform** - Works on Windows, macOS, and Linux
 
 ---
 
@@ -34,117 +34,112 @@
 
 ### VS Code Extension
 
-**macOS / Linux:**
-```bash
-git clone https://github.com/n11kol11c/acelang.git
-cd acelang/acelang_theme
-./install.sh
-```
-
-**Windows:**
-```cmd
-git clone https://github.com/n11kol11c/acelang.git
-cd acelang\acelang_theme
-install.bat
-```
-
-### Python Library
+Install syntax highlighting for `.ac` files:
 
 ```bash
+# Clone the repository
 git clone https://github.com/n11kol11c/acelang.git
-cd acelang/kit
+cd acelang/packages/vscode
+
+# Run installer
+./install.sh        # macOS / Linux
+install.bat         # Windows
+```
+
+### Python SDK
+
+Install the Python library for configuration management:
+
+```bash
+cd acelang/packages/cli
 pip install -e .
 ```
 
 ---
 
-## Syntax Overview
+## Syntax Example
 
 ```ac
-# Single-line comment
-
-/;
-  Multi-line comment
-;/
-
-# Server configuration
-sv_hostname "My Awesome Server"
+# Server Configuration
+sv_hostname "My RP Server"
 sv_maxClients 48
-sv_licenseKey "your_license_key"
+sv_licenseKey "your_key_here"
+
+# Enable OneSync for 32+ players
 onesync on
 
-# Resource management
+# Resource Management
 ensure mapmanager
 ensure chat
 ensure spawnmanager
+ensure baseevents
 
-# ACE permissions
+# ACE Permissions
 add_ace group.admin command allow
 add_ace group.admin txAdmin.kick allow
 
-# Principal management
+# Principal Management
 add_principal identifier.license:abc123 group.admin
 ```
 
 ---
 
-## What's Highlighted
+## Language Features
 
-| Category | Examples |
-|----------|----------|
-| **Commands** | `setr`, `set`, `sets`, `ensure`, `restart`, `add_ace` |
-| **Convars** | `sv_hostname`, `sv_maxClients`, `onesync_enableInfinity` |
-| **Principals** | `group.admin`, `builtin.everyone`, `identifier.license:*` |
-| **Permissions** | `allow`, `deny`, `deny_socket` |
-| **Booleans** | `true`, `false`, `on`, `off` |
-| **Resources** | `mapmanager`, `chat`, `spawnmanager`, `baseevents` |
+| Feature | Syntax | Description |
+|---------|--------|-------------|
+| Single-line Comment | `# comment` | Standard hash comments |
+| Multi-line Comment | `/; ... ;/` | Block comments for documentation |
+| Convars | `sv_*`, `onesync_*` | Server configuration variables |
+| Resources | `ensure`, `start`, `stop` | Resource lifecycle management |
+| Permissions | `add_ace`, `remove_ace` | ACE permission system |
+| Principals | `add_principal` | User/group hierarchy |
+| Directives | `@include`, `@from` | File inclusion system |
 
 ---
 
-## Python Usage
+## Python SDK
 
 ```python
 from acelang import AcelangParser, AcelangValidator
 
-# Parse a configuration file
+# Parse configuration
 parser = AcelangParser()
 result = parser.parse_file('server.cfg')
 
-# Access parsed data
-for command in result['commands']:
-    print(f"{command.name}: {command.args}")
+# Access commands
+for cmd in result['commands']:
+    print(f"{cmd.name}: {cmd.args}")
 
-# Get specific command types
+# Get specific types
 convars = parser.get_convars()
 resources = parser.get_resources()
-ace_permissions = parser.get_ace_permissions()
 
-# Validate configuration
+# Validate
 validator = AcelangValidator()
 errors = validator.validate_file('server.cfg')
-
-if not errors:
-    print("Configuration is valid!")
 ```
 
 ---
 
 ## Customization
 
-Customize syntax colors in your VS Code `settings.json`:
+Customize syntax colors in VS Code `settings.json`:
 
 ```json
-"editor.tokenColorCustomizations": {
-    "textMateRules": [
-        {
-            "scope": "keyword.command.server.acelang",
-            "settings": { "foreground": "#ff6b9d" }
-        },
-        {
-            "scope": "keyword.control.directive.acelang",
-            "settings": { "foreground": "#ff6b9d" }
-        }
-    ]
+{
+    "editor.tokenColorCustomizations": {
+        "textMateRules": [
+            {
+                "scope": "keyword.command.server.acelang",
+                "settings": { "foreground": "#ff6b9d" }
+            },
+            {
+                "scope": "keyword.control.directive.acelang",
+                "settings": { "foreground": "#ff6b9d" }
+            }
+        ]
+    }
 }
 ```
 
@@ -154,59 +149,71 @@ Customize syntax colors in your VS Code `settings.json`:
 
 ```
 acelang/
-├── acelang_theme/          # VS Code Extension
-│   ├── install.sh          # macOS/Linux Installer
-│   ├── install.bat         # Windows Installer
-│   ├── syntaxes/           # TextMate Grammar
-│   ├── src/                # Extension Source
-│   └── fivem_api_reference.ac
+├── packages/
+│   ├── vscode/                # VS Code Extension
+│   │   ├── src/               # TypeScript Source
+│   │   ├── syntaxes/          # TextMate Grammar
+│   │   ├── install.sh         # Unix Installer
+│   │   ├── install.bat        # Windows Installer
+│   │   └── package.json       # Extension Manifest
+│   │
+│   └── cli/                   # Python SDK
+│       ├── acelang/           # Package Source
+│       │   ├── parser.py      # Configuration Parser
+│       │   └── validator.py   # Syntax Validator
+│       └── setup.py           # Package Setup
 │
-└── kit/                    # Python Library
-    ├── setup.py
-    └── acelang/
-        ├── parser.py       # .ac File Parser
-        └── validator.py    # Configuration Validator
+├── README.md
+└── LICENSE
 ```
 
 ---
 
 ## Development
 
+### Prerequisites
+
+- Node.js 18+
+- Python 3.8+
+- VS Code
+
 ### VS Code Extension
 
 ```bash
-cd acelang_theme
+cd packages/vscode
 npm install
 npm run compile
 npm run watch
 ```
 
-### Python Library
+### Python SDK
 
 ```bash
-cd kit
+cd packages/cli
 pip install -e .
-python -c "from acelang import AcelangParser; print('OK')"
+pytest  # Run tests
 ```
 
 ---
 
 ## Contributing
 
+Contributions are welcome! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
 5. Open a Pull Request
 
 ---
 
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
 <p align="center">
-  Made with ❤️ for the FiveM community
+  Built with ❤️ for the FiveM community
 </p>

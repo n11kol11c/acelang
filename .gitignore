@@ -1,22 +1,44 @@
-# VS Code extension
-acelang_theme/node_modules/
-acelang_theme/out/
-acelang_theme/*.vsix
-acelang_theme/.DS_Store
+# Dependencies
+node_modules/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Build outputs
+out/
+dist/
+build/
+*.vsix
+*.egg-info/
+.eggs/
+
+# IDE
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.venv
+venv/
+env/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Test coverage
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
 
 # Python
-acelang_python/__pycache__/
-acelang_python/*.py[cod]
-acelang_python/*$py.class
-acelang_python/*.egg-info/
-acelang_python/dist/
-acelang_python/build/
-acelang_python/.eggs/
-acelang_python/*.egg
-acelang_python/.env
-acelang_python/.venv
-acelang_python/venv/
-
-# General
-.DS_Store
-*.log
+*.egg
+.pytest_cache/
+.mypy_cache/
