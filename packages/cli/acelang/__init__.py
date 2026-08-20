@@ -1,4 +1,22 @@
-from ._components.identifier import (
+"""
+Acelang - Python SDK for FiveM Configuration Files
+
+This package provides tools for parsing, validating, and manipulating
+FiveM server configuration files written in the Acelang syntax.
+
+Example:
+    >>> from acelang import Keywords, build_hostname, build_onesync
+    >>> print(build_hostname("My Server"))
+    set sv_hostname "My Server"
+"""
+
+__version__ = "1.0.0"
+__author__ = "Acelang Contributors"
+__license__ = "MIT"
+
+from .parser import AcelangParser, Command, Comment, Directive
+from .validator import AcelangValidator
+from .identifier import (
     Keywords,
     KeywordInfo,
     ParamInfo,
@@ -183,7 +201,7 @@ from ._components.identifier import (
     get_all_lines,
     get_stats,
 )
-from ._components.buffer import (
+from .buffer import (
     BYTE, KILOBYTE, MEGABYTE, GIGABYTE, TERABYTE,
     BUFFER_SIZE, MAX_FILENAME_LEN, MIN_FILENAME_LEN, MAX_FILE_SIZE,
     MAX_PACKET_SIZE, MAX_EVENT_SIZE, MAX_NET_EVENT_SIZE, MAX_STATEBAG_SIZE,
@@ -199,6 +217,7 @@ from ._components.buffer import (
 )
 
 __all__ = [
+    "AcelangParser", "AcelangValidator", "Command", "Comment", "Directive",
     "Keywords", "KeywordInfo", "ParamInfo",
     "get_identifier", "is_valid_keyword", "is_valid_cvar", "is_valid_action",
     "is_valid_principal", "is_valid_state", "get_token_type", "get_token_prefix",
