@@ -798,16 +798,22 @@ def get_string_only() -> frozenset[str]:
 # int → str, bool → "true"/"false" or "allow"/"deny", str → str
 # ═══════════════════════════════════════════════════════════════════════════
 
-def _set(name: str, value: str, /) -> str:
-    return build_line("set", name, format_value(value))
+def _set(name: str, value: str, /, *, use_set: bool = True) -> str:
+    if use_set:
+        return build_line("set", name, format_value(value))
+    return build_line(name, format_value(value))
 
 
-def _setr(name: str, value: str, /) -> str:
-    return build_line("setr", name, format_value(value))
+def _setr(name: str, value: str, /, *, use_set: bool = True) -> str:
+    if use_set:
+        return build_line("setr", name, format_value(value))
+    return build_line(name, format_value(value))
 
 
-def _sets(name: str, value: str, /) -> str:
-    return build_line("sets", name, format_value(value))
+def _sets(name: str, value: str, /, *, use_set: bool = True) -> str:
+    if use_set:
+        return build_line("sets", name, format_value(value))
+    return build_line(name, format_value(value))
 
 
 # ── Access Control Commands ──
@@ -889,8 +895,8 @@ def clientkick(player_id: int, reason: str = "", /) -> str:
     return build_line("clientkick", *args)
 
 
-def moo(value: int = 31337, /) -> str:
-    return _set("moo", str(value))
+def moo(value: int = 31337, /, *, use_set: bool = True) -> str:
+    return _set("moo", str(value), use_set=use_set)
 
 
 # ── Console Channel Filters ──
@@ -954,138 +960,138 @@ def sync_stop_recording(net_id: str, /) -> str:
 # SERVER CONFIGURATION (sv_* convars)
 # ═══════════════════════════════════════════════════════════════════════════
 
-def sv_hostname(name: str, /) -> str:
-    return _set("sv_hostname", name)
+def sv_hostname(name: str, /, *, use_set: bool = True) -> str:
+    return _set("sv_hostname", name, use_set=use_set)
 
 
-def sv_maxClients(n: int, /) -> str:
-    return _set("sv_maxClients", str(n))
+def sv_maxClients(n: int, /, *, use_set: bool = True) -> str:
+    return _set("sv_maxClients", str(n), use_set=use_set)
 
 
-def sv_licenseKey(key: str, /) -> str:
-    return _set("sv_licenseKey", key)
+def sv_licenseKey(key: str, /, *, use_set: bool = True) -> str:
+    return _set("sv_licenseKey", key, use_set=use_set)
 
 
-def sv_lan(enabled: bool, /) -> str:
-    return _set("sv_lan", "true" if enabled else "false")
+def sv_lan(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("sv_lan", "true" if enabled else "false", use_set=use_set)
 
 
-def sv_projectName(name: str, /) -> str:
-    return _sets("sv_projectName", name)
+def sv_projectName(name: str, /, *, use_set: bool = True) -> str:
+    return _sets("sv_projectName", name, use_set=use_set)
 
 
-def sv_projectDesc(desc: str, /) -> str:
-    return _sets("sv_projectDesc", desc)
+def sv_projectDesc(desc: str, /, *, use_set: bool = True) -> str:
+    return _sets("sv_projectDesc", desc, use_set=use_set)
 
 
-def sv_appearAllowlisted(enabled: bool, /) -> str:
-    return _sets("sv_appearAllowlisted", "true" if enabled else "false")
+def sv_appearAllowlisted(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _sets("sv_appearAllowlisted", "true" if enabled else "false", use_set=use_set)
 
 
-def sv_allowlistInstructions(text: str, /) -> str:
-    return _sets("sv_allowlistInstructions", text)
+def sv_allowlistInstructions(text: str, /, *, use_set: bool = True) -> str:
+    return _sets("sv_allowlistInstructions", text, use_set=use_set)
 
 
-def sv_tebexSecret(secret: str, /) -> str:
-    return _set("sv_tebexSecret", secret)
+def sv_tebexSecret(secret: str, /, *, use_set: bool = True) -> str:
+    return _set("sv_tebexSecret", secret, use_set=use_set)
 
 
-def sv_enforceGameBuild(build_num: int, /) -> str:
-    return _set("sv_enforceGameBuild", str(build_num))
+def sv_enforceGameBuild(build_num: int, /, *, use_set: bool = True) -> str:
+    return _set("sv_enforceGameBuild", str(build_num), use_set=use_set)
 
 
-def sv_replaceExeToSwitchBuilds(enabled: bool, /) -> str:
-    return _set("sv_replaceExeToSwitchBuilds", "true" if enabled else "false")
+def sv_replaceExeToSwitchBuilds(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("sv_replaceExeToSwitchBuilds", "true" if enabled else "false", use_set=use_set)
 
 
-def sv_master1(url: str = "", /) -> str:
-    return _set("sv_master1", url)
+def sv_master1(url: str = "", /, *, use_set: bool = True) -> str:
+    return _set("sv_master1", url, use_set=use_set)
 
 
-def sv_kvsName(name: str = "default", /) -> str:
-    return _set("sv_kvsName", name)
+def sv_kvsName(name: str = "default", /, *, use_set: bool = True) -> str:
+    return _set("sv_kvsName", name, use_set=use_set)
 
 
-def sv_endpoints(eps: str, /) -> str:
-    return _set("sv_endpoints", eps)
+def sv_endpoints(eps: str, /, *, use_set: bool = True) -> str:
+    return _set("sv_endpoints", eps, use_set=use_set)
 
 
-def sv_registerMulticastDns(enabled: bool, /) -> str:
-    return _set("sv_registerMulticastDns", "true" if enabled else "false")
+def sv_registerMulticastDns(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("sv_registerMulticastDns", "true" if enabled else "false", use_set=use_set)
 
 
-def sv_showBusySpinnerOnLoadingScreen(enabled: bool, /) -> str:
-    return _set("sv_showBusySpinnerOnLoadingScreen", "true" if enabled else "false")
+def sv_showBusySpinnerOnLoadingScreen(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("sv_showBusySpinnerOnLoadingScreen", "true" if enabled else "false", use_set=use_set)
 
 
-def sv_endpointurl(url: str, /) -> str:
-    return _set("sv_endpointurl", url)
+def sv_endpointurl(url: str, /, *, use_set: bool = True) -> str:
+    return _set("sv_endpointurl", url, use_set=use_set)
 
 
-def sv_kick_players_cnl(enabled: bool, /) -> str:
-    return _set("sv_kick_players_cnl", "1" if enabled else "0")
+def sv_kick_players_cnl(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("sv_kick_players_cnl", "1" if enabled else "0", use_set=use_set)
 
 
-def sv_exposePlayerIdentifiersInHttpEndpoint(enabled: bool, /) -> str:
-    return _set("sv_exposePlayerIdentifiersInHttpEndpoint", "true" if enabled else "false")
+def sv_exposePlayerIdentifiersInHttpEndpoint(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("sv_exposePlayerIdentifiersInHttpEndpoint", "true" if enabled else "false", use_set=use_set)
 
 
-def sv_scriptDebugDuplicates(enabled: bool, /) -> str:
-    return _set("sv_scriptDebugDuplicates", "true" if enabled else "false")
+def sv_scriptDebugDuplicates(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("sv_scriptDebugDuplicates", "true" if enabled else "false", use_set=use_set)
 
 
 # ── Network ──
 
-def netPort(port: int, /) -> str:
-    return _set("netPort", str(port))
+def netPort(port: int, /, *, use_set: bool = True) -> str:
+    return _set("netPort", str(port), use_set=use_set)
 
 
-def net_tcpConnLimit(limit: int, /) -> str:
-    return _set("net_tcpConnLimit", str(limit))
+def net_tcpConnLimit(limit: int, /, *, use_set: bool = True) -> str:
+    return _set("net_tcpConnLimit", str(limit), use_set=use_set)
 
 
-def sv_tcpConnectionTimeoutSeconds(seconds: int, /) -> str:
-    return _set("sv_tcpConnectionTimeoutSeconds", str(seconds))
+def sv_tcpConnectionTimeoutSeconds(seconds: int, /, *, use_set: bool = True) -> str:
+    return _set("sv_tcpConnectionTimeoutSeconds", str(seconds), use_set=use_set)
 
 
-def sv_ioThreads(n: int, /) -> str:
-    return _set("sv_ioThreads", str(n))
+def sv_ioThreads(n: int, /, *, use_set: bool = True) -> str:
+    return _set("sv_ioThreads", str(n), use_set=use_set)
 
 
-def sv_clientConnectingTimeoutMilliseconds(ms: int, /) -> str:
-    return _set("sv_clientConnectingTimeoutMilliseconds", str(ms))
+def sv_clientConnectingTimeoutMilliseconds(ms: int, /, *, use_set: bool = True) -> str:
+    return _set("sv_clientConnectingTimeoutMilliseconds", str(ms), use_set=use_set)
 
 
-def sv_clientConnectedTimeoutMilliseconds(ms: int, /) -> str:
-    return _set("sv_clientConnectedTimeoutMilliseconds", str(ms))
+def sv_clientConnectedTimeoutMilliseconds(ms: int, /, *, use_set: bool = True) -> str:
+    return _set("sv_clientConnectedTimeoutMilliseconds", str(ms), use_set=use_set)
 
 
-def sv_pingIntervalMilliseconds(ms: int, /) -> str:
-    return _set("sv_pingIntervalMilliseconds", str(ms))
+def sv_pingIntervalMilliseconds(ms: int, /, *, use_set: bool = True) -> str:
+    return _set("sv_pingIntervalMilliseconds", str(ms), use_set=use_set)
 
 
-def sv_endpointPrivacy(enabled: bool, /) -> str:
-    return _set("sv_endpointPrivacy", "true" if enabled else "false")
+def sv_endpointPrivacy(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("sv_endpointPrivacy", "true" if enabled else "false", use_set=use_set)
 
 
-def sv_forceIndirectListing(enabled: bool, /) -> str:
-    return _set("sv_forceIndirectListing", "true" if enabled else "false")
+def sv_forceIndirectListing(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("sv_forceIndirectListing", "true" if enabled else "false", use_set=use_set)
 
 
-def sv_listingIpOverride(ip: str, /) -> str:
-    return _set("sv_listingIpOverride", ip)
+def sv_listingIpOverride(ip: str, /, *, use_set: bool = True) -> str:
+    return _set("sv_listingIpOverride", ip, use_set=use_set)
 
 
-def sv_listingHostOverride(host: str, /) -> str:
-    return _set("sv_listingHostOverride", host)
+def sv_listingHostOverride(host: str, /, *, use_set: bool = True) -> str:
+    return _set("sv_listingHostOverride", host, use_set=use_set)
 
 
-def sv_proxyIPRanges(ranges: str, /) -> str:
-    return _set("sv_proxyIPRanges", ranges)
+def sv_proxyIPRanges(ranges: str, /, *, use_set: bool = True) -> str:
+    return _set("sv_proxyIPRanges", ranges, use_set=use_set)
 
 
-def sv_enhancedHostSupport(enabled: bool, /) -> str:
-    return _set("sv_enhancedHostSupport", "true" if enabled else "false")
+def sv_enhancedHostSupport(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("sv_enhancedHostSupport", "true" if enabled else "false", use_set=use_set)
 
 
 # ── Security & Authentication ──
@@ -1094,44 +1100,44 @@ def rcon_password(pw: str, /) -> str:
     return build_line("rcon_password", format_value(pw))
 
 
-def sv_scriptHookAllowed(allowed: bool, /) -> str:
-    return _set("sv_scriptHookAllowed", "1" if allowed else "0")
+def sv_scriptHookAllowed(allowed: bool, /, *, use_set: bool = True) -> str:
+    return _set("sv_scriptHookAllowed", "1" if allowed else "0", use_set=use_set)
 
 
-def sv_authMaxVariance(var: int, /) -> str:
-    return _set("sv_authMaxVariance", str(var))
+def sv_authMaxVariance(var: int, /, *, use_set: bool = True) -> str:
+    return _set("sv_authMaxVariance", str(var), use_set=use_set)
 
 
-def sv_authMinTrust(trust: int, /) -> str:
-    return _set("sv_authMinTrust", str(trust))
+def sv_authMinTrust(trust: int, /, *, use_set: bool = True) -> str:
+    return _set("sv_authMinTrust", str(trust), use_set=use_set)
 
 
-def sv_requestParanoia(level: int, /) -> str:
-    return _set("sv_requestParanoia", str(level))
+def sv_requestParanoia(level: int, /, *, use_set: bool = True) -> str:
+    return _set("sv_requestParanoia", str(level), use_set=use_set)
 
 
-def sv_filterRequestControl(mode: int, /) -> str:
-    return _set("sv_filterRequestControl", str(mode))
+def sv_filterRequestControl(mode: int, /, *, use_set: bool = True) -> str:
+    return _set("sv_filterRequestControl", str(mode), use_set=use_set)
 
 
-def sv_filterRequestControlSettleTimer(ms: int, /) -> str:
-    return _set("sv_filterRequestControlSettleTimer", str(ms))
+def sv_filterRequestControlSettleTimer(ms: int, /, *, use_set: bool = True) -> str:
+    return _set("sv_filterRequestControlSettleTimer", str(ms), use_set=use_set)
 
 
-def sv_pureLevel(level: int, /) -> str:
-    return _set("sv_pureLevel", str(level))
+def sv_pureLevel(level: int, /, *, use_set: bool = True) -> str:
+    return _set("sv_pureLevel", str(level), use_set=use_set)
 
 
-def sv_entityLockdown(mode: str, /) -> str:
-    return _set("sv_entityLockdown", mode)
+def sv_entityLockdown(mode: str, /, *, use_set: bool = True) -> str:
+    return _set("sv_entityLockdown", mode, use_set=use_set)
 
 
-def sv_useAccurateSends(enabled: bool, /) -> str:
-    return _set("sv_useAccurateSends", "true" if enabled else "false")
+def sv_useAccurateSends(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("sv_useAccurateSends", "true" if enabled else "false", use_set=use_set)
 
 
-def sv_protectServerEntities(enabled: bool, /) -> str:
-    return _set("sv_protectServerEntities", "true" if enabled else "false")
+def sv_protectServerEntities(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("sv_protectServerEntities", "true" if enabled else "false", use_set=use_set)
 
 
 # ── OneSync ──
@@ -1140,98 +1146,98 @@ def onesync(mode: str, /) -> str:
     return build_line("onesync", mode)
 
 
-def onesync_enableInfinity(enabled: bool, /) -> str:
-    return _set("onesync_enableInfinity", "true" if enabled else "false")
+def onesync_enableInfinity(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("onesync_enableInfinity", "true" if enabled else "false", use_set=use_set)
 
 
-def onesync_enableBeyond(enabled: bool, /) -> str:
-    return _set("onesync_enableBeyond", "true" if enabled else "false")
+def onesync_enableBeyond(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("onesync_enableBeyond", "true" if enabled else "false", use_set=use_set)
 
 
-def onesync_population(enabled: bool, /) -> str:
-    return _set("onesync_population", "true" if enabled else "false")
+def onesync_population(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("onesync_population", "true" if enabled else "false", use_set=use_set)
 
 
-def onesync_forceMigration(enabled: bool, /) -> str:
-    return _set("onesync_forceMigration", "true" if enabled else "false")
+def onesync_forceMigration(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("onesync_forceMigration", "true" if enabled else "false", use_set=use_set)
 
 
-def onesync_distanceCulling(enabled: bool, /) -> str:
-    return _set("onesync_distanceCulling", "true" if enabled else "false")
+def onesync_distanceCulling(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("onesync_distanceCulling", "true" if enabled else "false", use_set=use_set)
 
 
-def onesync_distanceCullVehicles(enabled: bool, /) -> str:
-    return _set("onesync_distanceCullVehicles", "true" if enabled else "false")
+def onesync_distanceCullVehicles(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("onesync_distanceCullVehicles", "true" if enabled else "false", use_set=use_set)
 
 
-def onesync_radiusFrequency(enabled: bool, /) -> str:
-    return _set("onesync_radiusFrequency", "true" if enabled else "false")
+def onesync_radiusFrequency(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("onesync_radiusFrequency", "true" if enabled else "false", use_set=use_set)
 
 
-def onesync_migrateDataTimeout(ms: int, /) -> str:
-    return _set("onesync_migrateDataTimeout", str(ms))
+def onesync_migrateDataTimeout(ms: int, /, *, use_set: bool = True) -> str:
+    return _set("onesync_migrateDataTimeout", str(ms), use_set=use_set)
 
 
-def onesync_compressionDictionarySamples(enabled: bool, /) -> str:
-    return _set("onesync_compressionDictionarySamples", "true" if enabled else "false")
+def onesync_compressionDictionarySamples(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("onesync_compressionDictionarySamples", "true" if enabled else "false", use_set=use_set)
 
 
-def onesync_mapBoundsMinX(value: int, /) -> str:
-    return _set("onesync_mapBoundsMinX", str(value))
+def onesync_mapBoundsMinX(value: int, /, *, use_set: bool = True) -> str:
+    return _set("onesync_mapBoundsMinX", str(value), use_set=use_set)
 
 
-def onesync_mapBoundsMinY(value: int, /) -> str:
-    return _set("onesync_mapBoundsMinY", str(value))
+def onesync_mapBoundsMinY(value: int, /, *, use_set: bool = True) -> str:
+    return _set("onesync_mapBoundsMinY", str(value), use_set=use_set)
 
 
-def onesync_mapBoundsMaxX(value: int, /) -> str:
-    return _set("onesync_mapBoundsMaxX", str(value))
+def onesync_mapBoundsMaxX(value: int, /, *, use_set: bool = True) -> str:
+    return _set("onesync_mapBoundsMaxX", str(value), use_set=use_set)
 
 
-def onesync_mapBoundsMaxY(value: int, /) -> str:
-    return _set("onesync_mapBoundsMaxY", str(value))
+def onesync_mapBoundsMaxY(value: int, /, *, use_set: bool = True) -> str:
+    return _set("onesync_mapBoundsMaxY", str(value), use_set=use_set)
 
 
-def onesync_mapCellAreaSize(size: int, /) -> str:
-    return _set("onesync_mapCellAreaSize", str(size))
+def onesync_mapCellAreaSize(size: int, /, *, use_set: bool = True) -> str:
+    return _set("onesync_mapCellAreaSize", str(size), use_set=use_set)
 
 
 # ── Features ──
 
-def sv_enableNetworkedSounds(enabled: bool, /) -> str:
-    return _set("sv_enableNetworkedSounds", "true" if enabled else "false")
+def sv_enableNetworkedSounds(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("sv_enableNetworkedSounds", "true" if enabled else "false", use_set=use_set)
 
 
-def sv_enableNetworkedPhoneExplosions(enabled: bool, /) -> str:
-    return _set("sv_enableNetworkedPhoneExplosions", "true" if enabled else "false")
+def sv_enableNetworkedPhoneExplosions(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("sv_enableNetworkedPhoneExplosions", "true" if enabled else "false", use_set=use_set)
 
 
-def sv_enableNetworkedScriptEntityStates(enabled: bool, /) -> str:
-    return _set("sv_enableNetworkedScriptEntityStates", "true" if enabled else "false")
+def sv_enableNetworkedScriptEntityStates(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("sv_enableNetworkedScriptEntityStates", "true" if enabled else "false", use_set=use_set)
 
 
-def sv_enableNetEventReassembly(enabled: bool, /) -> str:
-    return _set("sv_enableNetEventReassembly", "true" if enabled else "false")
+def sv_enableNetEventReassembly(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("sv_enableNetEventReassembly", "true" if enabled else "false", use_set=use_set)
 
 
-def sv_netEventReassemblyMaxPendingEvents(n: int, /) -> str:
-    return _set("sv_netEventReassemblyMaxPendingEvents", str(n))
+def sv_netEventReassemblyMaxPendingEvents(n: int, /, *, use_set: bool = True) -> str:
+    return _set("sv_netEventReassemblyMaxPendingEvents", str(n), use_set=use_set)
 
 
-def sv_netEventReassemblyUnlimitedPendingEvents(enabled: bool, /) -> str:
-    return _set("sv_netEventReassemblyUnlimitedPendingEvents", "true" if enabled else "false")
+def sv_netEventReassemblyUnlimitedPendingEvents(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("sv_netEventReassemblyUnlimitedPendingEvents", "true" if enabled else "false", use_set=use_set)
 
 
-def sv_voiceChat(enabled: bool, /) -> str:
-    return _set("sv_voiceChat", "true" if enabled else "false")
+def sv_voiceChat(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("sv_voiceChat", "true" if enabled else "false", use_set=use_set)
 
 
-def sv_mumble(enabled: bool, /) -> str:
-    return _set("sv_mumble", "true" if enabled else "false")
+def sv_mumble(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("sv_mumble", "true" if enabled else "false", use_set=use_set)
 
 
-def sv_devMode(enabled: bool, /) -> str:
-    return _set("sv_devMode", "true" if enabled else "false")
+def sv_devMode(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("sv_devMode", "true" if enabled else "false", use_set=use_set)
 
 
 def svgui(enabled: bool = True, /) -> str:
@@ -1240,44 +1246,44 @@ def svgui(enabled: bool = True, /) -> str:
 
 # ── Experimental ──
 
-def sv_experimentalStateBagsHandler(enabled: bool, /) -> str:
-    return _set("sv_experimentalStateBagsHandler", "true" if enabled else "false")
+def sv_experimentalStateBagsHandler(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("sv_experimentalStateBagsHandler", "true" if enabled else "false", use_set=use_set)
 
 
-def sv_experimentalOnesyncPopulation(enabled: bool, /) -> str:
-    return _set("sv_experimentalOnesyncPopulation", "true" if enabled else "false")
+def sv_experimentalOnesyncPopulation(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("sv_experimentalOnesyncPopulation", "true" if enabled else "false", use_set=use_set)
 
 
-def sv_experimentalNetGameEventHandler(enabled: bool, /) -> str:
-    return _set("sv_experimentalNetGameEventHandler", "true" if enabled else "false")
+def sv_experimentalNetGameEventHandler(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("sv_experimentalNetGameEventHandler", "true" if enabled else "false", use_set=use_set)
 
 
-def sv_stateBagStrictMode(enabled: bool, /) -> str:
-    return _setr("sv_stateBagStrictMode", "true" if enabled else "false")
+def sv_stateBagStrictMode(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _setr("sv_stateBagStrictMode", "true" if enabled else "false", use_set=use_set)
 
 
-def sv_httpFileServerProxyOnly(enabled: bool, /) -> str:
-    return _set("sv_httpFileServerProxyOnly", "true" if enabled else "false")
+def sv_httpFileServerProxyOnly(enabled: bool, /, *, use_set: bool = True) -> str:
+    return _set("sv_httpFileServerProxyOnly", "true" if enabled else "false", use_set=use_set)
 
 
 # ── Steam ──
 
-def steam_webApiKey(key: str, /) -> str:
-    return _set("steam_webApiKey", key)
+def steam_webApiKey(key: str, /, *, use_set: bool = True) -> str:
+    return _set("steam_webApiKey", key, use_set=use_set)
 
 
-def steam_webApiDomain(domain: str, /) -> str:
-    return _set("steam_webApiDomain", domain)
+def steam_webApiDomain(domain: str, /, *, use_set: bool = True) -> str:
+    return _set("steam_webApiDomain", domain, use_set=use_set)
 
 
 # ── Monitoring ──
 
-def sv_prometheusBasicAuthUser(user: str, /) -> str:
-    return _set("sv_prometheusBasicAuthUser", user)
+def sv_prometheusBasicAuthUser(user: str, /, *, use_set: bool = True) -> str:
+    return _set("sv_prometheusBasicAuthUser", user, use_set=use_set)
 
 
-def sv_prometheusBasicAuthPassword(pw: str, /) -> str:
-    return _set("sv_prometheusBasicAuthPassword", pw)
+def sv_prometheusBasicAuthPassword(pw: str, /, *, use_set: bool = True) -> str:
+    return _set("sv_prometheusBasicAuthPassword", pw, use_set=use_set)
 
 
 # ── Misc ──
@@ -1544,16 +1550,16 @@ build_standard_onesync = batch_standard_onesync
 
 # ── Set Commands (exposed publicly) ──
 
-def set(name: str, value: str, /) -> str:
-    return _set(name, value)
+def set(name: str, value: str, /, *, use_set: bool = True) -> str:
+    return _set(name, value, use_set=use_set)
 
 
-def setr(name: str, value: str, /) -> str:
-    return _setr(name, value)
+def setr(name: str, value: str, /, *, use_set: bool = True) -> str:
+    return _setr(name, value, use_set=use_set)
 
 
-def sets(name: str, value: str, /) -> str:
-    return _sets(name, value)
+def sets(name: str, value: str, /, *, use_set: bool = True) -> str:
+    return _sets(name, value, use_set=use_set)
 
 
 # ── Lowercase Aliases ──
@@ -1564,190 +1570,190 @@ def sv_maxclients(n: int, /) -> str:
 
 # ── Individual Rate Limiter ConVars ──
 
-def rateLimiter_challenge_rate(value: int = 4, /) -> str:
-    return _set("rateLimiter_challenge_rate", str(value))
+def rateLimiter_challenge_rate(value: int = 4, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_challenge_rate", str(value), use_set=use_set)
 
 
-def rateLimiter_challenge_burst(value: int = 10, /) -> str:
-    return _set("rateLimiter_challenge_burst", str(value))
+def rateLimiter_challenge_burst(value: int = 10, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_challenge_burst", str(value), use_set=use_set)
 
 
-def rateLimiter_handshake_rate(value: int = 4, /) -> str:
-    return _set("rateLimiter_handshake_rate", str(value))
+def rateLimiter_handshake_rate(value: int = 4, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_handshake_rate", str(value), use_set=use_set)
 
 
-def rateLimiter_handshake_burst(value: int = 10, /) -> str:
-    return _set("rateLimiter_handshake_burst", str(value))
+def rateLimiter_handshake_burst(value: int = 10, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_handshake_burst", str(value), use_set=use_set)
 
 
-def rateLimiter_handshakeUDP_rate(value: int = 1, /) -> str:
-    return _set("rateLimiter_handshakeUDP_rate", str(value))
+def rateLimiter_handshakeUDP_rate(value: int = 1, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_handshakeUDP_rate", str(value), use_set=use_set)
 
 
-def rateLimiter_handshakeUDP_burst(value: int = 5, /) -> str:
-    return _set("rateLimiter_handshakeUDP_burst", str(value))
+def rateLimiter_handshakeUDP_burst(value: int = 5, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_handshakeUDP_burst", str(value), use_set=use_set)
 
 
-def rateLimiter_http_dynamic_rate(value: int = 4, /) -> str:
-    return _set("rateLimiter_http_dynamic_rate", str(value))
+def rateLimiter_http_dynamic_rate(value: int = 4, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_http_dynamic_rate", str(value), use_set=use_set)
 
 
-def rateLimiter_http_dynamic_burst(value: int = 10, /) -> str:
-    return _set("rateLimiter_http_dynamic_burst", str(value))
+def rateLimiter_http_dynamic_burst(value: int = 10, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_http_dynamic_burst", str(value), use_set=use_set)
 
 
-def rateLimiter_http_info_rate(value: int = 4, /) -> str:
-    return _set("rateLimiter_http_info_rate", str(value))
+def rateLimiter_http_info_rate(value: int = 4, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_http_info_rate", str(value), use_set=use_set)
 
 
-def rateLimiter_http_info_burst(value: int = 10, /) -> str:
-    return _set("rateLimiter_http_info_burst", str(value))
+def rateLimiter_http_info_burst(value: int = 10, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_http_info_burst", str(value), use_set=use_set)
 
 
-def rateLimiter_http_perf_rate(value: int = 2, /) -> str:
-    return _set("rateLimiter_http_perf_rate", str(value))
+def rateLimiter_http_perf_rate(value: int = 2, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_http_perf_rate", str(value), use_set=use_set)
 
 
-def rateLimiter_http_perf_burst(value: int = 5, /) -> str:
-    return _set("rateLimiter_http_perf_burst", str(value))
+def rateLimiter_http_perf_burst(value: int = 5, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_http_perf_burst", str(value), use_set=use_set)
 
 
-def rateLimiter_http_players_rate(value: int = 4, /) -> str:
-    return _set("rateLimiter_http_players_rate", str(value))
+def rateLimiter_http_players_rate(value: int = 4, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_http_players_rate", str(value), use_set=use_set)
 
 
-def rateLimiter_http_players_burst(value: int = 10, /) -> str:
-    return _set("rateLimiter_http_players_burst", str(value))
+def rateLimiter_http_players_burst(value: int = 10, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_http_players_burst", str(value), use_set=use_set)
 
 
-def rateLimiter_netCommand_rate(value: int = 7, /) -> str:
-    return _set("rateLimiter_netCommand_rate", str(value))
+def rateLimiter_netCommand_rate(value: int = 7, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_netCommand_rate", str(value), use_set=use_set)
 
 
-def rateLimiter_netCommand_burst(value: int = 14, /) -> str:
-    return _set("rateLimiter_netCommand_burst", str(value))
+def rateLimiter_netCommand_burst(value: int = 14, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_netCommand_burst", str(value), use_set=use_set)
 
 
-def rateLimiter_netCommandFlood_rate(value: int = 25, /) -> str:
-    return _set("rateLimiter_netCommandFlood_rate", str(value))
+def rateLimiter_netCommandFlood_rate(value: int = 25, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_netCommandFlood_rate", str(value), use_set=use_set)
 
 
-def rateLimiter_netCommandFlood_burst(value: int = 45, /) -> str:
-    return _set("rateLimiter_netCommandFlood_burst", str(value))
+def rateLimiter_netCommandFlood_burst(value: int = 45, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_netCommandFlood_burst", str(value), use_set=use_set)
 
 
-def rateLimiter_netCommandSize_rate(value: int = 1024, /) -> str:
-    return _set("rateLimiter_netCommandSize_rate", str(value))
+def rateLimiter_netCommandSize_rate(value: int = 1024, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_netCommandSize_rate", str(value), use_set=use_set)
 
 
-def rateLimiter_netCommandSize_burst(value: int = 8192, /) -> str:
-    return _set("rateLimiter_netCommandSize_burst", str(value))
+def rateLimiter_netCommandSize_burst(value: int = 8192, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_netCommandSize_burst", str(value), use_set=use_set)
 
 
-def rateLimiter_netEvent_rate(value: int = 50, /) -> str:
-    return _set("rateLimiter_netEvent_rate", str(value))
+def rateLimiter_netEvent_rate(value: int = 50, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_netEvent_rate", str(value), use_set=use_set)
 
 
-def rateLimiter_netEvent_burst(value: int = 200, /) -> str:
-    return _set("rateLimiter_netEvent_burst", str(value))
+def rateLimiter_netEvent_burst(value: int = 200, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_netEvent_burst", str(value), use_set=use_set)
 
 
-def rateLimiter_netEventFlood_rate(value: int = 75, /) -> str:
-    return _set("rateLimiter_netEventFlood_rate", str(value))
+def rateLimiter_netEventFlood_rate(value: int = 75, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_netEventFlood_rate", str(value), use_set=use_set)
 
 
-def rateLimiter_netEventFlood_burst(value: int = 300, /) -> str:
-    return _set("rateLimiter_netEventFlood_burst", str(value))
+def rateLimiter_netEventFlood_burst(value: int = 300, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_netEventFlood_burst", str(value), use_set=use_set)
 
 
-def rateLimiter_rcon_rate(value: int = 2, /) -> str:
-    return _set("rateLimiter_rcon_rate", str(value))
+def rateLimiter_rcon_rate(value: int = 2, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_rcon_rate", str(value), use_set=use_set)
 
 
-def rateLimiter_rcon_burst(value: int = 5, /) -> str:
-    return _set("rateLimiter_rcon_burst", str(value))
+def rateLimiter_rcon_burst(value: int = 5, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_rcon_burst", str(value), use_set=use_set)
 
 
-def rateLimiter_res_http_handler_rate(value: int = 10, /) -> str:
-    return _set("rateLimiter_res_http_handler_rate", str(value))
+def rateLimiter_res_http_handler_rate(value: int = 10, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_res_http_handler_rate", str(value), use_set=use_set)
 
 
-def rateLimiter_res_http_handler_burst(value: int = 25, /) -> str:
-    return _set("rateLimiter_res_http_handler_burst", str(value))
+def rateLimiter_res_http_handler_burst(value: int = 25, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_res_http_handler_burst", str(value), use_set=use_set)
 
 
-def rateLimiter_resourceList_rate(value: int = 10, /) -> str:
-    return _set("rateLimiter_resourceList_rate", str(value))
+def rateLimiter_resourceList_rate(value: int = 10, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_resourceList_rate", str(value), use_set=use_set)
 
 
-def rateLimiter_resourceList_burst(value: int = 25, /) -> str:
-    return _set("rateLimiter_resourceList_burst", str(value))
+def rateLimiter_resourceList_burst(value: int = 25, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_resourceList_burst", str(value), use_set=use_set)
 
 
-def rateLimiter_stateBag_rate(value: int = 75, /) -> str:
-    return _set("rateLimiter_stateBag_rate", str(value))
+def rateLimiter_stateBag_rate(value: int = 75, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_stateBag_rate", str(value), use_set=use_set)
 
 
-def rateLimiter_stateBag_burst(value: int = 125, /) -> str:
-    return _set("rateLimiter_stateBag_burst", str(value))
+def rateLimiter_stateBag_burst(value: int = 125, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_stateBag_burst", str(value), use_set=use_set)
 
 
-def rateLimiter_stateBagFlood_rate(value: int = 150, /) -> str:
-    return _set("rateLimiter_stateBagFlood_rate", str(value))
+def rateLimiter_stateBagFlood_rate(value: int = 150, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_stateBagFlood_rate", str(value), use_set=use_set)
 
 
-def rateLimiter_stateBagFlood_burst(value: int = 175, /) -> str:
-    return _set("rateLimiter_stateBagFlood_burst", str(value))
+def rateLimiter_stateBagFlood_burst(value: int = 175, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_stateBagFlood_burst", str(value), use_set=use_set)
 
 
-def rateLimiter_stateBagSize_rate(value: int = 131072, /) -> str:
-    return _set("rateLimiter_stateBagSize_rate", str(value))
+def rateLimiter_stateBagSize_rate(value: int = 131072, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_stateBagSize_rate", str(value), use_set=use_set)
 
 
-def rateLimiter_stateBagSize_burst(value: int = 262144, /) -> str:
-    return _set("rateLimiter_stateBagSize_burst", str(value))
+def rateLimiter_stateBagSize_burst(value: int = 262144, /, *, use_set: bool = True) -> str:
+    return _set("rateLimiter_stateBagSize_burst", str(value), use_set=use_set)
 
 
 # ── txAdmin ConVars ──
 
-def txAdmin_menuEnabled(enabled: bool = True, /) -> str:
-    return _set("txAdmin-menuEnabled", "true" if enabled else "false")
+def txAdmin_menuEnabled(enabled: bool = True, /, *, use_set: bool = True) -> str:
+    return _set("txAdmin-menuEnabled", "true" if enabled else "false", use_set=use_set)
 
 
-def txAdmin_menuAlignRight(enabled: bool = False, /) -> str:
-    return _set("txAdmin-menuAlignRight", "true" if enabled else "false")
+def txAdmin_menuAlignRight(enabled: bool = False, /, *, use_set: bool = True) -> str:
+    return _set("txAdmin-menuAlignRight", "true" if enabled else "false", use_set=use_set)
 
 
-def txAdmin_menuPageKey(key: str = "Tab", /) -> str:
-    return _set("txAdmin-menuPageKey", key)
+def txAdmin_menuPageKey(key: str = "Tab", /, *, use_set: bool = True) -> str:
+    return _set("txAdmin-menuPageKey", key, use_set=use_set)
 
 
-def txAdmin_hideDefaultAnnouncement(enabled: bool = False, /) -> str:
-    return _set("txAdmin-hideDefaultAnnouncement", "true" if enabled else "false")
+def txAdmin_hideDefaultAnnouncement(enabled: bool = False, /, *, use_set: bool = True) -> str:
+    return _set("txAdmin-hideDefaultAnnouncement", "true" if enabled else "false", use_set=use_set)
 
 
-def txAdmin_hideDefaultDirectMessage(enabled: bool = False, /) -> str:
-    return _set("txAdmin-hideDefaultDirectMessage", "true" if enabled else "false")
+def txAdmin_hideDefaultDirectMessage(enabled: bool = False, /, *, use_set: bool = True) -> str:
+    return _set("txAdmin-hideDefaultDirectMessage", "true" if enabled else "false", use_set=use_set)
 
 
-def txAdmin_hideDefaultWarning(enabled: bool = False, /) -> str:
-    return _set("txAdmin-hideDefaultWarning", "true" if enabled else "false")
+def txAdmin_hideDefaultWarning(enabled: bool = False, /, *, use_set: bool = True) -> str:
+    return _set("txAdmin-hideDefaultWarning", "true" if enabled else "false", use_set=use_set)
 
 
-def txAdmin_hideDefaultScheduledRestartWarning(enabled: bool = False, /) -> str:
-    return _set("txAdmin-hideDefaultScheduledRestartWarning", "true" if enabled else "false")
+def txAdmin_hideDefaultScheduledRestartWarning(enabled: bool = False, /, *, use_set: bool = True) -> str:
+    return _set("txAdmin-hideDefaultScheduledRestartWarning", "true" if enabled else "false", use_set=use_set)
 
 
-def txAdmin_debugMode(enabled: bool = False, /) -> str:
-    return _setr("txAdmin-debugMode", "true" if enabled else "false")
+def txAdmin_debugMode(enabled: bool = False, /, *, use_set: bool = True) -> str:
+    return _setr("txAdmin-debugMode", "true" if enabled else "false", use_set=use_set)
 
 
-def txAdmin_menuPlayerIdDistance(distance: int = 150, /) -> str:
-    return _setr("txAdmin-menuPlayerIdDistance", str(distance))
+def txAdmin_menuPlayerIdDistance(distance: int = 150, /, *, use_set: bool = True) -> str:
+    return _setr("txAdmin-menuPlayerIdDistance", str(distance), use_set=use_set)
 
 
-def txAdmin_menuDrunkDuration(seconds: int = 0, /) -> str:
-    return _setr("txAdmin-menuDrunkDuration", str(seconds))
+def txAdmin_menuDrunkDuration(seconds: int = 0, /, *, use_set: bool = True) -> str:
+    return _setr("txAdmin-menuDrunkDuration", str(seconds), use_set=use_set)
 
 
 # ═══════════════════════════════════════════════════════════════════════════
