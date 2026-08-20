@@ -1,49 +1,137 @@
-# Acelang
+<p align="center">
+  <img src="https://img.shields.io/badge/VS%20Code-Extension-blue?style=for-the-badge&logo=visual-studio-code&logoColor=white" alt="VS Code Extension">
+  <img src="https://img.shields.io/badge/Python-Library-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python Library">
+  <img src="https://img.shields.io/badge/FiveM-Config%20Language-orange?style=for-the-badge&logo=fivem&logoColor=white" alt="FiveM">
+  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
+</p>
 
-Acelang is a config language for FiveM servers. This repository contains:
+<h1 align="center">Acelang</h1>
 
-- **acelang_theme/** - VS Code extension for syntax highlighting
-- **acelang_python/** - Python library for parsing and validating .ac files
+<p align="center">
+  <strong>A modern configuration language for FiveM servers</strong>
+</p>
 
-## Quick Install
+<p align="center">
+  Acelang provides a structured, readable syntax for managing FiveM server configurations.<br>
+  Parse, validate, and highlight your server configs with powerful tooling.
+</p>
 
-### macOS / Linux
+---
 
+## Features
+
+| Feature | Description |
+|---------|-------------|
+| **Syntax Highlighting** | Full VS Code support with color-coded keywords, convars, and principals |
+| **Multi-line Comments** | Use `/;` and `;/` for block comments alongside standard `#` comments |
+| **Python Parser** | Programmatically read and manipulate `.ac` files |
+| **Validator** | Catch errors before deploying your server configuration |
+| **Cross-Platform** | Works on Windows, macOS, and Linux |
+
+---
+
+## Quick Start
+
+### VS Code Extension
+
+**macOS / Linux:**
 ```bash
 git clone https://github.com/n11kol11c/acelang.git
 cd acelang/acelang_theme
 ./install.sh
 ```
 
-### Windows (Command Prompt)
-
+**Windows:**
 ```cmd
 git clone https://github.com/n11kol11c/acelang.git
 cd acelang\acelang_theme
 install.bat
 ```
 
-### Windows (PowerShell)
+### Python Library
 
-```powershell
+```bash
 git clone https://github.com/n11kol11c/acelang.git
-cd acelang\acelang_theme
-.\install.bat
+cd acelang/kit
+pip install -e .
 ```
 
-## Features
+---
 
-- **Syntax highlighting** for all FiveM server commands
-- **Comments**: `#` (single-line) and `/;` ... `;/` (multi-line)
-- **Keywords**: `setr`, `set`, `sets`, `add_ace`, `ensure`, `restart`, etc.
-- **Convars**: All `sv_*`, `onesync_*`, `rateLimiter_*`, `steam_*` variables
-- **Principals**: `group.*`, `builtin.*`, `identifier.*`, `resource.*`
-- **Permissions**: `allow`, `deny`, `deny_socket`
-- **Booleans**: `true`, `false`, `on`, `off`
+## Syntax Overview
+
+```ac
+# Single-line comment
+
+/;
+  Multi-line comment
+;/
+
+# Server configuration
+sv_hostname "My Awesome Server"
+sv_maxClients 48
+sv_licenseKey "your_license_key"
+onesync on
+
+# Resource management
+ensure mapmanager
+ensure chat
+ensure spawnmanager
+
+# ACE permissions
+add_ace group.admin command allow
+add_ace group.admin txAdmin.kick allow
+
+# Principal management
+add_principal identifier.license:abc123 group.admin
+```
+
+---
+
+## What's Highlighted
+
+| Category | Examples |
+|----------|----------|
+| **Commands** | `setr`, `set`, `sets`, `ensure`, `restart`, `add_ace` |
+| **Convars** | `sv_hostname`, `sv_maxClients`, `onesync_enableInfinity` |
+| **Principals** | `group.admin`, `builtin.everyone`, `identifier.license:*` |
+| **Permissions** | `allow`, `deny`, `deny_socket` |
+| **Booleans** | `true`, `false`, `on`, `off` |
+| **Resources** | `mapmanager`, `chat`, `spawnmanager`, `baseevents` |
+
+---
+
+## Python Usage
+
+```python
+from acelang import AcelangParser, AcelangValidator
+
+# Parse a configuration file
+parser = AcelangParser()
+result = parser.parse_file('server.cfg')
+
+# Access parsed data
+for command in result['commands']:
+    print(f"{command.name}: {command.args}")
+
+# Get specific command types
+convars = parser.get_convars()
+resources = parser.get_resources()
+ace_permissions = parser.get_ace_permissions()
+
+# Validate configuration
+validator = AcelangValidator()
+errors = validator.validate_file('server.cfg')
+
+if not errors:
+    print("Configuration is valid!")
+```
+
+---
 
 ## Customization
 
-Add to your VS Code `settings.json` to customize colors:
+Customize syntax colors in your VS Code `settings.json`:
 
 ```json
 "editor.tokenColorCustomizations": {
@@ -60,35 +148,27 @@ Add to your VS Code `settings.json` to customize colors:
 }
 ```
 
-## Python Library
+---
 
-The `acelang_python/` directory contains a Python library for working with .ac files.
+## Project Structure
 
-### Installation
-
-```bash
-cd acelang_python
-pip install -e .
+```
+acelang/
+├── acelang_theme/          # VS Code Extension
+│   ├── install.sh          # macOS/Linux Installer
+│   ├── install.bat         # Windows Installer
+│   ├── syntaxes/           # TextMate Grammar
+│   ├── src/                # Extension Source
+│   └── fivem_api_reference.ac
+│
+└── kit/                    # Python Library
+    ├── setup.py
+    └── acelang/
+        ├── parser.py       # .ac File Parser
+        └── validator.py    # Configuration Validator
 ```
 
-### Usage
-
-```python
-from acelang import AcelangParser, AcelangValidator
-
-# Parse a .ac file
-parser = AcelangParser()
-result = parser.parse_file('server.cfg')
-
-# Get specific commands
-convars = parser.get_convars()
-resources = parser.get_resources()
-ace_permissions = parser.get_ace_permissions()
-
-# Validate a .ac file
-validator = AcelangValidator()
-errors = validator.validate_file('server.cfg')
-```
+---
 
 ## Development
 
@@ -96,44 +176,37 @@ errors = validator.validate_file('server.cfg')
 
 ```bash
 cd acelang_theme
-npm install          # Install dependencies
-npm run compile      # Compile TypeScript
-npm run package      # Build .vsix package
-npm run watch        # Watch for changes
+npm install
+npm run compile
+npm run watch
 ```
 
 ### Python Library
 
 ```bash
-cd acelang_python
-pip install -e .     # Install in development mode
+cd kit
+pip install -e .
+python -c "from acelang import AcelangParser; print('OK')"
 ```
 
-## Project Structure
+---
 
-```
-acelang/
-├── acelang_theme/              # VS Code extension
-│   ├── install.sh              # macOS/Linux installer
-│   ├── install.bat             # Windows installer
-│   ├── package.json            # Extension manifest
-│   ├── syntaxes/
-│   │   └── acelang.tmLanguage.json
-│   ├── src/
-│   │   └── extension.ts
-│   ├── language-configuration.json
-│   ├── tsconfig.json
-│   └── fivem_api_reference.ac
-│
-└── acelang_python/             # Python library
-    ├── setup.py
-    ├── acelang/
-    │   ├── __init__.py
-    │   ├── parser.py
-    │   └── validator.py
-    └── README.md
-```
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+---
 
 ## License
 
-MIT
+Distributed under the MIT License. See `LICENSE` for more information.
+
+---
+
+<p align="center">
+  Made with ❤️ for the FiveM community
+</p>
