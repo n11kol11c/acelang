@@ -101,7 +101,7 @@ Install syntax highlighting for `.ac` files:
 ```bash
 # Clone the repository
 git clone https://github.com/n11kol11c/acelang.git
-cd acelang/packages/vscode
+cd acelang/theme/acelang_theme
 
 # Run installer
 ./install.sh        # macOS / Linux
@@ -113,7 +113,7 @@ install.bat         # Windows
 Install the Python library for configuration management:
 
 ```bash
-cd acelang/packages/cli
+cd acelang/kit
 pip install -e .
 ```
 
@@ -1107,32 +1107,36 @@ Customize syntax colors in VS Code `settings.json`:
 
 ```
 acelang/
-├── packages/
-│   ├── vscode/                          # VS Code Extension
-│   │   ├── src/
-│   │   │   └── extension.ts             # Extension entry point
-│   │   ├── syntaxes/
-│   │   │   └── acelang.tmLanguage.json  # TextMate grammar
-│   │   ├── language-configuration.json  # Language configuration
-│   │   ├── package.json                 # Extension manifest
-│   │   ├── tsconfig.json                # TypeScript config
-│   │   ├── install.sh                   # Unix installer
-│   │   ├── install.bat                  # Windows installer
-│   │   ├── test.ac                      # Test file
-│   │   ├── configtest.ac                # Config test file
-│   │   └── fivem_api_reference.ac       # API reference
-│   │
-│   └── cli/                             # Python SDK
-│       ├── acelang/                     # Package source
-│       │   ├── __init__.py              # Package init (521 exports)
-│       │   ├── identifier.py            # 225 keywords + metadata
-│       │   ├── parser.py                # Configuration parser
-│       │   ├── validator.py             # Syntax validator
-│       │   ├── buffer.py                # Buffer utilities
-│       │   └── fivem_api.ac             # Complete API reference
-│       ├── setup.py                     # Package setup
-│       └── README.md                    # Package documentation
+├── api/                                 # API Reference Files
+│   ├── fivem_api.ac                     # Complete FiveM API reference
+│   └── kit.ac                           # Kit API reference
 │
+├── kit/                                 # Python SDK
+│   ├── __init__.py                      # Package init (521 exports)
+│   ├── kit.py                           # CLI entry point
+│   └── _components/
+│       ├── identifier.py                # 225 keywords + metadata
+│       ├── buffer.py                    # Buffer utilities
+│       ├── parser.py                    # Configuration parser
+│       └── types.py                     # Type definitions
+│
+├── theme/
+│   └── acelang_theme/                   # VS Code Extension
+│       ├── src/
+│       │   └── extension.ts             # Extension entry point
+│       ├── syntaxes/
+│       │   └── acelang.tmLanguage.json  # TextMate grammar
+│       ├── language-configuration.json  # Language configuration
+│       ├── package.json                 # Extension manifest
+│       ├── tsconfig.json                # TypeScript config
+│       ├── install.sh                   # Unix installer
+│       ├── install.bat                  # Windows installer
+│       ├── test.ac                      # Test file
+│       ├── configtest.ac                # Config test file
+│       └── fivem_api_reference.ac       # API reference
+│
+├── .vscode/                             # VS Code settings
+├── .gitignore                           # Git ignore rules
 ├── CONTRIBUTING.md                      # Contribution guidelines
 ├── LICENSE                              # MIT License
 └── README.md                            # This file
@@ -1151,7 +1155,7 @@ acelang/
 ### VS Code Extension
 
 ```bash
-cd packages/vscode
+cd theme/acelang_theme
 npm install
 npm run compile
 npm run watch
@@ -1160,7 +1164,7 @@ npm run watch
 ### Python SDK
 
 ```bash
-cd packages/cli
+cd kit
 pip install -e .
 pip install -e ".[dev]"  # With dev dependencies
 ```
@@ -1169,11 +1173,11 @@ pip install -e ".[dev]"  # With dev dependencies
 
 ```bash
 # VS Code Extension
-cd packages/vscode
+cd theme/acelang_theme
 npm test
 
 # Python SDK
-cd packages/cli
+cd kit
 pytest
 pytest --cov=acelang  # With coverage
 ```
