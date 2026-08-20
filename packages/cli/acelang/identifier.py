@@ -794,524 +794,748 @@ def get_string_only() -> frozenset[str]:
 
 # ═══════════════════════════════════════════════════════════════════════════
 # BUILDER FUNCTIONS — generate cfg lines for every keyword
+# Function names match the actual FiveM keyword names
+# int → str, bool → "true"/"false" or "allow"/"deny", str → str
 # ═══════════════════════════════════════════════════════════════════════════
 
-def build_set(name: str, value: str, /) -> str:
+def _set(name: str, value: str, /) -> str:
     return build_line("set", name, format_value(value))
 
 
-def build_setr(name: str, value: str, /) -> str:
+def _setr(name: str, value: str, /) -> str:
     return build_line("setr", name, format_value(value))
 
 
-def build_sets(name: str, value: str, /) -> str:
+def _sets(name: str, value: str, /) -> str:
     return build_line("sets", name, format_value(value))
 
 
-def build_ace(principal: str, obj: str, perm: str, /) -> str:
+# ── Access Control Commands ──
+
+def add_ace(principal: str, obj: str, perm: str = "allow", /) -> str:
     return build_line("add_ace", principal, obj, perm)
 
 
-def build_remove_ace(principal: str, obj: str, /) -> str:
+def remove_ace(principal: str, obj: str, /) -> str:
     return build_line("remove_ace", principal, obj)
 
 
-def build_principal(child: str, parent: str, /) -> str:
+def add_principal(child: str, parent: str, /) -> str:
     return build_line("add_principal", child, parent)
 
 
-def build_remove_principal(child: str, parent: str, /) -> str:
+def remove_principal(child: str, parent: str, /) -> str:
     return build_line("remove_principal", child, parent)
 
 
-def build_block_event(event: str, /) -> str:
-    return build_line("block_net_game_event", format_value(event))
-
-
-def build_unblock_event(event: str, /) -> str:
-    return build_line("unblock_net_game_event", format_value(event))
-
-
-def build_test_ace(principal: str, obj: str, /) -> str:
+def test_ace(principal: str, obj: str, /) -> str:
     return build_line("test_ace", principal, obj)
 
 
-def build_ensure(resource: str, /) -> str:
+def block_net_game_event(event: str, /) -> str:
+    return build_line("block_net_game_event", format_value(event))
+
+
+def unblock_net_game_event(event: str, /) -> str:
+    return build_line("unblock_net_game_event", format_value(event))
+
+
+# ── Resource Commands ──
+
+def ensure(resource: str, /) -> str:
     return build_line("ensure", resource)
 
 
-def build_ensure_stop(resource: str, /) -> str:
+def ensure_stop(resource: str, /) -> str:
     return build_line("ensure_stop", resource)
 
 
-def build_start(resource: str, /) -> str:
+def start(resource: str, /) -> str:
     return build_line("start", resource)
 
 
-def build_stop(resource: str, /) -> str:
+def stop(resource: str, /) -> str:
     return build_line("stop", resource)
 
 
-def build_restart(resource: str, /) -> str:
+def restart(resource: str, /) -> str:
     return build_line("restart", resource)
 
 
-def build_quit(reason: str = "", /) -> str:
+def quit(reason: str = "", /) -> str:
     return build_line("quit", format_value(reason)) if reason else "quit"
 
 
-def build_refresh() -> str:
+def refresh() -> str:
     return "refresh"
 
 
-def build_say(message: str, /) -> str:
+def say(message: str, /) -> str:
     return build_line("say", format_value(message))
 
 
-def build_exec(path: str, /) -> str:
+def exec(path: str, /) -> str:
     return build_line("exec", path)
 
 
-def build_load_icon(path: str, /) -> str:
-    return build_line("load_server_icon", format_value(path))
+def status() -> str:
+    return "status"
 
 
-def build_increase_pool(pool: str, amount: int, /) -> str:
+def clientkick(player_id: int, reason: str = "", /) -> str:
+    args = [str(player_id)]
+    if reason:
+        args.append(format_value(reason))
+    return build_line("clientkick", *args)
+
+
+def moo(value: int = 31337, /) -> str:
+    return _set("moo", str(value))
+
+
+# ── Console Channel Filters ──
+
+def con_channelFilters() -> str:
+    return "con_channelFilters"
+
+
+def con_addChannelFilter(filter_val: str, action: str, /) -> str:
+    return build_line("con_addChannelFilter", filter_val, action)
+
+
+def con_removeChannelFilter(filter_val: str, action: str, /) -> str:
+    return build_line("con_removeChannelFilter", filter_val, action)
+
+
+# ── Endpoint Commands ──
+
+def endpoint_add_tcp(endpoint: str, /) -> str:
+    return build_line("endpoint_add_tcp", format_value(endpoint))
+
+
+def endpoint_add_udp(endpoint: str, /) -> str:
+    return build_line("endpoint_add_udp", format_value(endpoint))
+
+
+# ── Pool Size ──
+
+def increase_pool_size(pool: str, amount: int, /) -> str:
     return build_line("increase_pool_size", format_value(pool), str(amount))
 
 
-def build_sync_start(net_id: str, compressed: str = "", /) -> str:
+# ── Server Icon ──
+
+def load_server_icon(path: str, /) -> str:
+    return build_line("load_server_icon", format_value(path))
+
+
+# ── Replay / Recording ──
+
+def replay_start(file_name: str, mode: str, /) -> str:
+    return build_line("replay_start", file_name, mode)
+
+
+def replay_stop(replay_id: str, /) -> str:
+    return build_line("replay_stop", replay_id)
+
+
+def sync_start_recording(net_id: str, compressed: str = "", /) -> str:
     args = [net_id]
     if compressed:
         args.append(compressed)
     return build_line("sync_start_recording", *args)
 
 
-def build_sync_stop(net_id: str, /) -> str:
+def sync_stop_recording(net_id: str, /) -> str:
     return build_line("sync_stop_recording", net_id)
 
 
-def build_replay_start(file_name: str, mode: str, /) -> str:
-    return build_line("replay_start", file_name, mode)
+# ═══════════════════════════════════════════════════════════════════════════
+# SERVER CONFIGURATION (sv_* convars)
+# ═══════════════════════════════════════════════════════════════════════════
+
+def sv_hostname(name: str, /) -> str:
+    return _set("sv_hostname", name)
 
 
-def build_replay_stop(replay_id: str, /) -> str:
-    return build_line("replay_stop", replay_id)
+def sv_maxClients(n: int, /) -> str:
+    return _set("sv_maxClients", str(n))
 
 
-def build_endpoint_tcp(endpoint: str, /) -> str:
-    return build_line("endpoint_add_tcp", format_value(endpoint))
+def sv_licenseKey(key: str, /) -> str:
+    return _set("sv_licenseKey", key)
 
 
-def build_endpoint_udp(endpoint: str, /) -> str:
-    return build_line("endpoint_add_udp", format_value(endpoint))
+def sv_lan(enabled: bool, /) -> str:
+    return _set("sv_lan", "true" if enabled else "false")
 
 
-def build_con_filter_add(filter_val: str, action: str, /) -> str:
-    return build_line("con_addChannelFilter", filter_val, action)
+def sv_projectName(name: str, /) -> str:
+    return _sets("sv_projectName", name)
 
 
-def build_con_filter_remove(filter_val: str, action: str, /) -> str:
-    return build_line("con_removeChannelFilter", filter_val, action)
+def sv_projectDesc(desc: str, /) -> str:
+    return _sets("sv_projectDesc", desc)
 
 
-# ── Server Config Builders ──
-
-def build_hostname(name: str, /) -> str:
-    return build_set("sv_hostname", name)
+def sv_appearAllowlisted(enabled: bool, /) -> str:
+    return _sets("sv_appearAllowlisted", "true" if enabled else "false")
 
 
-def build_max_clients(n: int, /) -> str:
-    return build_set("sv_maxClients", str(n))
+def sv_allowlistInstructions(text: str, /) -> str:
+    return _sets("sv_allowlistInstructions", text)
 
 
-def build_license_key(key: str, /) -> str:
-    return build_set("sv_licenseKey", key)
+def sv_tebexSecret(secret: str, /) -> str:
+    return _set("sv_tebexSecret", secret)
 
 
-def build_lan(enabled: bool, /) -> str:
-    return build_set("sv_lan", "true" if enabled else "false")
+def sv_enforceGameBuild(build_num: int, /) -> str:
+    return _set("sv_enforceGameBuild", str(build_num))
 
 
-def build_project_name(name: str, /) -> str:
-    return build_set("sv_projectName", name)
+def sv_replaceExeToSwitchBuilds(enabled: bool, /) -> str:
+    return _set("sv_replaceExeToSwitchBuilds", "true" if enabled else "false")
 
 
-def build_project_desc(desc: str, /) -> str:
-    return build_set("sv_projectDesc", desc)
+def sv_master1(url: str = "", /) -> str:
+    return _set("sv_master1", url)
 
 
-def build_tebex_secret(secret: str, /) -> str:
-    return build_set("sv_tebexSecret", secret)
+def sv_kvsName(name: str = "default", /) -> str:
+    return _set("sv_kvsName", name)
 
 
-def build_game_build(build_num: int, /) -> str:
-    return build_set("sv_enforceGameBuild", str(build_num))
+def sv_endpoints(eps: str, /) -> str:
+    return _set("sv_endpoints", eps)
 
 
-def build_game_name(name: str, /) -> str:
-    return build_line("gamename", name)
+def sv_registerMulticastDns(enabled: bool, /) -> str:
+    return _set("sv_registerMulticastDns", "true" if enabled else "false")
 
 
-def build_game_type(gtype: str, /) -> str:
-    return build_line("gametype", format_value(gtype))
+def sv_showBusySpinnerOnLoadingScreen(enabled: bool, /) -> str:
+    return _set("sv_showBusySpinnerOnLoadingScreen", "true" if enabled else "false")
 
 
-def build_map_name(name: str, /) -> str:
-    return build_line("mapname", format_value(name))
+def sv_endpointurl(url: str, /) -> str:
+    return _set("sv_endpointurl", url)
 
 
-def build_rcon_password(pw: str, /) -> str:
+def sv_kick_players_cnl(enabled: bool, /) -> str:
+    return _set("sv_kick_players_cnl", "1" if enabled else "0")
+
+
+def sv_exposePlayerIdentifiersInHttpEndpoint(enabled: bool, /) -> str:
+    return _set("sv_exposePlayerIdentifiersInHttpEndpoint", "true" if enabled else "false")
+
+
+def sv_scriptDebugDuplicates(enabled: bool, /) -> str:
+    return _set("sv_scriptDebugDuplicates", "true" if enabled else "false")
+
+
+# ── Network ──
+
+def netPort(port: int, /) -> str:
+    return _set("netPort", str(port))
+
+
+def net_tcpConnLimit(limit: int, /) -> str:
+    return _set("net_tcpConnLimit", str(limit))
+
+
+def sv_tcpConnectionTimeoutSeconds(seconds: int, /) -> str:
+    return _set("sv_tcpConnectionTimeoutSeconds", str(seconds))
+
+
+def sv_ioThreads(n: int, /) -> str:
+    return _set("sv_ioThreads", str(n))
+
+
+def sv_clientConnectingTimeoutMilliseconds(ms: int, /) -> str:
+    return _set("sv_clientConnectingTimeoutMilliseconds", str(ms))
+
+
+def sv_clientConnectedTimeoutMilliseconds(ms: int, /) -> str:
+    return _set("sv_clientConnectedTimeoutMilliseconds", str(ms))
+
+
+def sv_pingIntervalMilliseconds(ms: int, /) -> str:
+    return _set("sv_pingIntervalMilliseconds", str(ms))
+
+
+def sv_endpointPrivacy(enabled: bool, /) -> str:
+    return _set("sv_endpointPrivacy", "true" if enabled else "false")
+
+
+def sv_forceIndirectListing(enabled: bool, /) -> str:
+    return _set("sv_forceIndirectListing", "true" if enabled else "false")
+
+
+def sv_listingIpOverride(ip: str, /) -> str:
+    return _set("sv_listingIpOverride", ip)
+
+
+def sv_listingHostOverride(host: str, /) -> str:
+    return _set("sv_listingHostOverride", host)
+
+
+def sv_proxyIPRanges(ranges: str, /) -> str:
+    return _set("sv_proxyIPRanges", ranges)
+
+
+def sv_enhancedHostSupport(enabled: bool, /) -> str:
+    return _set("sv_enhancedHostSupport", "true" if enabled else "false")
+
+
+# ── Security & Authentication ──
+
+def rcon_password(pw: str, /) -> str:
     return build_line("rcon_password", format_value(pw))
 
 
-def build_net_port(port: int, /) -> str:
-    return build_set("netPort", str(port))
+def sv_scriptHookAllowed(allowed: bool, /) -> str:
+    return _set("sv_scriptHookAllowed", "1" if allowed else "0")
 
 
-def build_tcp_limit(limit: int, /) -> str:
-    return build_set("net_tcpConnLimit", str(limit))
+def sv_authMaxVariance(var: int, /) -> str:
+    return _set("sv_authMaxVariance", str(var))
 
 
-def build_script_hook(allowed: bool, /) -> str:
-    return build_set("sv_scriptHookAllowed", "1" if allowed else "0")
+def sv_authMinTrust(trust: int, /) -> str:
+    return _set("sv_authMinTrust", str(trust))
 
 
-def build_endpoint_privacy(enabled: bool, /) -> str:
-    return build_set("sv_endpointPrivacy", "true" if enabled else "false")
+def sv_requestParanoia(level: int, /) -> str:
+    return _set("sv_requestParanoia", str(level))
 
 
-def build_entity_lockdown(mode: str, /) -> str:
-    return build_set("sv_entityLockdown", mode)
+def sv_filterRequestControl(mode: int, /) -> str:
+    return _set("sv_filterRequestControl", str(mode))
 
 
-def build_pure_level(level: int, /) -> str:
-    return build_set("sv_pureLevel", str(level))
+def sv_filterRequestControlSettleTimer(ms: int, /) -> str:
+    return _set("sv_filterRequestControlSettleTimer", str(ms))
 
 
-def build_request_paranoia(level: int, /) -> str:
-    return build_set("sv_requestParanoia", str(level))
+def sv_pureLevel(level: int, /) -> str:
+    return _set("sv_pureLevel", str(level))
 
 
-def build_auth_variance(var: int, /) -> str:
-    return build_set("sv_authMaxVariance", str(var))
+def sv_entityLockdown(mode: str, /) -> str:
+    return _set("sv_entityLockdown", mode)
 
 
-def build_auth_trust(trust: int, /) -> str:
-    return build_set("sv_authMinTrust", str(trust))
+def sv_useAccurateSends(enabled: bool, /) -> str:
+    return _set("sv_useAccurateSends", "true" if enabled else "false")
 
 
-def build_filter_request(level: int, /) -> str:
-    return build_set("sv_filterRequestControl", str(level))
+def sv_protectServerEntities(enabled: bool, /) -> str:
+    return _set("sv_protectServerEntities", "true" if enabled else "false")
 
 
-def build_filter_settle(ms: int, /) -> str:
-    return build_set("sv_filterRequestControlSettleTimer", str(ms))
+# ── OneSync ──
+
+def onesync(mode: str, /) -> str:
+    return build_line("onesync", mode)
 
 
-# ── OneSync Builders ──
-
-def build_onesync(mode: str, /) -> str:
-    return build_set("onesync", mode)
+def onesync_enableInfinity(enabled: bool, /) -> str:
+    return _set("onesync_enableInfinity", "true" if enabled else "false")
 
 
-def build_onesync_infinity(enabled: bool, /) -> str:
-    return build_set("onesync_enableInfinity", "true" if enabled else "false")
+def onesync_enableBeyond(enabled: bool, /) -> str:
+    return _set("onesync_enableBeyond", "true" if enabled else "false")
 
 
-def build_onesync_population(enabled: bool, /) -> str:
-    return build_set("onesync_population", "true" if enabled else "false")
+def onesync_population(enabled: bool, /) -> str:
+    return _set("onesync_population", "true" if enabled else "false")
 
 
-def build_onesync_migration(enabled: bool, /) -> str:
-    return build_set("onesync_forceMigration", "true" if enabled else "false")
+def onesync_forceMigration(enabled: bool, /) -> str:
+    return _set("onesync_forceMigration", "true" if enabled else "false")
 
 
-def build_onesync_culling(enabled: bool, /) -> str:
-    return build_set("onesync_distanceCulling", "true" if enabled else "false")
+def onesync_distanceCulling(enabled: bool, /) -> str:
+    return _set("onesync_distanceCulling", "true" if enabled else "false")
 
 
-def build_onesync_cull_vehicles(enabled: bool, /) -> str:
-    return build_set("onesync_distanceCullVehicles", "true" if enabled else "false")
+def onesync_distanceCullVehicles(enabled: bool, /) -> str:
+    return _set("onesync_distanceCullVehicles", "true" if enabled else "false")
 
 
-def build_onesync_radius(enabled: bool, /) -> str:
-    return build_set("onesync_radiusFrequency", "true" if enabled else "false")
+def onesync_radiusFrequency(enabled: bool, /) -> str:
+    return _set("onesync_radiusFrequency", "true" if enabled else "false")
 
 
-def build_onesync_migrate_timeout(ms: int, /) -> str:
-    return build_set("onesync_migrateDataTimeout", str(ms))
+def onesync_migrateDataTimeout(ms: int, /) -> str:
+    return _set("onesync_migrateDataTimeout", str(ms))
 
 
-def build_onesync_map_bounds(min_x: int, min_y: int, max_x: int, max_y: int, /) -> list[str]:
+def onesync_compressionDictionarySamples(enabled: bool, /) -> str:
+    return _set("onesync_compressionDictionarySamples", "true" if enabled else "false")
+
+
+def onesync_mapBoundsMinX(value: int, /) -> str:
+    return _set("onesync_mapBoundsMinX", str(value))
+
+
+def onesync_mapBoundsMinY(value: int, /) -> str:
+    return _set("onesync_mapBoundsMinY", str(value))
+
+
+def onesync_mapBoundsMaxX(value: int, /) -> str:
+    return _set("onesync_mapBoundsMaxX", str(value))
+
+
+def onesync_mapBoundsMaxY(value: int, /) -> str:
+    return _set("onesync_mapBoundsMaxY", str(value))
+
+
+def onesync_mapCellAreaSize(size: int, /) -> str:
+    return _set("onesync_mapCellAreaSize", str(size))
+
+
+# ── Features ──
+
+def sv_enableNetworkedSounds(enabled: bool, /) -> str:
+    return _set("sv_enableNetworkedSounds", "true" if enabled else "false")
+
+
+def sv_enableNetworkedPhoneExplosions(enabled: bool, /) -> str:
+    return _set("sv_enableNetworkedPhoneExplosions", "true" if enabled else "false")
+
+
+def sv_enableNetworkedScriptEntityStates(enabled: bool, /) -> str:
+    return _set("sv_enableNetworkedScriptEntityStates", "true" if enabled else "false")
+
+
+def sv_enableNetEventReassembly(enabled: bool, /) -> str:
+    return _set("sv_enableNetEventReassembly", "true" if enabled else "false")
+
+
+def sv_netEventReassemblyMaxPendingEvents(n: int, /) -> str:
+    return _set("sv_netEventReassemblyMaxPendingEvents", str(n))
+
+
+def sv_netEventReassemblyUnlimitedPendingEvents(enabled: bool, /) -> str:
+    return _set("sv_netEventReassemblyUnlimitedPendingEvents", "true" if enabled else "false")
+
+
+def sv_voiceChat(enabled: bool, /) -> str:
+    return _set("sv_voiceChat", "true" if enabled else "false")
+
+
+def sv_mumble(enabled: bool, /) -> str:
+    return _set("sv_mumble", "true" if enabled else "false")
+
+
+def sv_devMode(enabled: bool, /) -> str:
+    return _set("sv_devMode", "true" if enabled else "false")
+
+
+def svgui(enabled: bool = True, /) -> str:
+    return "svgui" if enabled else "svgui"
+
+
+# ── Experimental ──
+
+def sv_experimentalStateBagsHandler(enabled: bool, /) -> str:
+    return _set("sv_experimentalStateBagsHandler", "true" if enabled else "false")
+
+
+def sv_experimentalOnesyncPopulation(enabled: bool, /) -> str:
+    return _set("sv_experimentalOnesyncPopulation", "true" if enabled else "false")
+
+
+def sv_experimentalNetGameEventHandler(enabled: bool, /) -> str:
+    return _set("sv_experimentalNetGameEventHandler", "true" if enabled else "false")
+
+
+def sv_stateBagStrictMode(enabled: bool, /) -> str:
+    return _setr("sv_stateBagStrictMode", "true" if enabled else "false")
+
+
+def sv_httpFileServerProxyOnly(enabled: bool, /) -> str:
+    return _set("sv_httpFileServerProxyOnly", "true" if enabled else "false")
+
+
+# ── Steam ──
+
+def steam_webApiKey(key: str, /) -> str:
+    return _set("steam_webApiKey", key)
+
+
+def steam_webApiDomain(domain: str, /) -> str:
+    return _set("steam_webApiDomain", domain)
+
+
+# ── Monitoring ──
+
+def sv_prometheusBasicAuthUser(user: str, /) -> str:
+    return _set("sv_prometheusBasicAuthUser", user)
+
+
+def sv_prometheusBasicAuthPassword(pw: str, /) -> str:
+    return _set("sv_prometheusBasicAuthPassword", pw)
+
+
+# ── Misc ──
+
+def gamename(game: str, /) -> str:
+    return build_line("gamename", game)
+
+
+def gametype(gtype: str, /) -> str:
+    return build_line("gametype", format_value(gtype))
+
+
+def mapname(name: str, /) -> str:
+    return build_line("mapname", format_value(name))
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# RATE LIMITER BUILDERS
+# ═══════════════════════════════════════════════════════════════════════════
+
+def _rateLimiter(name: str, rate: int, burst: int, /) -> list[str]:
     return [
-        build_set("onesync_mapBoundsMinX", str(min_x)),
-        build_set("onesync_mapBoundsMinY", str(min_y)),
-        build_set("onesync_mapBoundsMaxX", str(max_x)),
-        build_set("onesync_mapBoundsMaxY", str(max_y)),
+        _set(f"rateLimiter_{name}_rate", str(rate)),
+        _set(f"rateLimiter_{name}_burst", str(burst)),
     ]
 
 
-def build_onesync_cell_size(size: int, /) -> str:
-    return build_set("onesync_mapCellAreaSize", str(size))
+def rateLimiter_challenge(rate: int = 4, burst: int = 10, /) -> list[str]:
+    return _rateLimiter("challenge", rate, burst)
 
 
-# ── Feature Builders ──
+def rateLimiter_handshake(rate: int = 4, burst: int = 10, /) -> list[str]:
+    return _rateLimiter("handshake", rate, burst)
 
-def build_networked_sounds(enabled: bool, /) -> str:
-    return build_set("sv_enableNetworkedSounds", "true" if enabled else "false")
 
+def rateLimiter_handshakeUDP(rate: int = 1, burst: int = 5, /) -> list[str]:
+    return _rateLimiter("handshakeUDP", rate, burst)
 
-def build_networked_phone_explosions(enabled: bool, /) -> str:
-    return build_set("sv_enableNetworkedPhoneExplosions", "true" if enabled else "false")
 
+def rateLimiter_http_dynamic(rate: int = 4, burst: int = 10, /) -> list[str]:
+    return _rateLimiter("http_dynamic", rate, burst)
 
-def build_script_entity_states(enabled: bool, /) -> str:
-    return build_set("sv_enableNetworkedScriptEntityStates", "true" if enabled else "false")
 
+def rateLimiter_http_info(rate: int = 4, burst: int = 10, /) -> list[str]:
+    return _rateLimiter("http_info", rate, burst)
 
-def build_event_reassembly(enabled: bool, /) -> str:
-    return build_set("sv_enableNetEventReassembly", "true" if enabled else "false")
 
+def rateLimiter_http_perf(rate: int = 2, burst: int = 5, /) -> list[str]:
+    return _rateLimiter("http_perf", rate, burst)
 
-def build_max_pending_events(n: int, /) -> str:
-    return build_set("sv_netEventReassemblyMaxPendingEvents", str(n))
 
+def rateLimiter_http_players(rate: int = 4, burst: int = 10, /) -> list[str]:
+    return _rateLimiter("http_players", rate, burst)
 
-def build_unlimited_pending(enabled: bool, /) -> str:
-    return build_set("sv_netEventReassemblyUnlimitedPendingEvents", "true" if enabled else "false")
 
+def rateLimiter_netCommand(rate: int = 7, burst: int = 14, /) -> list[str]:
+    return _rateLimiter("netCommand", rate, burst)
 
-def build_voice_chat(enabled: bool, /) -> str:
-    return build_set("sv_voiceChat", "true" if enabled else "false")
 
+def rateLimiter_netCommandFlood(rate: int = 25, burst: int = 45, /) -> list[str]:
+    return _rateLimiter("netCommandFlood", rate, burst)
 
-def build_mumble(enabled: bool, /) -> str:
-    return build_set("sv_mumble", "true" if enabled else "false")
 
+def rateLimiter_netCommandSize(rate: int = 1024, burst: int = 8192, /) -> list[str]:
+    return _rateLimiter("netCommandSize", rate, burst)
 
-def build_dev_mode(enabled: bool, /) -> str:
-    return build_set("sv_devMode", "true" if enabled else "false")
 
+def rateLimiter_netEvent(rate: int = 50, burst: int = 200, /) -> list[str]:
+    return _rateLimiter("netEvent", rate, burst)
 
-def build_accurate_sends(enabled: bool, /) -> str:
-    return build_set("sv_useAccurateSends", "true" if enabled else "false")
 
+def rateLimiter_netEventFlood(rate: int = 75, burst: int = 300, /) -> list[str]:
+    return _rateLimiter("netEventFlood", rate, burst)
 
-def build_indirect_listing(enabled: bool, /) -> str:
-    return build_set("sv_forceIndirectListing", "true" if enabled else "false")
 
+def rateLimiter_rcon(rate: int = 2, burst: int = 5, /) -> list[str]:
+    return _rateLimiter("rcon", rate, burst)
 
-def build_listing_ip(ip: str, /) -> str:
-    return build_set("sv_listingIpOverride", ip)
 
+def rateLimiter_res_http_handler(rate: int = 10, burst: int = 25, /) -> list[str]:
+    return _rateLimiter("res_http_handler", rate, burst)
 
-def build_listing_host(host: str, /) -> str:
-    return build_set("sv_listingHostOverride", host)
 
+def rateLimiter_resourceList(rate: int = 10, burst: int = 25, /) -> list[str]:
+    return _rateLimiter("resourceList", rate, burst)
 
-def build_multicast_dns(enabled: bool, /) -> str:
-    return build_set("sv_registerMulticastDns", "true" if enabled else "false")
 
+def rateLimiter_stateBag(rate: int = 75, burst: int = 125, /) -> list[str]:
+    return _rateLimiter("stateBag", rate, burst)
 
-def build_endpoints(eps: str, /) -> str:
-    return build_set("sv_endpoints", eps)
 
+def rateLimiter_stateBagFlood(rate: int = 150, burst: int = 175, /) -> list[str]:
+    return _rateLimiter("stateBagFlood", rate, burst)
 
-def build_tcp_timeout(seconds: int, /) -> str:
-    return build_set("sv_tcpConnectionTimeoutSeconds", str(seconds))
 
+def rateLimiter_stateBagSize(rate: int = 131072, burst: int = 262144, /) -> list[str]:
+    return _rateLimiter("stateBagSize", rate, burst)
 
-def build_proxy_ranges(ranges: str, /) -> str:
-    return build_set("sv_proxyIPRanges", ranges)
 
-
-def build_io_threads(n: int, /) -> str:
-    return build_set("sv_ioThreads", str(n))
-
-
-def build_connect_timeout(ms: int, /) -> str:
-    return build_set("sv_clientConnectingTimeoutMilliseconds", str(ms))
-
-
-def build_connected_timeout(ms: int, /) -> str:
-    return build_set("sv_clientConnectedTimeoutMilliseconds", str(ms))
-
-
-def build_ping_interval(ms: int, /) -> str:
-    return build_set("sv_pingIntervalMilliseconds", str(ms))
-
-
-def build_steam_api_key(key: str, /) -> str:
-    return build_set("steam_webApiKey", key)
-
-
-def build_steam_domain(domain: str, /) -> str:
-    return build_set("steam_webApiDomain", domain)
-
-
-def build_prometheus_user(user: str, /) -> str:
-    return build_set("sv_prometheusBasicAuthUser", user)
-
-
-def build_prometheus_pass(pw: str, /) -> str:
-    return build_set("sv_prometheusBasicAuthPassword", pw)
-
-
-# ── Rate Limiter Builders ──
-
-def build_ratelimiter(name: str, rate: int, burst: int, /) -> list[str]:
-    return [
-        build_set(f"rateLimiter_{name}_rate", str(rate)),
-        build_set(f"rateLimiter_{name}_burst", str(burst)),
-    ]
-
-
-def build_ratelimiter_challenge(rate: int = 4, burst: int = 10, /) -> list[str]:
-    return build_ratelimiter("challenge", rate, burst)
-
-
-def build_ratelimiter_handshake(rate: int = 4, burst: int = 10, /) -> list[str]:
-    return build_ratelimiter("handshake", rate, burst)
-
-
-def build_ratelimiter_handshake_udp(rate: int = 1, burst: int = 5, /) -> list[str]:
-    return build_ratelimiter("handshakeUDP", rate, burst)
-
-
-def build_ratelimiter_http_dynamic(rate: int = 4, burst: int = 10, /) -> list[str]:
-    return build_ratelimiter("http_dynamic", rate, burst)
-
-
-def build_ratelimiter_http_info(rate: int = 4, burst: int = 10, /) -> list[str]:
-    return build_ratelimiter("http_info", rate, burst)
-
-
-def build_ratelimiter_http_perf(rate: int = 2, burst: int = 5, /) -> list[str]:
-    return build_ratelimiter("http_perf", rate, burst)
-
-
-def build_ratelimiter_http_players(rate: int = 4, burst: int = 10, /) -> list[str]:
-    return build_ratelimiter("http_players", rate, burst)
-
-
-def build_ratelimiter_net_command(rate: int = 7, burst: int = 14, /) -> list[str]:
-    return build_ratelimiter("netCommand", rate, burst)
-
-
-def build_ratelimiter_net_command_flood(rate: int = 25, burst: int = 45, /) -> list[str]:
-    return build_ratelimiter("netCommandFlood", rate, burst)
-
-
-def build_ratelimiter_net_command_size(rate: int = 1024, burst: int = 8192, /) -> list[str]:
-    return build_ratelimiter("netCommandSize", rate, burst)
-
-
-def build_ratelimiter_net_event(rate: int = 50, burst: int = 200, /) -> list[str]:
-    return build_ratelimiter("netEvent", rate, burst)
-
-
-def build_ratelimiter_net_event_flood(rate: int = 75, burst: int = 300, /) -> list[str]:
-    return build_ratelimiter("netEventFlood", rate, burst)
-
-
-def build_ratelimiter_rcon(rate: int = 2, burst: int = 5, /) -> list[str]:
-    return build_ratelimiter("rcon", rate, burst)
-
-
-def build_ratelimiter_res_http(rate: int = 10, burst: int = 25, /) -> list[str]:
-    return build_ratelimiter("res_http_handler", rate, burst)
-
-
-def build_ratelimiter_resource_list(rate: int = 10, burst: int = 25, /) -> list[str]:
-    return build_ratelimiter("resourceList", rate, burst)
-
-
-def build_ratelimiter_state_bag(rate: int = 75, burst: int = 125, /) -> list[str]:
-    return build_ratelimiter("stateBag", rate, burst)
-
-
-def build_ratelimiter_state_bag_flood(rate: int = 150, burst: int = 175, /) -> list[str]:
-    return build_ratelimiter("stateBagFlood", rate, burst)
-
-
-def build_ratelimiter_state_bag_size(rate: int = 131072, burst: int = 262144, /) -> list[str]:
-    return build_ratelimiter("stateBagSize", rate, burst)
-
-
-def build_all_ratelimiters() -> list[str]:
+def rateLimiter_all(rate: int = 0, burst: int = 0, /) -> list[str]:
     lines: list[str] = []
     for pair in get_ratelimiter_pairs():
         rate_cvar, burst_cvar = pair
-        info_r = Keywords.META.get(rate_cvar)
-        info_b = Keywords.META.get(burst_cvar)
-        rate_default = info_r.default if info_r else "0"
-        burst_default = info_b.default if info_b else "0"
-        lines.append(build_set(rate_cvar, rate_default))
-        lines.append(build_set(burst_cvar, burst_default))
+        lines.append(_set(rate_cvar, str(rate)))
+        lines.append(_set(burst_cvar, str(burst)))
     return lines
 
 
-# ── Batch Builders ──
+# ═══════════════════════════════════════════════════════════════════════════
+# BATCH BUILDERS
+# ═══════════════════════════════════════════════════════════════════════════
 
-def build_admin_permissions(groups: list[str] | None = None, /) -> list[str]:
+def batch_admin_permissions(groups: list[str] | None = None, /) -> list[str]:
     if groups is None:
         groups = ["group.admin"]
     lines: list[str] = []
     for g in groups:
-        lines.append(build_ace(g, "command", "allow"))
-        lines.append(build_ace(g, "command.kick", "allow"))
-        lines.append(build_ace(g, "command.ban", "allow"))
-        lines.append(build_ace(g, "txAdmin.kick", "allow"))
-        lines.append(build_ace(g, "txAdmin.ban", "allow"))
-        lines.append(build_ace(g, "txAdmin.warn", "allow"))
+        lines.append(add_ace(g, "command", "allow"))
+        lines.append(add_ace(g, "command.kick", "allow"))
+        lines.append(add_ace(g, "command.ban", "allow"))
+        lines.append(add_ace(g, "txAdmin.kick", "allow"))
+        lines.append(add_ace(g, "txAdmin.ban", "allow"))
+        lines.append(add_ace(g, "txAdmin.warn", "allow"))
     return lines
 
 
-def build_resource_ensures(*resources: str) -> list[str]:
-    return [build_ensure(r) for r in resources]
+def batch_ensures(*resources: str) -> list[str]:
+    return [ensure(r) for r in resources]
 
 
-def build_default_ensures() -> list[str]:
-    return build_resource_ensures(
+def batch_default_ensures() -> list[str]:
+    return batch_ensures(
         "mapmanager", "chat", "spawnmanager", "sessionmanager",
         "basic-gamemode", "hardcap", "rconlog", "baseevents",
     )
 
 
-def build_identifier_steam(steam64: str, group: str = "group.admin", /) -> list[str]:
-    return [build_principal(make_steam_id(steam64), group)]
+def batch_identifier_steam(steam64: str, group: str = "group.admin", /) -> list[str]:
+    return [add_principal(make_steam_id(steam64), group)]
 
 
-def build_identifier_license(license: str, group: str = "group.admin", /) -> list[str]:
-    return [build_principal(make_license_id(license), group)]
+def batch_identifier_license(license: str, group: str = "group.admin", /) -> list[str]:
+    return [add_principal(make_license_id(license), group)]
 
 
-def build_identifier_discord(discord_id: str, group: str = "group.admin", /) -> list[str]:
-    return [build_principal(make_discord_id(discord_id), group)]
+def batch_identifier_discord(discord_id: str, group: str = "group.admin", /) -> list[str]:
+    return [add_principal(make_discord_id(discord_id), group)]
 
 
-def build_standard_server_config(hostname: str, max_clients: int = 48, license_key: str = "", /) -> list[str]:
+def batch_standard_server_config(hostname: str, max_clients: int = 48, license_key: str = "", /) -> list[str]:
     lines: list[str] = []
-    lines.append(build_hostname(hostname))
-    lines.append(build_max_clients(max_clients))
+    lines.append(sv_hostname(hostname))
+    lines.append(sv_maxClients(max_clients))
     if license_key:
-        lines.append(build_license_key(license_key))
-    lines.append(build_net_port(30120))
-    lines.append(build_endpoint_tcp("0.0.0.0:30120"))
+        lines.append(sv_licenseKey(license_key))
+    lines.append(netPort(30120))
+    lines.append(endpoint_add_tcp("0.0.0.0:30120"))
     return lines
 
 
-def build_standard_onesync(max_clients: int = 64, /) -> list[str]:
+def batch_standard_onesync(max_clients: int = 64, /) -> list[str]:
     lines: list[str] = []
     if max_clients > 32:
-        lines.append(build_onesync("on"))
-        lines.append(build_onesync_infinity(True))
-    lines.append(build_onesync_population(True))
-    lines.append(build_onesync_migration(True))
-    lines.append(build_onesync_culling(True))
-    lines.append(build_onesync_radius(True))
+        lines.append(onesync("on"))
+        lines.append(onesync_enableInfinity(True))
+    lines.append(onesync_population(True))
+    lines.append(onesync_forceMigration(True))
+    lines.append(onesync_distanceCulling(True))
+    lines.append(onesync_radiusFrequency(True))
     return lines
+
+
+# ── Backward Compatibility Aliases ──
+build_hostname = sv_hostname
+build_max_clients = sv_maxClients
+build_license_key = sv_licenseKey
+build_lan = sv_lan
+build_project_name = sv_projectName
+build_project_desc = sv_projectDesc
+build_tebex_secret = sv_tebexSecret
+build_game_build = sv_enforceGameBuild
+build_game_name = gamename
+build_game_type = gametype
+build_map_name = mapname
+build_rcon_password = rcon_password
+build_net_port = netPort
+build_tcp_limit = net_tcpConnLimit
+build_script_hook = sv_scriptHookAllowed
+build_endpoint_privacy = sv_endpointPrivacy
+build_entity_lockdown = sv_entityLockdown
+build_pure_level = sv_pureLevel
+build_request_paranoia = sv_requestParanoia
+build_auth_variance = sv_authMaxVariance
+build_auth_trust = sv_authMinTrust
+build_filter_request = sv_filterRequestControl
+build_filter_settle = sv_filterRequestControlSettleTimer
+build_onesync = onesync
+build_onesync_infinity = onesync_enableInfinity
+build_onesync_population = onesync_population
+build_onesync_migration = onesync_forceMigration
+build_onesync_culling = onesync_distanceCulling
+build_onesync_cull_vehicles = onesync_distanceCullVehicles
+build_onesync_radius = onesync_radiusFrequency
+build_onesync_migrate_timeout = onesync_migrateDataTimeout
+build_onesync_cell_size = onesync_mapCellAreaSize
+build_networked_sounds = sv_enableNetworkedSounds
+build_networked_phone_explosions = sv_enableNetworkedPhoneExplosions
+build_script_entity_states = sv_enableNetworkedScriptEntityStates
+build_event_reassembly = sv_enableNetEventReassembly
+build_max_pending_events = sv_netEventReassemblyMaxPendingEvents
+build_unlimited_pending = sv_netEventReassemblyUnlimitedPendingEvents
+build_voice_chat = sv_voiceChat
+build_mumble = sv_mumble
+build_dev_mode = sv_devMode
+build_accurate_sends = sv_useAccurateSends
+build_indirect_listing = sv_forceIndirectListing
+build_listing_ip = sv_listingIpOverride
+build_listing_host = sv_listingHostOverride
+build_multicast_dns = sv_registerMulticastDns
+build_endpoints = sv_endpoints
+build_tcp_timeout = sv_tcpConnectionTimeoutSeconds
+build_proxy_ranges = sv_proxyIPRanges
+build_io_threads = sv_ioThreads
+build_connect_timeout = sv_clientConnectingTimeoutMilliseconds
+build_connected_timeout = sv_clientConnectedTimeoutMilliseconds
+build_ping_interval = sv_pingIntervalMilliseconds
+build_steam_api_key = steam_webApiKey
+build_steam_domain = steam_webApiDomain
+build_prometheus_user = sv_prometheusBasicAuthUser
+build_prometheus_pass = sv_prometheusBasicAuthPassword
+build_ratelimiter = _rateLimiter
+build_ratelimiter_challenge = rateLimiter_challenge
+build_ratelimiter_handshake = rateLimiter_handshake
+build_ratelimiter_handshake_udp = rateLimiter_handshakeUDP
+build_ratelimiter_http_dynamic = rateLimiter_http_dynamic
+build_ratelimiter_http_info = rateLimiter_http_info
+build_ratelimiter_http_perf = rateLimiter_http_perf
+build_ratelimiter_http_players = rateLimiter_http_players
+build_ratelimiter_net_command = rateLimiter_netCommand
+build_ratelimiter_net_command_flood = rateLimiter_netCommandFlood
+build_ratelimiter_net_command_size = rateLimiter_netCommandSize
+build_ratelimiter_net_event = rateLimiter_netEvent
+build_ratelimiter_net_event_flood = rateLimiter_netEventFlood
+build_ratelimiter_rcon = rateLimiter_rcon
+build_ratelimiter_res_http = rateLimiter_res_http_handler
+build_ratelimiter_resource_list = rateLimiter_resourceList
+build_ratelimiter_state_bag = rateLimiter_stateBag
+build_ratelimiter_state_bag_flood = rateLimiter_stateBagFlood
+build_ratelimiter_state_bag_size = rateLimiter_stateBagSize
+build_all_ratelimiters = rateLimiter_all
+build_admin_permissions = batch_admin_permissions
+build_resource_ensures = batch_ensures
+build_default_ensures = batch_default_ensures
+build_identifier_steam = batch_identifier_steam
+build_identifier_license = batch_identifier_license
+build_identifier_discord = batch_identifier_discord
+build_standard_server_config = batch_standard_server_config
+build_standard_onesync = batch_standard_onesync
 
 
 def get_all_lines() -> list[str]:
