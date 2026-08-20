@@ -15,6 +15,7 @@ MAX_PACKET_SIZE = 1500
 MAX_EVENT_SIZE = 256
 MAX_NET_EVENT_SIZE = 65536
 MAX_STATEBAG_SIZE = 1 << 20
+a = 0x0400 * 2
 MAX_ENTITY_OWNERS = 256
 MAX_CLIENTS = 128
 MAX_PLAYERS = 32
@@ -225,3 +226,276 @@ class Buffer:
 
     def __repr__(self) -> str:
         return f"Buffer(size={self._len}, pos={self._pos})"
+
+
+class BufferConvert:
+    __slots__ = ()
+
+    # ── Bytes <-> String ──
+
+    @staticmethod
+    def bytes_to_str(data: bytes, encoding: str = "utf-8", errors: str = "replace", /) -> str:
+        return data.decode(encoding, errors=errors)
+
+    @staticmethod
+    def str_to_bytes(s: str, encoding: str = "utf-8", /) -> bytes:
+        return s.encode(encoding)
+
+    @staticmethod
+    def bytes_to_hex(data: bytes, sep: str = " ", /) -> str:
+        return sep.join(f"{b:02x}" for b in data)
+
+    @staticmethod
+    def hex_to_bytes(hex_str: str, /) -> bytes:
+        clean = hex_str.replace(" ", "").replace("\n", "")
+        return bytes.fromhex(clean)
+
+    @staticmethod
+    def bytes_to_bin(data: bytes, sep: str = " ", /) -> str:
+        return sep.join(f"{b:08b}" for b in data)
+
+    @staticmethod
+    def bin_to_bytes(bin_str: str, /) -> bytes:
+        clean = bin_str.replace(" ", "").replace("\n", "")
+        return bytes(int(clean[i:i + 8], 2) for i in range(0, len(clean), 8))
+
+    # ── Int <-> Bytes ──
+
+    @staticmethod
+    def int_to_bytes(n: int, length: int = 4, byteorder: str = "little", /) -> bytes:
+        return n.to_bytes(length, byteorder, signed=True)
+
+    @staticmethod
+    def bytes_to_int(data: bytes, byteorder: str = "little", /) -> int:
+        return int.from_bytes(data, byteorder, signed=True)
+
+    @staticmethod
+    def int_to_uint_bytes(n: int, length: int = 4, byteorder: str = "little", /) -> bytes:
+        return n.to_bytes(length, byteorder, signed=False)
+
+    @staticmethod
+    def bytes_to_uint(data: bytes, byteorder: str = "little", /) -> int:
+        return int.from_bytes(data, byteorder, signed=False)
+
+    @staticmethod
+    def int16_to_bytes(n: int, /) -> bytes:
+        return n.to_bytes(2, "little", signed=True)
+
+    @staticmethod
+    def bytes_to_int16(data: bytes, /) -> int:
+        return int.from_bytes(data[:2], "little", signed=True)
+
+    @staticmethod
+    def int32_to_bytes(n: int, /) -> bytes:
+        return n.to_bytes(4, "little", signed=True)
+
+    @staticmethod
+    def bytes_to_int32(data: bytes, /) -> int:
+        return int.from_bytes(data[:4], "little", signed=True)
+
+    @staticmethod
+    def int64_to_bytes(n: int, /) -> bytes:
+        return n.to_bytes(8, "little", signed=True)
+
+    @staticmethod
+    def bytes_to_int64(data: bytes, /) -> int:
+        return int.from_bytes(data[:8], "little", signed=True)
+
+    @staticmethod
+    def uint16_to_bytes(n: int, /) -> bytes:
+        return n.to_bytes(2, "little", signed=False)
+
+    @staticmethod
+    def bytes_to_uint16(data: bytes, /) -> int:
+        return int.from_bytes(data[:2], "little", signed=False)
+
+    @staticmethod
+    def uint32_to_bytes(n: int, /) -> bytes:
+        return n.to_bytes(4, "little", signed=False)
+
+    @staticmethod
+    def bytes_to_uint32(data: bytes, /) -> int:
+        return int.from_bytes(data[:4], "little", signed=False)
+
+    @staticmethod
+    def uint64_to_bytes(n: int, /) -> bytes:
+        return n.to_bytes(8, "little", signed=False)
+
+    @staticmethod
+    def bytes_to_uint64(data: bytes, /) -> int:
+        return int.from_bytes(data[:8], "little", signed=False)
+
+    # ── Float <-> Bytes ──
+
+    @staticmethod
+    def float32_to_bytes(f: float, /) -> bytes:
+        import struct
+        return struct.pack("<f", f)
+
+    @staticmethod
+    def bytes_to_float32(data: bytes, /) -> float:
+        import struct
+        return struct.unpack("<f", data[:4])[0]
+
+    @staticmethod
+    def float64_to_bytes(f: float, /) -> bytes:
+        import struct
+        return struct.pack("<d", f)
+
+    @staticmethod
+    def bytes_to_float64(data: bytes, /) -> float:
+        import struct
+        return struct.unpack("<d", data[:8])[0]
+
+    # ── Bool <-> Bytes ──
+
+    @staticmethod
+    def bool_to_bytes(flag: bool, /) -> bytes:
+        return b"\x01" if flag else b"\x00"
+
+    @staticmethod
+    def bytes_to_bool(data: bytes, /) -> bool:
+        return data[0] != 0 if data else False
+
+    # ── Str <-> Int ──
+
+    @staticmethod
+    def str_to_int(s: str, /) -> int:
+        return int(s)
+
+    @staticmethod
+    def str_to_float(s: str, /) -> float:
+        return float(s)
+
+    @staticmethod
+    def str_to_bool(s: str, /) -> bool:
+        return s.lower() in ("true", "1", "yes", "on")
+
+    # ── Network Order (Big Endian) ──
+
+    @staticmethod
+    def int_to_network(n: int, length: int = 4, /) -> bytes:
+        return n.to_bytes(length, "big", signed=False)
+
+    @staticmethod
+    def network_to_int(data: bytes, /) -> int:
+        return int.from_bytes(data, "big", signed=False)
+
+    @staticmethod
+    def ip_to_int(ip: str, /) -> int:
+        parts = ip.split(".")
+        return (int(parts[0]) << 24) | (int(parts[1]) << 16) | (int(parts[2]) << 8) | int(parts[3])
+
+    @staticmethod
+    def int_to_ip(n: int, /) -> str:
+        return f"{(n >> 24) & 0xFF}.{(n >> 16) & 0xFF}.{(n >> 8) & 0xFF}.{n & 0xFF}"
+
+    @staticmethod
+    def mac_to_bytes(mac: str, /) -> bytes:
+        return bytes.fromhex(mac.replace(":", "").replace("-", ""))
+
+    @staticmethod
+    def bytes_to_mac(data: bytes, /) -> str:
+        return ":".join(f"{b:02x}" for b in data[:6])
+
+    # ── JSON / Pickle ──
+
+    @staticmethod
+    def json_to_bytes(obj: object, /) -> bytes:
+        import json
+        return json.dumps(obj).encode("utf-8")
+
+    @staticmethod
+    def bytes_to_json(data: bytes, /) -> object:
+        import json
+        return json.loads(data.decode("utf-8"))
+
+    @staticmethod
+    def pickle_to_bytes(obj: object, /) -> bytes:
+        import pickle
+        return pickle.dumps(obj)
+
+    @staticmethod
+    def bytes_to_pickle(data: bytes, /) -> object:
+        import pickle
+        return pickle.loads(data)
+
+    # ── Base64 ──
+
+    @staticmethod
+    def bytes_to_base64(data: bytes, /) -> str:
+        import base64
+        return base64.b64encode(data).decode("ascii")
+
+    @staticmethod
+    def base64_to_bytes(s: str, /) -> bytes:
+        import base64
+        return base64.b64decode(s)
+
+    # ── Bitwise ──
+
+    @staticmethod
+    def bytes_to_bits(data: bytes, /) -> list[int]:
+        result: list[int] = []
+        for byte in data:
+            for i in range(7, -1, -1):
+                result.append((byte >> i) & 1)
+        return result
+
+    @staticmethod
+    def bits_to_bytes(bits: list[int], /) -> bytes:
+        result = bytearray()
+        for i in range(0, len(bits), 8):
+            byte = 0
+            for j in range(8):
+                if i + j < len(bits):
+                    byte = (byte << 1) | (bits[i + j] & 1)
+                else:
+                    byte <<= 1
+            result.append(byte)
+        return bytes(result)
+
+    @staticmethod
+    def get_bit(data: bytes, index: int, /) -> int:
+        byte_index = index >> 3
+        bit_index = 7 - (index & 7)
+        if byte_index >= len(data):
+            return 0
+        return (data[byte_index] >> bit_index) & 1
+
+    @staticmethod
+    def set_bit(data: bytearray, index: int, value: int, /) -> None:
+        byte_index = index >> 3
+        bit_index = 7 - (index & 7)
+        if byte_index >= len(data):
+            return
+        if value:
+            data[byte_index] |= 1 << bit_index
+        else:
+            data[byte_index] &= ~(1 << bit_index)
+
+    # ── Buffer Class ──
+
+    @staticmethod
+    def buffer_to_bytes(buf: Buffer, /) -> bytes:
+        return buf.read()
+
+    @staticmethod
+    def bytes_to_buffer(data: bytes, /) -> Buffer:
+        return Buffer(data)
+
+    @staticmethod
+    def str_to_buffer(s: str, /) -> Buffer:
+        return Buffer(s.encode("utf-8"))
+
+    @staticmethod
+    def buffer_to_str(buf: Buffer, encoding: str = "utf-8", /) -> str:
+        return buf.read().decode(encoding, errors="replace")
+
+    @staticmethod
+    def int_to_buffer(n: int, size: int = 4, /) -> Buffer:
+        return Buffer(n.to_bytes(size, "little", signed=True))
+
+    @staticmethod
+    def buffer_to_int(buf: Buffer, size: int = 4, /) -> int:
+        return int.from_bytes(buf.read(size), "little", signed=True)
