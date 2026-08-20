@@ -1,0 +1,3 @@
+setr sv_maxClients 32
+onesync deny
+
