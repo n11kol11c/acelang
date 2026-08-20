@@ -1,0 +1,602 @@
+# ============================================================
+#           COMPLETE FiveM API Config Reference
+#            All server commands & convars
+#          Source: docs.fivem.net/server-commands
+# ============================================================
+
+# --- A ---
+
+# Add an ACE permission to a principal
+# Syntax: add_ace [principal] [object] [allow|deny]
+add_ace group.admin command allow
+add_ace group.admin command.kick allow
+add_ace group.admin command.ban allow
+add_ace group.admin txAdmin.kick allow
+
+# Add a principal to a group (player -> group or group -> group)
+# Syntax: add_principal [child] [parent]
+add_principal identifier.license:abc123 group.admin
+add_principal group.admin group.moderator
+
+
+# --- B ---
+
+# Block a net game event (anti-cheat)
+# Syntax: block_net_game_event [eventName]
+block_net_game_event "FIRE_EVENT"
+block_net_game_event "BLOCK_WEAPON_SELECTION"
+
+
+# --- C ---
+
+# Client kick (provided by rconlog)
+# Syntax: clientkick [id] [reason]
+clientkick 43 "You're a superstitious idiot!"
+
+# Console channel filters
+con_channelFilters
+con_addChannelFilter [filter] [action]
+con_removeChannelFilter [filter] [action]
+
+
+# --- E ---
+
+# Add a TCP endpoint for client connections
+endpoint_add_tcp "0.0.0.0:30120"
+
+# Add a UDP endpoint for game traffic
+endpoint_add_udp "0.0.0.0:30120"
+
+# Ensure a resource is running (starts it, or restarts if already running)
+ensure mapmanager
+ensure chat
+ensure spawnmanager
+ensure sessionmanager
+ensure basic-gamemode
+ensure hardcap
+ensure rconlog
+ensure baseevents
+ensure [resourcefolder]
+
+# Execute another config file
+exec server_internal.cfg
+exec permissions.cfg
+exec resources.cfg
+exec @vMenu/config/permissions.cfg
+
+
+# --- G ---
+
+# Set the game type (shown in server browser)
+gametype "Roleplay"
+
+# Set the game to run the server for (gta5 or rdr3)
+gamename gta5
+
+
+# --- I ---
+
+# Increase pool size for streaming assets
+# Syntax: increase_pool_size [poolName] [increase]
+increase_pool_size "TxdStore" 6000
+increase_pool_size "CMoveObject" 15
+increase_pool_size "FragmentStore" 14000
+increase_pool_size "Object" 2000
+increase_pool_size "InteriorProxy" 450
+
+
+# --- L ---
+
+# Load a server icon (96x96 PNG file)
+load_server_icon "my-server.png"
+
+
+# --- M ---
+
+# Moo: set to 31337 to bypass pool size validation for local dev
+# WARNING: Development only, never use in production
+set moo 31337
+
+# Set the map name (shown in server browser)
+mapname "Los Santos"
+
+
+# --- N ---
+
+# Set the primary port
+netPort 30120
+
+# Concurrent connection limit per IP (default 16)
+net_tcpConnLimit 32
+
+
+# --- O ---
+
+# Enable OneSync (required for 32+ players)
+# Values: on, off, legacy
+onesync on
+onesync off
+onesync legacy
+
+# OneSync: enable Infinity system for large player counts (default true)
+onesync_enableInfinity true
+
+# OneSync: enable population spawning/NPCs (default true)
+onesync_population true
+
+# OneSync: force entity migration when owner disconnects (default true)
+onesync_forceMigration true
+
+# OneSync: remove entities beyond distance (default true)
+onesync_distanceCulling true
+
+# OneSync: apply distance culling to vehicles (default false)
+onesync_distanceCullVehicles true
+
+# OneSync: adjust update frequency by distance (default true)
+onesync_radiusFrequency true
+
+# OneSync Enhanced: migration data timeout in ms (default 10000)
+onesync_migrateDataTimeout 10000
+
+# OneSync Enhanced: compression dictionary samples (default false)
+onesync_compressionDictionarySamples false
+
+# OneSync Enhanced: map bounds (can only be set at startup)
+onesync_mapBoundsMinX -10000
+onesync_mapBoundsMinY -10000
+onesync_mapBoundsMaxX 65536
+onesync_mapBoundsMaxY 65536
+
+# OneSync Enhanced: cell area size (default 100, can only be set at startup)
+onesync_mapCellAreaSize 100
+
+
+# --- Q ---
+
+# Quit the server (with optional reason)
+quit
+quit "Restarting - will be back soon!"
+
+
+# --- R ---
+
+# Set RCON password (UDP remote console)
+# WARNING: Never use setr for this!
+rcon_password "your_password_here"
+
+# Refresh resources folder
+refresh
+
+# Remove an ACE permission from a principal
+remove_ace group.admin command
+
+# Remove a principal from a group
+remove_principal identifier.license:abc123 group.admin
+
+# Restart a resource
+restart [resource]
+
+# Replay commands (Enhanced only)
+replay_start [fileName] [mode]
+replay_stop [replayId]
+
+
+# --- S ---
+
+# Send a chat message as console
+say "Hello everyone!"
+
+# Set a server-only convar (NOT sent to clients, safe for secrets)
+set mysql_connection_string "mysql://user:pass@host/db"
+set es_enableCustomData 1
+set temp_convar "hey world!"
+
+# Fix Connection CNL timed out error
+set sv_kick_players_cnl 0
+
+# Set a replicated convar (sent to ALL clients, NOT for secrets!)
+setr myscript_debug true
+setr voice_enableRadioAnim 1
+
+# Set a server-info convar (PUBLIC, shown in server browser)
+sets tags "roleplay, economy"
+sets locale "en-US"
+sets banner_detail "https://url.to/image.png"
+sets banner_connecting "https://url.to/image.png"
+sets sv_projectName "My FXServer Project"
+sets sv_projectDesc "Default FXServer requiring configuration"
+sets sv_appearAllowlisted false
+sets sv_allowlistInstructions "Contact us on Discord"
+
+# Show connected players with IDs and ping (provided by rconlog)
+status
+
+# Set the server hostname (shown in server browser)
+sv_hostname "My Awesome Server"
+
+# Set max client slots (1-2048, 32+ needs onesync)
+sv_maxClients 48
+
+# Set the license key (required, get from portal.cfx.re)
+sv_licenseKey "your_license_key_here"
+
+# Allow or disallow ScriptHook (0 = disallow, 1 = allow)
+sv_scriptHookAllowed 0
+
+# Hide player IPs from public reports
+sv_endpointPrivacy true
+
+# Custom URL for server endpoint instead of IP
+sv_endpointurl "https://myserver.example.com"
+
+# Force clients to use a specific GTA V game build
+sv_enforceGameBuild 2944
+
+# Controls how older game builds are run (true=old exe, false=latest exe with DLC)
+sv_replaceExeToSwitchBuilds true
+
+# Retain player identifiers in players.json endpoint
+sv_exposePlayerIdentifiersInHttpEndpoint false
+
+# Show busy spinner on loading screen
+sv_showBusySpinnerOnLoadingScreen false
+
+# Set master server URL (empty = private server)
+sv_master1 ""
+
+# Steam authentication (1-5, default 5)
+sv_authMaxVariance 1
+sv_authMinTrust 5
+
+# Anti-DDoS: proxy flood protection (0-3, default 0)
+sv_requestParanoia 0
+
+# Block REQUEST_CONTROL_EVENT routing (-1 to 4, default 0)
+sv_filterRequestControl 0
+
+# Settle timer for filter request control (default 30000ms)
+sv_filterRequestControlSettleTimer 30000
+
+# Prevent modified client files (0=off, 1=block modified, 2=block all)
+sv_pureLevel 0
+
+# Prevent networked sounds exploitation (default true)
+sv_enableNetworkedSounds true
+
+# Prevent phone explosions exploitation (default false)
+sv_enableNetworkedPhoneExplosions false
+
+# Prevent script entity state exploitation (default true)
+sv_enableNetworkedScriptEntityStates true
+
+# Experimental: faster state bags (default true)
+sv_experimentalStateBagsHandler true
+
+# Experimental: fix entity ID limit with onesync_population false (default true)
+sv_experimentalOnesyncPopulation true
+
+# Experimental: faster game events (default true)
+sv_experimentalNetGameEventHandler true
+
+# Restrict file server to proxy IPs only (default false)
+sv_httpFileServerProxyOnly false
+
+# Strict state bag mode: only server can modify (default false)
+setr sv_stateBagStrictMode false
+
+# Entity lockdown modes: full, strict, relaxed, inactive
+sv_entityLockdown inactive
+
+# Enable/disable accurate entity sends (default true)
+sv_useAccurateSends true
+
+# Enable reassembly of large network events (default true)
+sv_enableNetEventReassembly true
+
+# Max pending reassembled events per client (default 100)
+sv_netEventReassemblyMaxPendingEvents 100
+
+# Allow unlimited pending events (default false)
+sv_netEventReassemblyUnlimitedPendingEvents false
+
+# Prevent server from using real IP for listing (default false)
+sv_forceIndirectListing false
+
+# Override IP sent to master server
+sv_listingIpOverride "1.2.3.4"
+
+# Override hostname sent to master server
+sv_listingHostOverride "myserver.example.com"
+
+# Register via mDNS for LAN discovery (default true)
+sv_registerMulticastDns true
+
+# Space-separated list of client UDP endpoints
+sv_endpoints "1.2.3.4:30120"
+
+# TCP connection idle timeout in seconds (default 5)
+sv_tcpConnectionTimeoutSeconds 5
+
+# Proxy IP ranges in CIDR notation
+sv_proxyIPRanges "10.0.0.0/8 127.0.0.0/8 192.168.0.0/16 172.16.0.0/12"
+
+# Prometheus basic auth (Enhanced only)
+sv_prometheusBasicAuthUser ""
+sv_prometheusBasicAuthPassword ""
+
+# KVP database file name (Enhanced only, startup only)
+sv_kvsName "default"
+
+# LAN-only mode (default false, skips license key check)
+sv_lan false
+
+# Debug GUI toggle
+svgui
+
+# Tebex secret key
+sv_tebexSecret "your_secret_here"
+
+# Steam Web API key (required for Steam identifiers)
+steam_webApiKey "your_key_here"
+
+# Steam Web API domain (default api.steampowered.com)
+steam_webApiDomain "api.steampowered.com"
+
+# Enhanced: IO threads for network (default 0 = CPU core count)
+sv_ioThreads 0
+
+# Enhanced: client connecting timeout in ms (default 60000)
+sv_clientConnectingTimeoutMilliseconds 60000
+
+# Enhanced: connected client timeout in ms (default 120000)
+sv_clientConnectedTimeoutMilliseconds 120000
+
+# Enhanced: ping interval in ms (default 5000)
+sv_pingIntervalMilliseconds 5000
+
+# Enhanced: enable voice chat (default false)
+sv_voiceChat false
+
+# Enhanced: enable legacy Mumble API (default false, deprecated)
+sv_mumble false
+
+# Enhanced: enable dev mode (default false, DO NOT use in production)
+sv_devMode false
+
+# Start a resource
+start [resource]
+
+# Stop a resource
+stop [resource]
+
+# Stop ensuring a resource
+ensure_stop [resource]
+
+# Stop recording (Enhanced only)
+sync_start_recording [netId] [compressed]
+sync_stop_recording [netId]
+
+# Test if a principal has a specific ACE
+test_ace group.admin command
+
+
+# --- U ---
+
+# Unblock a net game event
+unblock_net_game_event "FIRE_EVENT"
+
+
+# --- Rate Limiter ConVars ---
+# Each limiter has _rate and _burst convars
+
+# Challenge limiter (client authentication challenge)
+rateLimiter_challenge_rate 4
+rateLimiter_challenge_burst 10
+
+# Handshake limiter (TCP connection handshake)
+rateLimiter_handshake_rate 4
+rateLimiter_handshake_burst 10
+
+# Handshake UDP limiter (UDP connection handshake)
+rateLimiter_handshakeUDP_rate 1
+rateLimiter_handshakeUDP_burst 5
+
+# HTTP dynamic limiter (dynamic HTTP endpoints)
+rateLimiter_http_dynamic_rate 4
+rateLimiter_http_dynamic_burst 10
+
+# HTTP info limiter (server info endpoint)
+rateLimiter_http_info_rate 4
+rateLimiter_http_info_burst 10
+
+# HTTP perf limiter (performance endpoint)
+rateLimiter_http_perf_rate 2
+rateLimiter_http_perf_burst 5
+
+# HTTP players limiter (player list endpoint)
+rateLimiter_http_players_rate 4
+rateLimiter_http_players_burst 10
+
+# Net command limiter (client commands)
+rateLimiter_netCommand_rate 7
+rateLimiter_netCommand_burst 14
+
+# Net command flood limiter (command flood protection)
+rateLimiter_netCommandFlood_rate 25
+rateLimiter_netCommandFlood_burst 45
+
+# Net command size limiter (command payload size)
+rateLimiter_netCommandSize_rate 1024
+rateLimiter_netCommandSize_burst 8192
+
+# Net event limiter (game events)
+rateLimiter_netEvent_rate 50
+rateLimiter_netEvent_burst 200
+
+# Net event flood limiter (event flood protection)
+rateLimiter_netEventFlood_rate 75
+rateLimiter_netEventFlood_burst 300
+
+# RCON limiter (remote console)
+rateLimiter_rcon_rate 2
+rateLimiter_rcon_burst 5
+
+# Resource HTTP handler limiter (resource HTTP endpoints)
+rateLimiter_res_http_handler_rate 10
+rateLimiter_res_http_handler_burst 25
+
+# Resource list limiter (resource listing)
+rateLimiter_resourceList_rate 10
+rateLimiter_resourceList_burst 25
+
+# State bag limiter (state bag updates)
+rateLimiter_stateBag_rate 75
+rateLimiter_stateBag_burst 125
+
+# State bag flood limiter (state bag flood protection)
+rateLimiter_stateBagFlood_rate 150
+rateLimiter_stateBagFlood_burst 175
+
+# State bag size limiter (state bag payload size)
+rateLimiter_stateBagSize_rate 131072
+rateLimiter_stateBagSize_burst 262144
+
+
+# --- DEPRECATED (no effect, kept for compatibility) ---
+
+# onesync_enableBeyond       (not necessary anymore)
+# sv_enhancedHostSupport     (not used anymore)
+# sv_protectServerEntities   (not implemented, use sv_entityLockdown)
+
+
+# --- txAdmin ConVars ---
+
+# Enable txAdmin menu (requires restart)
+txAdmin-menuEnabled true
+
+# Align txAdmin menu to right side of screen
+txAdmin-menuAlignRight false
+
+# Key for changing txAdmin menu pages (browser key code)
+txAdmin-menuPageKey Tab
+
+# Suppress default announcements
+txAdmin-hideDefaultAnnouncement false
+
+# Suppress default direct messages
+txAdmin-hideDefaultDirectMessage false
+
+# Suppress default warnings
+txAdmin-hideDefaultWarning false
+
+# Suppress restart warnings
+txAdmin-hideDefaultScheduledRestartWarning false
+
+# Toggle txAdmin debug printing
++setr txAdmin-debugMode true
+
+# Distance for Player ID visibility in txAdmin menu (default 150)
++setr txAdmin-menuPlayerIdDistance 100
+
+# Duration of drunk effect in txAdmin menu (seconds)
++setr txAdmin-menuDrunkDuration 120
+
+
+# --- Permission States ---
+
+allow
+deny
+deny_socket
+
+
+# --- Boolean Values ---
+
+true
+false
+on
+off
+
+
+# --- Common Principals ---
+
+# Built-in
+builtin.everyone
+builtin.restricted
+
+# Groups
+group.admin
+group.moderator
+group.owner
+group.user
+group.support
+group.helper
+group.god
+group.superadmin
+group.developer
+
+# Identifiers
+identifier.steam:110000112345678
+identifier.license:abc123def456
+identifier.discord:123456789012345678
+identifier.fivem:12345678
+identifier.ip:127.0.0.1
+identifier.xbl:1234567890123456
+
+# Resources
+resource.mapmanager
+resource.chat
+resource.spawnmanager
+resource.sessionmanager
+resource.hardcap
+resource.rconlog
+resource.baseevents
+
+
+# --- Common Command Permissions ---
+
+command
+command.kick
+command.ban
+command.tempban
+command.setgroup
+command.admin
+command.noclip
+command.tpm
+command.bring
+command.revive
+command.heal
+command.announce
+command.car
+command.weather
+command.time
+command.quit
+command.add_ace
+command.add_principal
+
+
+# --- txAdmin Permissions ---
+
+txAdmin.kick
+txAdmin.ban
+txAdmin.warn
+txAdmin.players.heal
+
+
+# --- Framework Permissions ---
+
+qbcore.admin
+qbx.admin
+esx.admin
+
+
+# --- Stock Resources ---
+
+mapmanager
+chat
+spawnmanager
+sessionmanager
+basic-gamemode
+hardcap
+rconlog
+baseevents
