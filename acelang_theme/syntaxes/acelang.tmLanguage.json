@@ -1,0 +1,164 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Acelang",
+  "scopeName": "source.acelang",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#strings" },
+    { "include": "#numbers" },
+    { "include": "#booleans" },
+    { "include": "#keywords" },
+    { "include": "#operators" },
+    { "include": "#functions" },
+    { "include": "#variables" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.number-sign.acelang",
+          "match": "#.*$"
+        },
+        {
+          "name": "comment.block.acelang",
+          "begin": "/;",
+          "end": ";/"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.acelang",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.acelang",
+              "match": "\\\\(?:[\"\\\\nrt])"
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.single.acelang",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            {
+              "name": "constant.character.escape.acelang",
+              "match": "\\\\(?:['\\\\nrt])"
+            }
+          ]
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.float.acelang",
+          "match": "\\b\\d+\\.\\d+\\b"
+        },
+        {
+          "name": "constant.numeric.integer.acelang",
+          "match": "\\b\\d+\\b"
+        }
+      ]
+    },
+    "booleans": {
+      "patterns": [
+        {
+          "name": "constant.language.boolean.acelang",
+          "match": "\\b(true|false|on|off)\\b"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.command.server.acelang",
+          "match": "\\b(setr|set|sets|add_ace|remove_ace|test_ace|add_principal|remove_principal|add_group|alias|jmp|exec|refresh|quit|say|status|clientkick|svgui|gamename|gametype|mapname|netPort|net_tcpConnLimit|block_net_game_event|unblock_net_game_event|con_channelFilters|con_addChannelFilter|con_removeChannelFilter|increase_pool_size|sync_start_recording|sync_stop_recording|replay_start|replay_stop|rateLimiter_challenge_rate|rateLimiter_challenge_burst|rateLimiter_handshake_rate|rateLimiter_handshake_burst|rateLimiter_handshakeUDP_rate|rateLimiter_handshakeUDP_burst|rateLimiter_http_dynamic_rate|rateLimiter_http_dynamic_burst|rateLimiter_http_info_rate|rateLimiter_http_info_burst|rateLimiter_http_perf_rate|rateLimiter_http_perf_burst|rateLimiter_http_players_rate|rateLimiter_http_players_burst|rateLimiter_netCommand_rate|rateLimiter_netCommand_burst|rateLimiter_netCommandFlood_rate|rateLimiter_netCommandFlood_burst|rateLimiter_netCommandSize_rate|rateLimiter_netCommandSize_burst|rateLimiter_netEvent_rate|rateLimiter_netEvent_burst|rateLimiter_netEventFlood_rate|rateLimiter_netEventFlood_burst|rateLimiter_rcon_rate|rateLimiter_rcon_burst|rateLimiter_res_http_handler_rate|rateLimiter_res_http_handler_burst|rateLimiter_resourceList_rate|rateLimiter_resourceList_burst|rateLimiter_stateBag_rate|rateLimiter_stateBag_burst|rateLimiter_stateBagFlood_rate|rateLimiter_stateBagFlood_burst|rateLimiter_stateBagSize_rate|rateLimiter_stateBagSize_burst)\\b"
+        },
+        {
+          "name": "keyword.command.resource.acelang",
+          "match": "\\b(ensure|ensure_stop|start|stop|restart)\\b"
+        },
+        {
+          "name": "keyword.command.server.acelang",
+          "match": "\\b(endpoint_add_tcp|endpoint_add_udp|load_server_icon|sv_hostname|sv_maxclients|sv_maxClients|sv_licenseKey|sv_scriptHookAllowed|sv_endpointPrivacy|sv_enforceGameBuild|sv_master1|rcon_password|onesync|sv_scriptDebugDuplicates|sv_lan|sv_pureLevel|sv_entityLockdown|sv_useAccurateSends|sv_enableNetworkedSounds|sv_enableNetworkedPhoneExplosions|sv_enableNetworkedScriptEntityStates|sv_experimentalStateBagsHandler|sv_experimentalOnesyncPopulation|sv_experimentalNetGameEventHandler|sv_httpFileServerProxyOnly|sv_stateBagStrictMode|sv_forceIndirectListing|sv_listingIpOverride|sv_listingHostOverride|sv_registerMulticastDns|sv_endpoints|sv_tcpConnectionTimeoutSeconds|sv_proxyIPRanges|sv_enableNetEventReassembly|sv_netEventReassemblyMaxPendingEvents|sv_netEventReassemblyUnlimitedPendingEvents|sv_requestParanoia|sv_filterRequestControl|sv_filterRequestControlSettleTimer|sv_authMaxVariance|sv_authMinTrust|sv_prometheusBasicAuthUser|sv_prometheusBasicAuthPassword|sv_kvsName|sv_tebexSecret|sv_devMode|sv_voiceChat|sv_mumble|sv_ioThreads|sv_clientConnectingTimeoutMilliseconds|sv_clientConnectedTimeoutMilliseconds|sv_pingIntervalMilliseconds|sv_replaceExeToSwitchBuilds|steam_webApiKey|steam_webApiDomain|onesync_enableInfinity|onesync_enableBeyond|onesync_population|onesync_forceMigration|onesync_distanceCulling|onesync_distanceCullVehicles|onesync_radiusFrequency|onesync_migrateDataTimeout|onesync_compressionDictionarySamples|onesync_mapBoundsMinX|onesync_mapBoundsMinY|onesync_mapBoundsMaxX|onesync_mapBoundsMaxY|onesync_mapCellAreaSize|sv_enhancedHostSupport|sv_protectServerEntities|sv_maxclients|gamename)\\b"
+        },
+        {
+          "name": "keyword.control.directive.acelang",
+          "match": "@(include|from|include_once|mod|stub|include_mod|include_stub|init)\\b"
+        },
+        {
+          "name": "keyword.control.flow.acelang",
+          "match": "\\b(if|else|elif|for|while|ret|brk|break|continue|pass)\\b"
+        },
+        {
+          "name": "support.type.principal.acelang",
+          "match": "\\b(group\\.[a-zA-Z_]+|builtin\\.[a-zA-Z_]+|resource\\.[a-zA-Z_]+)\\b"
+        },
+        {
+          "name": "support.type.identifier.acelang",
+          "match": "identifier\\.[a-zA-Z]+:"
+        },
+        {
+          "name": "support.type.resource.acelang",
+          "match": "\\b(mapmanager|chat|spawnmanager|sessionmanager|basic-gamemode|hardcap|rconlog|baseevents)\\b"
+        },
+        {
+          "name": "constant.language.permission.acelang",
+          "match": "\\b(allow|deny|deny_socket)\\b"
+        },
+        {
+          "name": "support.type.txadmin.acelang",
+          "match": "txAdmin\\.[a-zA-Z]+"
+        },
+        {
+          "name": "support.type.framework.acelang",
+          "match": "\\b(qbcore|qbx|esx)\\.[a-zA-Z]+\\b"
+        },
+        {
+          "name": "support.type.command.acelang",
+          "match": "command\\.[a-zA-Z]+"
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.assignment.acelang",
+          "match": "="
+        },
+        {
+          "name": "keyword.operator.comparison.acelang",
+          "match": "==|!=|<=|>=|<|>"
+        },
+        {
+          "name": "keyword.operator.arithmetic.acelang",
+          "match": "\\+|-|\\*|/|%|\\*\\*"
+        },
+        {
+          "name": "keyword.operator.logical.acelang",
+          "match": "&&|\\|\\||!"
+        }
+      ]
+    },
+    "functions": {
+      "patterns": [
+        {
+          "match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?:<[^>]*>)?\\s*(?=\\()",
+          "name": "entity.name.function.acelang"
+        }
+      ]
+    },
+    "variables": {
+      "patterns": [
+        {
+          "match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+          "name": "variable.other.acelang"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,22 @@
+# VS Code extension
+acelang_theme/node_modules/
+acelang_theme/out/
+acelang_theme/*.vsix
+acelang_theme/.DS_Store
+
+# Python
+acelang_python/__pycache__/
+acelang_python/*.py[cod]
+acelang_python/*$py.class
+acelang_python/*.egg-info/
+acelang_python/dist/
+acelang_python/build/
+acelang_python/.eggs/
+acelang_python/*.egg
+acelang_python/.env
+acelang_python/.venv
+acelang_python/venv/
+
+# General
+.DS_Store
+*.log

@@ -1,0 +1,6 @@
+@init "test"
+@include_once "otherStandardFile"
+@stub "thiswillinditacestubfile"
+@mod "thiswillindicatemodfile"
+
+endpoint_add_tcp 1.2.3
