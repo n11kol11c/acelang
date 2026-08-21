@@ -1,6 +1,6 @@
 from ._components.identifier import (
     # Classes
-    Keywords,
+    _G,
     KeywordInfo,
     ParamInfo,
 
@@ -536,7 +536,7 @@ from ._components.buffer import (
 
 __all__ = [
     # Classes
-    "Keywords", "KeywordInfo", "ParamInfo",
+    "_G", "KeywordInfo", "ParamInfo",
 
     # Lookup
     "get_identifier", "is_valid_keyword", "is_valid_cvar", "is_valid_action",

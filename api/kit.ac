@@ -1,3 +1,10 @@
-setr sv_maxClients 32
-onesync deny
+@init "Kit"
+@from self @include_once group.admin
 
+add_principal identifier.admin:@matija
+remove_ace group.admin allow
+
+ensure [global]/
+
+exec "permissions.cfg"
+unblock_net_game_event "ensures/FIRE_EVENT"

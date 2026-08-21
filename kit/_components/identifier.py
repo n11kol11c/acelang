@@ -33,7 +33,7 @@ class KeywordInfo:
     since: str = ""
 
 
-class Keywords:
+class _G:
     CVARS: frozenset[str] = frozenset({
         "add_ace", "add_principal", "block_net_game_event",
         "con_channelFilters", "con_addChannelFilter", "con_removeChannelFilter",
@@ -421,141 +421,141 @@ def get_identifier(identifier: str | None, /) -> str | None:
 
 
 def is_valid_keyword(token: str, /) -> bool:
-    return token in Keywords.ALL
+    return token in _G.ALL
 
 
 def is_valid_cvar(token: str, /) -> bool:
-    return token in Keywords.CVARS
+    return token in _G.CVARS
 
 
 def is_valid_action(token: str, /) -> bool:
-    return token in Keywords.ACTIONS
+    return token in _G.ACTIONS
 
 
 def is_valid_principal(token: str, /) -> bool:
-    return token in Keywords.PRINCIPALS
+    return token in _G.PRINCIPALS
 
 
 def is_valid_state(token: str, /) -> bool:
-    return token in Keywords.STATES
+    return token in _G.STATES
 
 
 def get_token_type(token: str, /) -> str | None:
-    if token in Keywords.CVARS:
+    if token in _G.CVARS:
         return "cvar"
-    if token in Keywords.ACTIONS:
+    if token in _G.ACTIONS:
         return "action"
-    if token in Keywords.PRINCIPALS:
+    if token in _G.PRINCIPALS:
         return "principal"
-    if token in Keywords.STATES:
+    if token in _G.STATES:
         return "state"
     return None
 
 
 def get_token_prefix(token: str, /) -> str | None:
-    for prefix, name in Keywords._PREFIXES.items():
+    for prefix, name in _G._PREFIXES.items():
         if token.startswith(prefix):
             return name
     return None
 
 
 def get_keyword_info(token: str, /) -> KeywordInfo | None:
-    return Keywords.META.get(token)
+    return _G.META.get(token)
 
 
 def get_keyword_name(token: str, /) -> str:
-    info = Keywords.META.get(token)
+    info = _G.META.get(token)
     return info.name if info else token
 
 
 def get_keyword_desc(token: str, /) -> str:
-    info = Keywords.META.get(token)
+    info = _G.META.get(token)
     return info.description if info else ""
 
 
 def get_keyword_type(token: str, /) -> str:
-    info = Keywords.META.get(token)
+    info = _G.META.get(token)
     return info.value_type if info else "string"
 
 
 def get_keyword_default(token: str, /) -> str:
-    info = Keywords.META.get(token)
+    info = _G.META.get(token)
     return info.default if info else ""
 
 
 def get_keyword_category(token: str, /) -> str:
-    info = Keywords.META.get(token)
+    info = _G.META.get(token)
     return info.category if info else ""
 
 
 def get_keyword_params(token: str, /) -> tuple[ParamInfo, ...]:
-    info = Keywords.META.get(token)
+    info = _G.META.get(token)
     return info.params if info else ()
 
 
 def get_keyword_usage(token: str, /) -> str:
-    info = Keywords.META.get(token)
+    info = _G.META.get(token)
     return info.usage if info else ""
 
 
 def get_keyword_related(token: str, /) -> tuple[str, ...]:
-    info = Keywords.META.get(token)
+    info = _G.META.get(token)
     return info.related if info else ()
 
 
 def get_keyword_warning(token: str, /) -> str:
-    info = Keywords.META.get(token)
+    info = _G.META.get(token)
     return info.warning if info else ""
 
 
 def is_deprecated(token: str, /) -> bool:
-    info = Keywords.META.get(token)
+    info = _G.META.get(token)
     return info.deprecated if info else False
 
 
 def is_startup_only(token: str, /) -> bool:
-    info = Keywords.META.get(token)
+    info = _G.META.get(token)
     return info.startup_only if info else False
 
 
 def find_by_category(category: str, /) -> frozenset[str]:
-    return frozenset(k for k, v in Keywords.META.items() if v.category == category)
+    return frozenset(k for k, v in _G.META.items() if v.category == category)
 
 
 def find_by_value_type(value_type: str, /) -> frozenset[str]:
-    return frozenset(k for k, v in Keywords.META.items() if v.value_type == value_type)
+    return frozenset(k for k, v in _G.META.items() if v.value_type == value_type)
 
 
 def find_by_name(name: str, /) -> list[str]:
     lower = name.lower()
-    return sorted(k for k, v in Keywords.META.items() if lower in v.name.lower())
+    return sorted(k for k, v in _G.META.items() if lower in v.name.lower())
 
 
 def find_deprecated() -> frozenset[str]:
-    return frozenset(k for k, v in Keywords.META.items() if v.deprecated)
+    return frozenset(k for k, v in _G.META.items() if v.deprecated)
 
 
 def find_startup_only() -> frozenset[str]:
-    return frozenset(k for k, v in Keywords.META.items() if v.startup_only)
+    return frozenset(k for k, v in _G.META.items() if v.startup_only)
 
 
 def find_with_warnings() -> dict[str, str]:
-    return {k: v.warning for k, v in Keywords.META.items() if v.warning}
+    return {k: v.warning for k, v in _G.META.items() if v.warning}
 
 
 def search_keywords(query: str, /) -> list[str]:
     lower = query.lower()
-    return sorted(k for k, v in Keywords.META.items()
+    return sorted(k for k, v in _G.META.items()
                   if lower in k.lower() or lower in v.name.lower() or lower in v.description.lower())
 
 
 def get_all_categories() -> frozenset[str]:
-    return frozenset(v.category for v in Keywords.META.values() if v.category)
+    return frozenset(v.category for v in _G.META.values() if v.category)
 
 
 def get_category_stats() -> dict[str, int]:
     stats: dict[str, int] = {}
-    for info in Keywords.META.values():
+    for info in _G.META.values():
         if info.category:
             stats[info.category] = stats.get(info.category, 0) + 1
     return dict(sorted(stats.items()))
@@ -563,7 +563,7 @@ def get_category_stats() -> dict[str, int]:
 
 def get_value_type_stats() -> dict[str, int]:
     stats: dict[str, int] = {}
-    for info in Keywords.META.values():
+    for info in _G.META.values():
         stats[info.value_type] = stats.get(info.value_type, 0) + 1
     return dict(sorted(stats.items()))
 
@@ -621,52 +621,52 @@ def make_xbl_id(xbl_id: str, /) -> str:
 # ═══════════════════════════════════════════════════════════════════════════
 
 def get_sv_convars() -> frozenset[str]:
-    return frozenset(c for c in Keywords.CVARS if c.startswith("sv_"))
+    return frozenset(c for c in _G.CVARS if c.startswith("sv_"))
 
 
 def get_onesync_convars() -> frozenset[str]:
-    return frozenset(c for c in Keywords.CVARS if c.startswith("onesync_"))
+    return frozenset(c for c in _G.CVARS if c.startswith("onesync_"))
 
 
 def get_ratelimiter_convars() -> frozenset[str]:
-    return frozenset(c for c in Keywords.CVARS if c.startswith("rateLimiter_"))
+    return frozenset(c for c in _G.CVARS if c.startswith("rateLimiter_"))
 
 
 def get_ratelimiter_pairs() -> list[tuple[str, str]]:
     pairs = []
-    for cvar in Keywords.CVARS:
+    for cvar in _G.CVARS:
         if cvar.startswith("rateLimiter_") and cvar.endswith("_rate"):
             burst = cvar.replace("_rate", "_burst")
-            if burst in Keywords.CVARS:
+            if burst in _G.CVARS:
                 pairs.append((cvar, burst))
     return sorted(pairs)
 
 
 def get_group_principals() -> frozenset[str]:
-    return frozenset(p for p in Keywords.PRINCIPALS if p.startswith("group."))
+    return frozenset(p for p in _G.PRINCIPALS if p.startswith("group."))
 
 
 def get_identifier_principals() -> frozenset[str]:
-    return frozenset(p for p in Keywords.PRINCIPALS if p.startswith("identifier."))
+    return frozenset(p for p in _G.PRINCIPALS if p.startswith("identifier."))
 
 
 def get_resource_principals() -> frozenset[str]:
-    return frozenset(p for p in Keywords.PRINCIPALS if p.startswith("resource.") or p in {
+    return frozenset(p for p in _G.PRINCIPALS if p.startswith("resource.") or p in {
         "mapmanager", "chat", "spawnmanager", "sessionmanager",
         "basic-gamemode", "hardcap", "rconlog", "baseevents",
     })
 
 
 def get_command_permissions() -> frozenset[str]:
-    return frozenset(p for p in Keywords.PRINCIPALS if p.startswith("command."))
+    return frozenset(p for p in _G.PRINCIPALS if p.startswith("command."))
 
 
 def get_txadmin_permissions() -> frozenset[str]:
-    return frozenset(p for p in Keywords.PRINCIPALS if p.startswith("txAdmin."))
+    return frozenset(p for p in _G.PRINCIPALS if p.startswith("txAdmin."))
 
 
 def get_framework_permissions() -> frozenset[str]:
-    return frozenset(p for p in Keywords.PRINCIPALS if p.startswith(("qbcore.", "qbx.", "esx.")))
+    return frozenset(p for p in _G.PRINCIPALS if p.startswith(("qbcore.", "qbx.", "esx.")))
 
 
 def validate_convar_value(cvar: str, value: str, /) -> bool:
@@ -686,7 +686,7 @@ def validate_convar_value(cvar: str, value: str, /) -> bool:
 
 
 def get_keyword_suggestions(prefix: str, /) -> list[str]:
-    keywords = sorted(Keywords.ALL)
+    keywords = sorted(_G.ALL)
     if not prefix:
         return keywords
     return [k for k in keywords if k.startswith(prefix)]
@@ -721,41 +721,41 @@ def format_value(value: str, /) -> str:
 
 
 def find_by_prefix(prefix: str, /) -> frozenset[str]:
-    return frozenset(k for k in Keywords.ALL if k.startswith(prefix))
+    return frozenset(k for k in _G.ALL if k.startswith(prefix))
 
 
 def find_by_suffix(suffix: str, /) -> frozenset[str]:
-    return frozenset(k for k in Keywords.ALL if k.endswith(suffix))
+    return frozenset(k for k in _G.ALL if k.endswith(suffix))
 
 
 def find_by_pattern(pattern: str, /) -> list[str]:
-    return sorted(k for k in Keywords.ALL if pattern in k)
+    return sorted(k for k in _G.ALL if pattern in k)
 
 
 def get_related(token: str, /) -> frozenset[str]:
     prefix = get_token_prefix(token)
     if prefix:
-        return frozenset(k for k in Keywords.ALL if k.startswith(prefix + "_") or k.startswith(prefix + "."))
+        return frozenset(k for k in _G.ALL if k.startswith(prefix + "_") or k.startswith(prefix + "."))
     if "." in token:
         base = token.split(".")[0]
-        return frozenset(k for k in Keywords.ALL if k.startswith(base + "."))
+        return frozenset(k for k in _G.ALL if k.startswith(base + "."))
     return frozenset()
 
 
 def get_rate_pair(cvar: str, /) -> tuple[str, str] | None:
     if cvar.endswith("_rate"):
         burst = cvar.replace("_rate", "_burst")
-        if burst in Keywords.CVARS:
+        if burst in _G.CVARS:
             return (cvar, burst)
     if cvar.endswith("_burst"):
         rate = cvar.replace("_burst", "_rate")
-        if rate in Keywords.CVARS:
+        if rate in _G.CVARS:
             return (rate, cvar)
     return None
 
 
 def get_enabled_only() -> frozenset[str]:
-    return frozenset(k for k in Keywords.CVARS if k in {
+    return frozenset(k for k in _G.CVARS if k in {
         "sv_lan", "sv_voiceChat", "sv_devMode", "sv_mumble",
         "sv_endpointPrivacy", "sv_useAccurateSends", "sv_registerMulticastDns",
         "sv_enableNetworkedSounds", "sv_enableNetworkedPhoneExplosions",
@@ -769,7 +769,7 @@ def get_enabled_only() -> frozenset[str]:
 
 
 def get_numeric_only() -> frozenset[str]:
-    return frozenset(k for k in Keywords.CVARS if k in {
+    return frozenset(k for k in _G.CVARS if k in {
         "sv_maxClients", "sv_maxclients", "sv_enforceGameBuild", "sv_pureLevel",
         "sv_requestParanoia", "sv_filterRequestControl", "sv_filterRequestControlSettleTimer",
         "sv_authMaxVariance", "sv_authMinTrust", "netPort", "net_tcpConnLimit",
@@ -782,7 +782,7 @@ def get_numeric_only() -> frozenset[str]:
 
 
 def get_string_only() -> frozenset[str]:
-    return frozenset(k for k in Keywords.CVARS if k in {
+    return frozenset(k for k in _G.CVARS if k in {
         "sv_hostname", "sv_licenseKey", "sv_master1", "sv_tebexSecret",
         "steam_webApiKey", "steam_webApiDomain", "sv_listingIpOverride",
         "sv_listingHostOverride", "sv_endpoints", "sv_proxyIPRanges",
@@ -1926,19 +1926,19 @@ TXADMIN_MENU_DRUNK_DURATION = "txAdmin-menuDrunkDuration"
 
 def get_all_lines() -> list[str]:
     lines = []
-    for cvar in sorted(Keywords.CVARS):
+    for cvar in sorted(_G.CVARS):
         lines.append(f"# {cvar}")
     return lines
 
 
 def get_stats() -> dict[str, int]:
     return {
-        "cvars": len(Keywords.CVARS),
-        "actions": len(Keywords.ACTIONS),
-        "principals": len(Keywords.PRINCIPALS),
-        "states": len(Keywords.STATES),
-        "total": len(Keywords.ALL),
-        "metadata": len(Keywords.META),
+        "cvars": len(_G.CVARS),
+        "actions": len(_G.ACTIONS),
+        "principals": len(_G.PRINCIPALS),
+        "states": len(_G.STATES),
+        "total": len(_G.ALL),
+        "metadata": len(_G.META),
         "sv_convars": len(get_sv_convars()),
         "onesync_convars": len(get_onesync_convars()),
         "ratelimiter_convars": len(get_ratelimiter_convars()),
